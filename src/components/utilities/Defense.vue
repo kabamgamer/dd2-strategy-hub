@@ -1,7 +1,7 @@
 <template>
   <div class="accordion-item mb-3">
     <h2 class="accordion-header" :id="id + '-heading'">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id + '-collapseOne'">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ userDefense.label }}</span>
 
@@ -227,5 +227,12 @@ onMounted((): void => {
 .defense-info__level .btn svg {
   color: var(--bs-primary);
   width: 15px;
+}
+
+.accordion-button {
+  font-weight: bold;
+}
+.accordion-button:focus {
+  box-shadow: none;
 }
 </style>

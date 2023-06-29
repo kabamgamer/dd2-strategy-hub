@@ -6,6 +6,7 @@ import type { DefenseDataResponse } from "@/data/DefenseData";
 
 export const useDefenseStore: () => any = (): object => {
     const innerStore = defineStore('defenseStore', () => {
+
         const loading = ref(false)
         const loaded = ref(false)
 
@@ -21,6 +22,17 @@ export const useDefenseStore: () => any = (): object => {
                     }
                 }, 100)
             })
+        }
+
+        function onDataError(err: Error): void {
+            const errorHandlers: { onDataError?: (err: Error) => void } = window as { onDataError?: (err: Error) => void }
+            const dataErrorHandler: ((err: Error) => void) | undefined = errorHandlers["onDataError"];
+
+            if (!dataErrorHandler) {
+                throw err;
+            }
+
+            dataErrorHandler(err);
         }
 
         function loadDefenses(): void {
@@ -59,7 +71,7 @@ export const useDefenseStore: () => any = (): object => {
                         }
                     })
                 })
-                .catch(err => { throw err });
+                .catch(err => { onDataError(err) })
         }
 
         async function getDefenseRoot(id: string): Promise<DefenseRootInterface | null> {

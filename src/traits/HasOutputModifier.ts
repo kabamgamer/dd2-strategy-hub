@@ -12,7 +12,7 @@ export default class HasOutputModifier {
             return new OutputModifier(parseFloat(modifierValue.replace('%', '')))
         }
 
-        new OutputModifier(undefined, parseFloat(modifierValue))
+        return new OutputModifier(undefined, parseFloat(modifierValue))
     }
 
 }

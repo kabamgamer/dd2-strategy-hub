@@ -20,11 +20,19 @@
       <DefenseDpsCalculator :ancientResetPoints="userAncientResetPoints" />
     </Section>
   </main>
+
+  <Modal title="An error occurred" ref="errorModal">
+    <template #body>{{ errorMessage }}</template>
+    <template #footer>
+      <button class="btn btn-primary" @click.prevent="reloadPage">Reload</button>
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 
+import Modal from "@/components/layout/BootstrapModal.vue";
 import Section from "@/components/layout/Section.vue";
 import AncientPowerResets from "@/components/sections/AncientPowerResets.vue";
 import AncientPowerPoints from "@/components/sections/AncientPowerPoints.vue";
@@ -36,6 +44,16 @@ import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
+
+const errorModal = ref<typeof Modal|null>(null);
+const errorMessage = ref<string>("");
+
+(window as { onDataError?: (err: Error) => void })["onDataError"] = (e: Error): void => {
+  console.error(e);
+  errorMessage.value = "Something went wrong while loading defense data, please reload the page. If the problem persists, please contact the developer.";
+  errorModal.value?.show();
+  throw e
+};
 
 // Load stores for faster initializations
 useDefenseStore()
@@ -58,6 +76,10 @@ const userAncientResetPoints = ref<UserAncientResetPoints>({
   ancient_hero_critical_damage: 0,
   ancient_hero_critical_chance: 0,
 });
+
+function reloadPage(): void {
+  window.location.reload();
+}
 
 onMounted((): void => {
   userAncientResetPoints.value = JSON.parse(localStorage.getItem('ancientResetPoints') ?? '{}') as UserAncientResetPoints;

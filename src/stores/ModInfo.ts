@@ -21,6 +21,17 @@ export const useModStore: () => any = (): object => {
             })
         }
 
+        function onDataError(err: Error): void {
+            const errorHandlers: { onDataError?: (err: Error) => void } = window as { onDataError?: (err: Error) => void }
+            const dataErrorHandler: ((err: Error) => void) | undefined = errorHandlers["onDataError"];
+
+            if (!dataErrorHandler) {
+                throw err;
+            }
+
+            dataErrorHandler(err);
+        }
+
         function loadMods(): void {
             if (loaded.value) return
 
@@ -46,7 +57,7 @@ export const useModStore: () => any = (): object => {
                         }
                     })
                 })
-                .catch(err => { throw err });
+                .catch(err => { onDataError(err) });
         }
 
         async function getModById(id: string): Promise<ModInterface | null> {

@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="container">
     <Section section-title="Ancient power resets">
       <AncientPowerResets />
     </Section>
@@ -21,6 +21,17 @@
     </Section>
   </main>
 
+  <footer class="footer mt-auto py-3 bg-light">
+    <div class="container text-center">
+      <span class="text-muted">
+        &copy; {{ (new Date).getFullYear() }} DD2 Strategy Hub |
+        <a href="https://github.com/kabamgamer/dd2-strategy-hub" target="_blank" rel="noopener noreferrer">
+          <IconGithub /> Github
+        </a>
+      </span>
+    </div>
+  </footer>
+
   <Modal title="An error occurred" ref="errorModal">
     <template #body>{{ errorMessage }}</template>
     <template #footer>
@@ -38,6 +49,7 @@ import AncientPowerResets from "@/components/sections/AncientPowerResets.vue";
 import AncientPowerPoints from "@/components/sections/AncientPowerPoints.vue";
 import RerollTracker from "@/components/sections/RerollTracker.vue";
 import DefenseDpsCalculator from "@/components/sections/DefenseDpsCalculator.vue";
+import IconGithub from "@/components/icons/IconGithub.vue";
 
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 

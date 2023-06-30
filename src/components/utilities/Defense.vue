@@ -1,5 +1,7 @@
 <template>
-  <div class="accordion-item mb-3">
+  <div class="accordion-item position-relative mb-3">
+    <LoadingSpinner v-if="loading" />
+
     <h2 class="accordion-header" :id="id + '-heading'">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
@@ -96,6 +98,7 @@ import Shards from "@/components/utilities/Shards.vue";
 import AscensionPoints from "@/components/utilities/AscensionPoints.vue";
 import IconChevronUp from "@/components/icons/IconChevronUp.vue";
 import IconChevronDown from "@/components/icons/IconChevronDown.vue";
+import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 
 import PetData from "@/classes/Pet";
 import RelicData from "@/classes/Relic";
@@ -104,10 +107,14 @@ import type DefenseModData from "@/data/DefenseModData";
 import type DefenseShardData from "@/data/DefenseShardData";
 
 import { useDefenseCalculations } from "@/composables/DefenseCalculations";
+import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
+import { storeToRefs } from "pinia";
 
+const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore();
+const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
 const { getDefenseRoot } = useDefenseStore();
 const { getModById } = useModStore()

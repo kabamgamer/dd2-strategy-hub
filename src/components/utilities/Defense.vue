@@ -229,6 +229,11 @@ onMounted((): void => {
   width: 15px;
 }
 
+.accordion-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 .accordion-button {
   font-weight: bold;
 }

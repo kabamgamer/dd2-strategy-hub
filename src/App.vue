@@ -56,6 +56,7 @@ import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
+import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 
 const errorModal = ref<typeof Modal|null>(null);
 const errorMessage = ref<string>("");
@@ -68,6 +69,7 @@ const errorMessage = ref<string>("");
 };
 
 // Load stores for faster initializations
+useGoogleSpreadsheetDataStore()
 useDefenseStore()
 useModStore()
 useShardStore()

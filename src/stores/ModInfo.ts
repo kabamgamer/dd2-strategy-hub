@@ -3,9 +3,12 @@ import { defineStore } from 'pinia'
 import type { ModInterface } from "@/interaces";
 import DefenseModData from "@/data/DefenseModData";
 import type { DefenseModDataResponse } from "@/data/DefenseModData";
+import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 
 export const useModStore: () => any = (): object => {
     const innerStore = defineStore('modStore', () => {
+        const { getMods } = useGoogleSpreadsheetDataStore()
+
         const allMods: ModInterface[] = []
         const loading = ref<boolean>(false)
         const loaded = ref<boolean>(false)
@@ -13,7 +16,7 @@ export const useModStore: () => any = (): object => {
         function initialized(): Promise<void> {
             return new Promise((resolve: () => void) => {
                 const interval = setInterval((): void => {
-                    if (allMods.length > 0) {
+                    if (loaded.value) {
                         clearInterval(interval)
                         resolve()
                     }
@@ -21,43 +24,27 @@ export const useModStore: () => any = (): object => {
             })
         }
 
-        function onDataError(err: Error): void {
-            const errorHandlers: { onDataError?: (err: Error) => void } = window as { onDataError?: (err: Error) => void }
-            const dataErrorHandler: ((err: Error) => void) | undefined = errorHandlers["onDataError"];
-
-            if (!dataErrorHandler) {
-                throw err;
-            }
-
-            dataErrorHandler(err);
-        }
-
         function loadMods(): void {
             if (loaded.value) return
 
             loading.value = true
 
-            const url: string = 'https://opensheet.elk.sh/14fMZD5KbC4NEHOKDPjHL8DVJgvvHFZonXbvvwuFCW7Y/Defense+Mods';
+            getMods().then((mods: DefenseModDataResponse[]) => {
+                const modCount: number = Object.keys(mods).length
 
-            fetch(url)
-                .then(res => res.json())
-                .then(mods => {
-                    const modCount: number = Object.keys(mods).length
+                mods.forEach((mod: DefenseModDataResponse, index: number) => {
+                    const modDataObject: ModInterface = new DefenseModData(mod);
 
-                    mods.forEach((defense: DefenseModDataResponse, index: number) => {
-                        const modDataObject: ModInterface = new DefenseModData(defense);
+                    if (modDataObject.id !== '') {
+                        allMods.push(modDataObject);
+                    }
 
-                        if (modDataObject.id !== '') {
-                            allMods.push(modDataObject);
-                        }
-
-                        if (index+1 === modCount) {
-                            loaded.value = true
-                            loading.value = false
-                        }
-                    })
+                    if (index+1 === modCount) {
+                        loaded.value = true
+                        loading.value = false
+                    }
                 })
-                .catch(err => { onDataError(err) });
+            });
         }
 
         async function getModById(id: string): Promise<ModInterface | null> {

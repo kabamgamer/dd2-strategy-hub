@@ -1,6 +1,6 @@
 # Dungeon Defenders 2 Strategy Hub
 
-This is the open source project of the dd2strategyhub.com webapp. It is a community driven project to 
+This is the open source project of the [DD2 Strategy Hub](https://dd2strategyhub.com/) webapp. It is a community driven project to 
 provide a platform for the Dungeon Defenders 2 community to optimize their strategies and builds.
 
 You can do some theory crafting, share your builds and strategies, and discuss them with other players.

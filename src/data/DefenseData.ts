@@ -3,29 +3,29 @@ import type { AscensionPointInterface, DefenseRootInterface } from "@/interaces"
 import { DefenseHealthAP, DefensePowerAP, DefenseRangeAP, DefenseRateAP } from "@/data/AscensionPoints";
 
 export interface DefenseDataResponse {
-    Defense: string;
-    Hero: string;
-    iconURL: string;
-    'Base Def Pwr': string;
-    'Base Def Health': string;
-    'Base ATK Rate': string;
-    'Max ATK Rate': string;
-    'Base ATK Range': string;
-    'Max ATK Range': string;
-    'Range Scalar': string;
-    'T1 ATK Scalar': string;
-    'T2 ATK Scalar': string;
-    'T3 ATK Scalar': string;
-    'T4 ATK Scalar': string;
-    'T5 ATK Scalar': string;
-    'T1 HP Scalar': string;
-    'Tier 2 HP Scalar': string;
-    'Tier 3 HP Scalar': string;
-    'Tier 4 HP Scalar': string;
-    'Tier 5 HP Scalar': string;
-    'ASC Def PWR ': string;
-    'ASC Def HP': string;
-    'ASC Gambit': string;
+    defense: string;
+    hero: string;
+    iconUrl: string;
+    baseDefPwr: number;
+    baseDefHealth: number;
+    baseAtkRate: number;
+    maxAtkRate: number;
+    baseAtkRange: number;
+    maxAtkRange: number;
+    rangeScalar: number;
+    t1AtkScalar: number;
+    t2AtkScalar: number;
+    t3AtkScalar: number;
+    t4AtkScalar: number;
+    t5AtkScalar: number;
+    t1HpScalar: number;
+    t2HpScalar: number;
+    t3HpScalar: number;
+    t4HpScalar: number;
+    t5HpScalar: number;
+    ascDefPwr: number;
+    ascDefHp: number;
+    ascGambit: number;
 }
 
 export default class DefenseData extends HasAscensionPoints implements DefenseRootInterface {
@@ -55,38 +55,38 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
      */
     protected populate(data: DefenseDataResponse): void {
         // Very basic check to see if data is present
-        if (data['Max ATK Range'] === '' || data['Base Def Pwr'] === '') {
+        if (!data.maxAtkRange || !data.baseDefPwr) {
             return
         }
 
-        this.id = data['Defense'].replace(/\s/g, '');
-        this.name = data['Defense'];
-        this.icon = data['iconURL'];
-        this.baseDefensePower = parseFloat(data['Base Def Pwr']);
-        this.baseDefenseHealth = parseFloat(data['Base Def Health']);
-        this.baseAttackRate = parseFloat(data['Base ATK Rate']);
-        this.maxAttackRate = parseFloat(data['Max ATK Rate']);
-        this.baseAttackRange = parseFloat(data['Base ATK Range']);
-        this.maxAttackRange = parseFloat(data['Max ATK Range']);
-        this.rangeScalar = parseFloat(data['Range Scalar']);
+        this.id = data.defense.replace(/\s/g, '');
+        this.name = data.defense;
+        this.icon = data.iconUrl;
+        this.baseDefensePower = data.baseDefPwr;
+        this.baseDefenseHealth = data.baseDefHealth;
+        this.baseAttackRate = data.baseAtkRate;
+        this.maxAttackRate = data.maxAtkRate;
+        this.baseAttackRange = data.baseAtkRange;
+        this.maxAttackRange = data.maxAtkRange;
+        this.rangeScalar = data.rangeScalar;
         this.attackScalar = [
-            parseFloat(data['T1 ATK Scalar']),
-            parseFloat(data['T2 ATK Scalar']),
-            parseFloat(data['T3 ATK Scalar']),
-            parseFloat(data['T4 ATK Scalar']),
-            parseFloat(data['T5 ATK Scalar']),
+            data.t1AtkScalar,
+            data.t2AtkScalar,
+            data.t3AtkScalar,
+            data.t4AtkScalar,
+            data.t5AtkScalar,
         ];
         this.hpScalar = [
-            parseFloat(data['T1 HP Scalar']),
-            parseFloat(data['Tier 2 HP Scalar']),
-            parseFloat(data['Tier 3 HP Scalar']),
-            parseFloat(data['Tier 4 HP Scalar']),
-            parseFloat(data['Tier 5 HP Scalar']),
+            data.t1HpScalar,
+            data.t2HpScalar,
+            data.t3HpScalar,
+            data.t4HpScalar,
+            data.t5HpScalar,
         ];
         this.ascensionPoints = [
-            new DefensePowerAP(parseFloat(data['ASC Def PWR '])),
-            new DefenseHealthAP(parseFloat(data['ASC Def HP'])),
-            new DefenseRangeAP(parseFloat(data['ASC Gambit'])),
+            new DefensePowerAP(data.ascDefPwr),
+            new DefenseHealthAP(data.ascDefHp),
+            new DefenseRangeAP(data.ascGambit),
             new DefenseRateAP,
         ];
     }

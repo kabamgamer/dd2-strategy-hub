@@ -1,6 +1,6 @@
 <template>
-  <div class="row">
-    <div class="col mb-3" v-for="ancientPowerPoint in ancientPowerPoints" :key="ancientPowerPoint.id">
+  <div class="row ancient-power-points">
+    <div class="col ancient-power-points__point mb-3 " v-for="ancientPowerPoint in ancientPowerPoints" :key="ancientPowerPoint.id">
       <Card :cardTitle="ancientPowerPoint.name">
         <img style="max-width: 119px" :src="ancientPowerPoint.icon" :alt="'Ancient ' + ancientPowerPoint.name">
 
@@ -35,3 +35,28 @@ function ensureValidLevel(id: string): void {
   (props.modelValue as UserAncientResetPoints)[id] = level < 0 ? 0 : level > 10 ? 10 : level;
 }
 </script>
+
+<style scoped>
+/* for every point: 2 columns on small mobile, 3 bigger mobile devices, 4 tablet, 7 desktop */
+.ancient-power-points__point {
+  flex: 0 0 50%;
+}
+
+@media (min-width: 425px) {
+  .ancient-power-points__point {
+    flex: 0 0 calc(100% / 3);
+  }
+}
+
+@media (min-width: 768px) {
+  .ancient-power-points__point {
+    flex: 0 0 25%;
+  }
+}
+
+@media (min-width: 992px) {
+  .ancient-power-points__point {
+    flex: 0 0 calc(100% / 7);
+  }
+}
+</style>

@@ -2,11 +2,13 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { DefenseModDataResponse } from "@/data/DefenseModData";
 import type { DefenseShardDataResponse } from "@/data/DefenseShardData";
+import type { DefenseDataResponse } from "@/data/DefenseData";
 
 export const useGoogleSpreadsheetDataStore: () => any = (): object => {
     const innerStore = defineStore('googleSpreadsheetDataStore', () => {
         const mods = ref<DefenseModDataResponse[]>([])
         const shards = ref<DefenseShardDataResponse[]>([])
+        const defenses = ref<DefenseDataResponse[]>([])
         const loading = ref<boolean>(false)
         const loaded = ref<boolean>(false)
 
@@ -44,6 +46,7 @@ export const useGoogleSpreadsheetDataStore: () => any = (): object => {
                 .then(data => {
                     mods.value = data["Defense Mods"]
                     shards.value = data["Defense Shards"]
+                    defenses.value = data["Defense Stats"]
 
                     loaded.value = true
                     loading.value = false
@@ -61,7 +64,12 @@ export const useGoogleSpreadsheetDataStore: () => any = (): object => {
             return Promise.resolve(shards.value)
         }
 
-        return { loading, loadData, getMods, getShards }
+        async function getDefenses(): Promise<DefenseDataResponse[]> {
+            await initialized()
+            return Promise.resolve(defenses.value)
+        }
+
+        return { loading, loadData, getMods, getShards, getDefenses }
     })
 
     const store = innerStore()

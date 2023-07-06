@@ -64,7 +64,7 @@ export function useDefenseCalculations(): any {
             rangeGambitSubtraction = (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
         }
 
-        return totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction
+        return (totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment())
     }
 
     function calculatedCriticalChance(): number {
@@ -108,7 +108,7 @@ export function useDefenseCalculations(): any {
     }
 
     function calculatedDps(): string {
-        const baseDefensePower: number = (defensePower.value + powerMods() + vampiricEmpowerment()) * destructionShardMultiplier() * massDestructionShardMultiplier() * destructivePylonMultiplier()
+        const baseDefensePower: number = defensePower.value * destructionShardMultiplier() * massDestructionShardMultiplier() * destructivePylonMultiplier()
         const attackDamage: number = baseDefensePower * defense.attackScalar[defenseLevel-1]
         const baseDps: number = attackDamage * (1 + criticalChance.value * criticalDamage.value) / attackRate()
         const totalDps: number = baseDps * antiModsModifier()

@@ -7,7 +7,7 @@
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ userDefense.label }}</span>
 
-          <span class="defense-dps" v-if="defense?.baseDefensePower">{{ totalDps }}</span>
+          <span class="defense-dps" v-if="defense?.baseDefensePower && !isBuffDefense">{{ totalDps }}</span>
         </span>
       </button>
     </h2>
@@ -34,7 +34,7 @@
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ Math.round(criticalChance * 100) }}%</span>
+                <span v-if="!isBuffDefense" class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ Math.round(criticalChance * 100) }}%</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ Math.round(criticalDamage * 100) }}%</span>
               </div>
             </div>
@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineEmits, defineProps, onMounted } from "vue";
+import { ref, watch, defineEmits, defineProps, onMounted, computed } from "vue";
 import type { PropType } from "vue";
 import type { DefenseRootInterface, UserDefenseInterface } from "@/interaces";
 
@@ -133,7 +133,7 @@ const props = defineProps({
 });
 
 const id = ref();
-const defense = ref<DefenseRootInterface|null>(null);
+const defense = ref<DefenseRootInterface|undefined>();
 const defenseLevel = ref(1);
 const userDefense = ref<UserDefenseInterface>({
   incrementId: 1,
@@ -143,6 +143,9 @@ const userDefense = ref<UserDefenseInterface>({
   relic: new RelicData,
   shards: [],
   ascensionPoints: {},
+});
+const isBuffDefense = computed((): boolean => {
+  return defense.value?.id === 'BoostAura' || defense.value?.id === 'BuffBeam';
 });
 
 function recalculate(): void {
@@ -164,7 +167,7 @@ function recalculate(): void {
   }, 100)
 }
 
-watch(defense, (val: DefenseRootInterface|null): void => {
+watch(defense, (val?: DefenseRootInterface): void => {
   if (!val) return;
   if (userDefense.value.id === val.id) return;
 

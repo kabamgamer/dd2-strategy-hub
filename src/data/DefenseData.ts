@@ -41,7 +41,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
     rangeScalar: number;
     attackScalar: number[];
     hpScalar: number[];
-    ascensionPoints: AscensionPointInterface[];
+    ascensionPoints: AscensionPointInterface[] = [];
 
     constructor(data: DefenseDataResponse) {
         super();
@@ -83,11 +83,17 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
             data.t4HpScalar,
             data.t5HpScalar,
         ];
-        this.ascensionPoints = [
-            new DefensePowerAP(data.ascDefPwr),
-            new DefenseHealthAP(data.ascDefHp),
-            new DefenseRangeAP(data.ascGambit),
-            new DefenseRateAP,
-        ];
+
+        if (data.ascDefPwr !== 0) {
+            this.ascensionPoints.push(new DefensePowerAP(data.ascDefPwr))
+        }
+        if (data.ascDefHp !== 0) {
+            this.ascensionPoints.push(new DefenseHealthAP(data.ascDefHp))
+        }
+        if (data.ascGambit !== 0) {
+            this.ascensionPoints.push(new DefenseRangeAP(data.ascGambit))
+        }
+
+        this.ascensionPoints.push(new DefenseRateAP)
     }
 }

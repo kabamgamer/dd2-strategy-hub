@@ -64,7 +64,7 @@ export function useDefenseCalculations(): any {
             rangeGambitSubtraction = (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
         }
 
-        return (totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment())
+        return totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
     }
 
     function calculatedCriticalChance(): number {
@@ -72,10 +72,16 @@ export function useDefenseCalculations(): any {
         let critChance: number = 30;
 
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
+            if ((util as ModInterface).type?.id === ModType.Diverse.id) {
+                return
+            }
+
             if (util.criticalChance instanceof OutputModifier) {
                 critChance += util.criticalChance.percentage ?? 0
             }
         })
+
+        critChance += diverseMods('criticalChance', 'percentage');
 
         let critChanceMultiplier: number = critChance / 100
 
@@ -92,10 +98,16 @@ export function useDefenseCalculations(): any {
         let criticalDamage: number = 50;
 
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
+            if ((util as ModInterface).type?.id === ModType.Diverse.id) {
+                return
+            }
+
             if (util.criticalDamage instanceof OutputModifier) {
                 criticalDamage += util.criticalDamage.percentage ?? 0
             }
         })
+
+        criticalDamage += diverseMods('criticalDamage', 'percentage');
 
         let criticalDamageMultiplier: number = criticalDamage / 100
 
@@ -111,7 +123,7 @@ export function useDefenseCalculations(): any {
         const baseDefensePower: number = defensePower.value * destructionShardMultiplier() * massDestructionShardMultiplier() * destructivePylonMultiplier()
         const attackDamage: number = baseDefensePower * defense.attackScalar[defenseLevel-1]
         const baseDps: number = attackDamage * (1 + criticalChance.value * criticalDamage.value) / attackRate()
-        const totalDps: number = baseDps * antiModsModifier()
+        const totalDps: number = baseDps * antiModsMultiplier()
 
         return Math.round(totalDps).toLocaleString('en-US')
     }
@@ -183,7 +195,7 @@ export function useDefenseCalculations(): any {
         let powerModsAdditive: number = 0;
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type !== ModType.Power) {
+            if (mod.type?.id !== ModType.Power.id) {
                 return
             }
 
@@ -193,11 +205,31 @@ export function useDefenseCalculations(): any {
         return powerModsAdditive
     }
 
-    function antiModsModifier(): number {
+    function diverseMods(stat: string, modifierType: string): number {
+        let calculatedDiversePower = 0
+        const diverseStack = userDefenseData.diverseStack ?? 0
+
+        defenseMods.forEach((mod: ModInterface): void => {
+            if (mod.type?.id !== ModType.Diverse.id) {
+                return
+            }
+
+            const statModifier = (mod as any)[stat]
+            if (!statModifier) {
+                return;
+            }
+
+            calculatedDiversePower += (statModifier[modifierType] ?? 0) * diverseStack
+        })
+
+        return calculatedDiversePower
+    }
+
+    function antiModsMultiplier(): number {
         let antiModsPercentage: number = 0;
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type !== ModType.Anti) {
+            if (mod.type?.id !== ModType.Anti.id) {
                 return
             }
 

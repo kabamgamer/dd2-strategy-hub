@@ -77,5 +77,6 @@ export interface UserDefenseInterface {
     ascensionPoints: { [id: string]: number };
     pet: PetInterface;
     relic: RelicInterface;
+    diverseStack?: number;
     shards: string[];
 }

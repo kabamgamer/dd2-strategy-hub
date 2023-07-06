@@ -61,6 +61,11 @@
 
           <div class="defense-info__relic">
             <DefenseRelic v-model="userDefense.relic" :defenseCompatibility="defense ?? undefined" :hide-relic="true" />
+
+            <!-- Show input for "custom diverse stack" if defense has diverse mods -->
+            <div v-if="hasDiverseMods">
+              <CustomInput type="number" label="Custom diverse stack" v-model="userDefense.diverseStack" />
+            </div>
           </div>
 
           <hr />
@@ -91,6 +96,7 @@ import { ref, watch, defineEmits, defineProps, onMounted, computed } from "vue";
 import type { PropType } from "vue";
 import type { DefenseRootInterface, UserDefenseInterface } from "@/interaces";
 
+import CustomInput from "@/components/layout/form/Input.vue";
 import DefenseSelection from "@/components/utilities/DefenseSelection.vue";
 import Pet from "@/components/utilities/Pet.vue";
 import DefenseRelic from "@/components/utilities/DefenseRelic.vue";
@@ -106,17 +112,20 @@ import RelicData from "@/classes/Relic";
 import type DefenseModData from "@/data/DefenseModData";
 import type DefenseShardData from "@/data/DefenseShardData";
 
+import { useDebounce } from "@/composables/Debounce";
 import { useDefenseCalculations } from "@/composables/DefenseCalculations";
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
 import { storeToRefs } from "pinia";
+import ModType from "@/enums/ModType";
 
-const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore();
+const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
+const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
-const { getDefenseRoot } = useDefenseStore();
+const { getDefenseRoot } = useDefenseStore()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
@@ -135,6 +144,9 @@ const props = defineProps({
 const id = ref();
 const defense = ref<DefenseRootInterface|undefined>();
 const defenseLevel = ref(1);
+const hasDiverseMods = ref(false);
+const userDefenseMods = ref<DefenseModData[]>([])
+const userDefenseShards = ref<DefenseShardData[]>([])
 const userDefense = ref<UserDefenseInterface>({
   incrementId: 1,
   id: "",
@@ -149,20 +161,21 @@ const isBuffDefense = computed((): boolean => {
 });
 
 function recalculate(): void {
-  const defenseMods: DefenseModData[] = []
-  const defenseShards: DefenseShardData[] = []
+  userDefenseMods.value = []
+  userDefenseShards.value = []
+
   userDefense.value.relic.mods.forEach(async (modId: string): Promise<void> => {
-    defenseMods.push(await getModById(modId))
+    userDefenseMods.value.push(await getModById(modId))
   })
   userDefense.value.shards.forEach(async (shardId: string): Promise<void> => {
-    defenseShards.push(await getShardById(shardId))
+    userDefenseShards.value.push(await getShardById(shardId))
   })
 
   // Await the loading of mods and shards before calculating
   const interval: any = setInterval((): void => {
-    if (defenseMods.length === userDefense.value.relic.mods.length && defenseShards.length === userDefense.value.shards.length) {
+    if (userDefenseMods.value.length === userDefense.value.relic.mods.length && userDefenseShards.value.length === userDefense.value.shards.length) {
       clearInterval(interval)
-      calculateDefensePower(defense.value, userDefense.value, defenseMods, defenseShards, defenseLevel.value, props.ancientResetPoints)
+      calculateDefensePower(defense.value, userDefense.value, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, props.ancientResetPoints)
     }
   }, 100)
 }
@@ -190,6 +203,10 @@ watch(userDefense, async (newValue: UserDefenseInterface, oldValue: UserDefenseI
 
   recalculate()
 }, { deep: true })
+
+watch(userDefenseMods, debounce(() => {
+  hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as DefenseModData).type?.id === ModType.Diverse.id).length > 0
+}, 100), { deep: true })
 
 watch(defenseLevel, recalculate)
 

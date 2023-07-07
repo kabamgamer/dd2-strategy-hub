@@ -120,7 +120,17 @@ export function useDefenseCalculations(): any {
     }
 
     function calculatedDps(): string {
-        const baseDefensePower: number = defensePower.value * destructionShardMultiplier() * massDestructionShardMultiplier() * destructivePylonMultiplier()
+        let baseDefensePower: number = defensePower.value
+        // Calculate percentage modifiers
+        defenseShards.forEach((shard: ShardInterface) => {
+            if (shard.defensePower?.percentage) {
+                baseDefensePower = shard.defensePower.calculate(baseDefensePower)
+            }
+        })
+
+        // Add destructive pylon modifier
+        baseDefensePower *= destructivePylonMultiplier()
+
         const attackDamage: number = baseDefensePower * defense.attackScalar[defenseLevel-1]
         const baseDps: number = attackDamage * (1 + criticalChance.value * criticalDamage.value) / attackRate()
         const totalDps: number = baseDps * antiModsMultiplier()
@@ -177,18 +187,6 @@ export function useDefenseCalculations(): any {
         const vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
 
         return vampiricEmpowermentBaseStat * .76
-    }
-
-    function destructionShardMultiplier(): number {
-        const shards: string[] = userDefenseData.shards;
-
-        return shards?.filter((shardId: string) => shardId === 'destruction').length === 0 ? 1 : 1.42
-    }
-
-    function massDestructionShardMultiplier(): number {
-        const shards: string[] = userDefenseData.shards;
-
-        return shards?.filter((shardId: string) => shardId === 'mass_destruction').length === 0 ? 1 : 1.70
     }
 
     function powerMods(): number {

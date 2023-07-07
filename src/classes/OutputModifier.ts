@@ -12,6 +12,6 @@ export default class OutputModifier {
             return baseValue + (this.additive ?? 0);
         }
 
-        return baseValue * this.percentage / 100 + (this.additive ?? 0);
+        return baseValue * (1 + this.percentage / 100) + (this.additive ?? 0);
     }
 }

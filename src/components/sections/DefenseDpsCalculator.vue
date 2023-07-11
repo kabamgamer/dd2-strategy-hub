@@ -1,5 +1,9 @@
 <template>
-  <div class="toolbar d-flex justify-content-end mb-3">
+  <div class="toolbar d-flex justify-content-between mb-3">
+    <div class="text-muted">
+      All shards are considered gilded and all mods are considered c8 10/10
+    </div>
+
     <button class="btn btn-primary" @click="addDefense">Add defense</button>
   </div>
 

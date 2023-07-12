@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { DefenseRootInterface, UserDefenseInterface } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
@@ -42,19 +42,6 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         }
     }
 
-    function updateDefense(defenseIncrementId: number, userData: UserDefenseInterface): void {
-        for (const defense of defenses.value) {
-            if (defense.incrementId !== defenseIncrementId) continue
-
-            defense.userData = userData
-            break
-        }
-
-        loadDefenseData()
-
-        persistDefenses()
-    }
-
     function deleteDefense(defenseIncrementId: number): void {
         for (const index in defenses.value) {
             const item = defenses.value[index]
@@ -72,5 +59,9 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('defenses', JSON.stringify(defenses.value.map((defense: UserDataStoreDefenseInterface) => defense.userData)))
     }
 
-    return { defenses, ancientPowerPoints, updateDefense, deleteDefense }
+    watch(defenses, () => {
+        persistDefenses()
+    }, { deep: true })
+
+    return { defenses, ancientPowerPoints, deleteDefense }
 })

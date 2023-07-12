@@ -11,7 +11,6 @@
 import type { ShardInterface } from "@/interaces";
 
 import type { PropType } from "vue";
-import type { DefenseRootInterface } from "@/interaces";
 import { ref, watch } from "vue";
 
 import { useShardStore } from "@/stores/ShardInfo";
@@ -24,7 +23,7 @@ const props = defineProps({
     type: Object as PropType<ShardInterface>,
     default: () => ({}),
   },
-  defenseCompatibility: Object as PropType<DefenseRootInterface>,
+  defenseCompatibility: String,
 });
 
 const selectedShard = ref('');

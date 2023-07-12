@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue"
-import type { DefenseRootInterface, ShardInterface } from "@/interaces"
+import type { ShardInterface } from "@/interaces"
 
 import ShardSelection from "@/components/utilities/ShardSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
@@ -41,7 +41,7 @@ const props = defineProps({
     type: Array as PropType<string[]>,
     default: () => [],
   },
-  defenseCompatibility: Object as PropType<DefenseRootInterface>,
+  defenseCompatibility: String,
 });
 
 const modelValue = props.modelValue ?? [];

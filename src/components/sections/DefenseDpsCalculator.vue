@@ -9,8 +9,8 @@
 
   <div class="accordion">
     <div class="row">
-      <div v-for="(userDefense, index) in userDefenses" :key="userDefense.incrementId" class="col-md-4">
-        <Defense :userDefenseProp="userDefense" :ancientResetPoints="ancientResetPoints" @change="(updatedDefense) => onDefenseChange(index, updatedDefense)" @delete="userDefenses.splice(index, 1)" />
+      <div v-for="(defense, index) in defenses" :key="defense.incrementId" class="col-md-4">
+        <Defense :userDefenseProp="defense.userData" :ancientResetPoints="ancientResetPoints" @change="(updatedDefense) => onDefenseChange(index, updatedDefense)" @delete="defenses.splice(index, 1)" />
       </div>
     </div>
   </div>
@@ -19,11 +19,16 @@
 <script setup lang="ts">
 import Defense from "@/components/utilities/Defense.vue";
 
-import { onMounted, ref, watch, defineProps } from "vue";
+import { storeToRefs } from "pinia";
+import { defineProps } from "vue";
 
 import type { UserDefenseInterface } from "@/interaces";
+import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+import { useUserDataStore } from "@/stores/UserData";
 
-const userDefenses = ref<UserDefenseInterface[]>([]);
+const userStore = useUserDataStore();
+
+const { defenses } = storeToRefs(userStore);
 
 defineProps({
   ancientResetPoints: {
@@ -32,21 +37,13 @@ defineProps({
   },
 })
 
-onMounted((): void => {
-  userDefenses.value = JSON.parse(localStorage.getItem('defenses') ?? '[]');
-});
-
-watch(userDefenses, (newValue): void => {
-  localStorage.setItem('defenses', JSON.stringify(newValue))
-}, { deep: true });
-
 function addDefense(): void {
   // highest incrementId + 1
-  const incrementId = Math.max(...userDefenses.value.map((userDefense) => userDefense.incrementId), 0) + 1;
-  userDefenses.value.push({incrementId} as UserDefenseInterface);
+  const incrementId = Math.max(...defenses.value.map((defense) => defense.incrementId), 0) + 1;
+  defenses.value.push({incrementId} as UserDataStoreDefenseInterface);
 }
 
 function onDefenseChange(index: number, defense: UserDefenseInterface): void {
-  userDefenses.value[index] = defense;
+  defenses.value[index].userData = defense;
 }
 </script>

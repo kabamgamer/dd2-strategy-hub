@@ -10,7 +10,7 @@
   <div class="accordion">
     <div class="row">
       <div v-for="defense in defenses" :key="defense.incrementId" class="col-md-4">
-        <Defense :defense="defense" :ancientResetPoints="ancientResetPoints" />
+        <Defense :defense="defense" />
       </div>
     </div>
   </div>
@@ -20,19 +20,11 @@
 import Defense from "@/components/utilities/Defense.vue";
 
 import { storeToRefs } from "pinia";
-import { defineProps } from "vue";
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import { useUserDataStore } from "@/stores/UserData";
 
 const { defenses } = storeToRefs(useUserDataStore());
-
-defineProps({
-  ancientResetPoints: {
-    type: Object,
-    required: true,
-  },
-})
 
 function addDefense(): void {
   // highest incrementId + 1

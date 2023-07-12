@@ -128,6 +128,7 @@ const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
 const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
+const { ancientPowerPoints } = storeToRefs(userStore);
 const { totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
@@ -135,10 +136,6 @@ const { getShardById } = useShardStore()
 const props = defineProps({
   defense: {
     type: Object as PropType<UserDataStoreDefenseInterface>,
-    required: true,
-  },
-  ancientResetPoints: {
-    type: Object,
     required: true,
   },
 });
@@ -167,7 +164,7 @@ function recalculate(): void {
   const interval: any = setInterval((): void => {
     if (userDefenseMods.value.length === defense.userData.relic.mods.length && userDefenseShards.value.length === defense.userData.shards.length) {
       clearInterval(interval)
-      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, props.ancientResetPoints)
+      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value)
     }
   }, 100)
 }
@@ -192,7 +189,7 @@ hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as Defens
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
 watch(defense, recalculate, { deep: true })
-watch(props.ancientResetPoints, recalculate, { deep: true })
+watch(ancientPowerPoints, recalculate, { deep: true })
 
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)

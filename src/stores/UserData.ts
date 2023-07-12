@@ -14,7 +14,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const { getDefenseRoot } = useDefenseStore();
 
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
-    const ancientPowerPoints = ref<UserAncientResetPoints[]>([])
+    const ancientPowerPoints = ref<UserAncientResetPoints>(getAncientPowerPoints())
 
     loadDefenseData()
 
@@ -30,6 +30,29 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         }
 
         return allDefenses
+    }
+
+    function getAncientPowerPoints(): UserAncientResetPoints {
+        if (!localStorage.getItem('ancientResetPoints')) {
+            return {
+                ancient_ability_power: 0,
+                ancient_heroic_power: 0,
+                ancient_health: 0,
+                ancient_resistance: 0,
+                ancient_life_steal: 0,
+                ancient_fortification: 0,
+                ancient_destruction: 0,
+                ancient_strikes: 0,
+                ancient_builder: 0,
+                ancient_respawn: 0,
+                ancient_defense_critical_damage: 0,
+                ancient_defense_critical_chance: 0,
+                ancient_hero_critical_damage: 0,
+                ancient_hero_critical_chance: 0,
+            }
+        }
+
+        return JSON.parse(localStorage.getItem('ancientResetPoints') ?? '{}')
     }
 
     async function loadDefenseData(): Promise<void> {
@@ -51,16 +74,16 @@ export const useUserDataStore = defineStore('userDataStore', () => {
             defenses.value.splice(parseInt(index), 1)
             break
         }
-
-        persistDefenses()
     }
 
-    function persistDefenses(): void {
-        localStorage.setItem('defenses', JSON.stringify(defenses.value.map((defense: UserDataStoreDefenseInterface) => defense.userData)))
-    }
-
+    // Persist defense data on change
     watch(defenses, () => {
-        persistDefenses()
+        localStorage.setItem('defenses', JSON.stringify(defenses.value.map((defense: UserDataStoreDefenseInterface) => defense.userData)))
+    }, { deep: true })
+
+    // Persist ancient power data on change
+    watch(ancientPowerPoints, () => {
+        localStorage.setItem('ancientResetPoints', JSON.stringify(ancientPowerPoints.value))
     }, { deep: true })
 
     return { defenses, ancientPowerPoints, deleteDefense }

@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue"
-import type { DefenseRootInterface, ModInterface, RelicInterface } from "@/interaces"
+import type { ModInterface, RelicInterface } from "@/interaces"
 
 import Input from "@/components/layout/form/Input.vue"
 import ModSelection from "@/components/utilities/ModSelection.vue"
@@ -45,7 +45,7 @@ const props = defineProps({
     type: Object as PropType<RelicInterface>,
     required: true
   },
-  defenseCompatibility: Object as PropType<DefenseRootInterface>,
+  defenseCompatibility: String,
   hideRelic: Boolean,
   hideMods: Boolean,
 })

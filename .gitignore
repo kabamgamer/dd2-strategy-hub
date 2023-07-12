@@ -13,6 +13,7 @@ dist
 dist-ssr
 coverage
 *.local
+tsconfig.vitest.tsbuildinfo
 
 /cypress/videos/
 /cypress/screenshots/

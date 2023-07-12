@@ -1,11 +1,11 @@
 <template>
   <div class="row ancient-power-points">
-    <div class="col ancient-power-points__point mb-3 " v-for="ancientPowerPoint in ancientPowerPoints" :key="ancientPowerPoint.id">
-      <Card :cardTitle="ancientPowerPoint.name">
-        <img style="max-width: 119px" :src="ancientPowerPoint.icon" :alt="'Ancient ' + ancientPowerPoint.name">
+    <div class="col ancient-power-points__point mb-3 " v-for="ancientPower in ancientPowers" :key="ancientPower.id">
+      <Card :cardTitle="ancientPower.name">
+        <img style="max-width: 119px" :src="ancientPower.icon" :alt="'Ancient ' + ancientPower.name">
 
         <div class="input-group" style="max-width: 119px">
-          <input type="number" min="0" max="10" v-model="modelValue[ancientPowerPoint.id]" class="form-control ancient-power-reset" @change="ensureValidLevel(ancientPowerPoint.id)">
+          <input type="number" min="0" max="10" v-model="ancientPowerPoints[ancientPower.id]" class="form-control ancient-power-reset" @change="ensureValidLevel(ancientPower.id)">
           <div class="input-group-append">
             <span class="input-group-text">/10</span>
           </div>
@@ -16,23 +16,17 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
-import type { PropType } from "vue";
 import Card from "@/components/layout/Card.vue";
 
-import ancientPowerPoints from "@/data/AncientPowers";
-import type { UserAncientResetPoints } from "@/data/AncientPowers";
+import { storeToRefs } from "pinia";
+import ancientPowers from "@/data/AncientPowers";
+import { useUserDataStore } from "@/stores/UserData";
 
-const props = defineProps({
-  modelValue: {
-    type: Object as PropType<UserAncientResetPoints>,
-    required: true,
-  },
-});
+const { ancientPowerPoints } = storeToRefs(useUserDataStore());
 
 function ensureValidLevel(id: string): void {
-  const level: number = (props.modelValue as UserAncientResetPoints)[id];
-  (props.modelValue as UserAncientResetPoints)[id] = level < 0 ? 0 : level > 10 ? 10 : level;
+  const level: number = ancientPowerPoints.value[id];
+  ancientPowerPoints.value[id] = level < 0 ? 0 : level > 10 ? 10 : level;
 }
 </script>
 

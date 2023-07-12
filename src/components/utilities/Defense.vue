@@ -17,7 +17,6 @@
         <DefenseSelection v-if="!defense.userData?.label" @change="onDefenseSelection" />
 
         <div class="defense-info" v-else>
-
           <div class="defense-info__header d-flex align-items-center flex-column">
             <div class="defense-info__header-info mb-3 w-100 d-flex">
               <div class="defense-info__header-icon">
@@ -39,48 +38,50 @@
               </div>
             </div>
 
-            <div class="defense-info__header-label">
+            <div class="defense-info__header-label" v-if="!setupDefenses">
               <input type="text" v-model="defense.userData.label" />
             </div>
           </div>
 
-          <hr />
+          <slot name="defense-details">
+            <hr />
 
-          <div class="defense-info__pet">
-            <div class="row">
-              <div class="col-md-6">
-                <Pet v-model="defense.userData.pet" />
-              </div>
-              <div class="col-md-6">
-                <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-mods="true" />
+            <div class="defense-info__pet">
+              <div class="row">
+                <div class="col-md-6">
+                  <Pet v-model="defense.userData.pet" />
+                </div>
+                <div class="col-md-6">
+                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-mods="true" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <hr />
+            <hr />
 
-          <div class="defense-info__relic">
-            <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-relic="true" />
+            <div class="defense-info__relic">
+              <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-relic="true" />
 
-            <!-- Show input for "custom diverse stack" if defense has diverse mods -->
-            <div v-if="hasDiverseMods">
-              <CustomInput type="number" label="Custom diverse stack" v-model="defense.userData.diverseStack" />
+              <!-- Show input for "custom diverse stack" if defense has diverse mods -->
+              <div v-if="hasDiverseMods">
+                <CustomInput type="number" label="Custom diverse stack" v-model="defense.userData.diverseStack" />
+              </div>
             </div>
-          </div>
 
-          <hr />
+            <hr />
 
-          <div class="defense-info__shards">
-            <Shards v-model="defense.userData.shards" :defenseCompatibility="defense.defenseData?.id" />
-          </div>
+            <div class="defense-info__shards">
+              <Shards v-model="defense.userData.shards" :defenseCompatibility="defense.defenseData?.id" />
+            </div>
 
-          <hr />
+            <hr />
 
-          <div class="defense-info__shards">
-            <AscensionPoints v-model="defense.userData.ascensionPoints" :ascensionPoints="defense.defenseData?.ascensionPoints" />
-          </div>
+            <div class="defense-info__shards">
+              <AscensionPoints v-model="defense.userData.ascensionPoints" :ascensionPoints="defense.defenseData?.ascensionPoints" />
+            </div>
+          </slot>
 
-          <div class="actions d-flex justify-content-center">
+          <div class="actions d-flex justify-content-center" v-if="!setupDefenses">
             <button class="btn btn-danger" @click.prevent="deleteDefense(defense.userData.incrementId)">
               Delete
             </button>
@@ -138,6 +139,7 @@ const props = defineProps({
     type: Object as PropType<UserDataStoreDefenseInterface>,
     required: true,
   },
+  setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
 });
 
 let defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
@@ -150,6 +152,8 @@ const userDefenseShards = ref<DefenseShardData[]>([])
 const isBuffDefense = computed((): boolean => defense.userData?.id === 'BoostAura' || defense.userData?.id === 'BuffBeam')
 
 function recalculate(): void {
+  if (!defense.userData) return
+
   userDefenseMods.value = []
   userDefenseShards.value = []
 
@@ -164,7 +168,7 @@ function recalculate(): void {
   const interval: any = setInterval((): void => {
     if (userDefenseMods.value.length === defense.userData.relic.mods.length && userDefenseShards.value.length === defense.userData.shards.length) {
       clearInterval(interval)
-      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value)
+      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses)
     }
   }, 100)
 }
@@ -190,12 +194,15 @@ hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as Defens
 watch(defenseLevel, recalculate)
 watch(defense, recalculate, { deep: true })
 watch(ancientPowerPoints, recalculate, { deep: true })
+watch(props, recalculate, { deep: true })
 
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
       .substring(1)
       .toLowerCase();
+
+  recalculate()
 })
 </script>
 

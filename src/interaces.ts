@@ -80,3 +80,9 @@ export interface UserDefenseInterface {
     diverseStack?: number;
     shards: string[];
 }
+
+export interface UserDefenseSetupInterface {
+    label: string;
+    incrementId: number;
+    defensesIncrementIds: number[];
+}

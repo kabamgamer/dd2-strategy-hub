@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import type { DefenseRootInterface, UserDefenseInterface } from "@/interaces";
+import type { DefenseRootInterface, UserDefenseInterface, UserDefenseSetupInterface } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 
@@ -14,12 +14,13 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const { getDefenseRoot } = useDefenseStore();
 
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
+    const defenseSetups = ref<UserDefenseSetupInterface[]>(getDefenseSetups())
     const ancientPowerPoints = ref<UserAncientResetPoints>(getAncientPowerPoints())
 
     loadDefenseData()
 
-    function getDefenses(userDefenses?: UserDefenseInterface[]): UserDataStoreDefenseInterface[] {
-        const defenses: UserDefenseInterface[] = userDefenses ?? JSON.parse(localStorage.getItem('defenses') ?? '[]')
+    function getDefenses(): UserDataStoreDefenseInterface[] {
+        const defenses: UserDefenseInterface[] = JSON.parse(localStorage.getItem('defenses') ?? '[]')
 
         const allDefenses: UserDataStoreDefenseInterface[] = []
         for (const userDefense of defenses) {
@@ -30,6 +31,10 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         }
 
         return allDefenses
+    }
+
+    function getDefenseSetups(): UserDefenseSetupInterface[] {
+        return JSON.parse(localStorage.getItem('defenseSetups') ?? '[]') as UserDefenseSetupInterface[]
     }
 
     function getAncientPowerPoints(): UserAncientResetPoints {
@@ -76,9 +81,25 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         }
     }
 
+    function deleteDefenseSetup(defenseSetupIncrementId: number): void {
+        for (const index in defenses.value) {
+            const item = defenseSetups.value[index]
+
+            if (item.incrementId !== defenseSetupIncrementId) continue
+
+            defenseSetups.value.splice(parseInt(index), 1)
+            break
+        }
+    }
+
     // Persist defense data on change
     watch(defenses, () => {
         localStorage.setItem('defenses', JSON.stringify(defenses.value.map((defense: UserDataStoreDefenseInterface) => defense.userData)))
+    }, { deep: true })
+
+    // Persist defense setup data on change
+    watch(defenseSetups, () => {
+        localStorage.setItem('defenseSetups', JSON.stringify(defenseSetups.value))
     }, { deep: true })
 
     // Persist ancient power data on change
@@ -86,5 +107,5 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('ancientResetPoints', JSON.stringify(ancientPowerPoints.value))
     }, { deep: true })
 
-    return { defenses, ancientPowerPoints, deleteDefense }
+    return { defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup }
 })

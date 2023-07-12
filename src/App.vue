@@ -19,6 +19,10 @@
     <Section section-title="Defense DPS calculator">
       <DefenseDpsCalculator />
     </Section>
+
+    <Section section-title="Defense setups">
+      <DefenseSetups />
+    </Section>
   </main>
 
   <footer class="footer mt-auto py-3 bg-light">
@@ -49,6 +53,7 @@ import AncientPowerResets from "@/components/sections/AncientPowerResets.vue";
 import AncientPowerPoints from "@/components/sections/AncientPowerPoints.vue";
 import RerollTracker from "@/components/sections/RerollTracker.vue";
 import DefenseDpsCalculator from "@/components/sections/DefenseDpsCalculator.vue";
+import DefenseSetups from "@/components/sections/DefenseSetups.vue";
 import IconGithub from "@/components/icons/IconGithub.vue";
 
 import { useDefenseStore } from "@/stores/DefenseInfo";

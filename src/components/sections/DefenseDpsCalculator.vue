@@ -9,8 +9,8 @@
 
   <div class="accordion">
     <div class="row">
-      <div v-for="(defense, index) in defenses" :key="defense.incrementId" class="col-md-4">
-        <Defense :userDefenseProp="defense.userData" :ancientResetPoints="ancientResetPoints" @change="(updatedDefense) => onDefenseChange(index, updatedDefense)" @delete="defenses.splice(index, 1)" />
+      <div v-for="defense in defenses" :key="defense.incrementId" class="col-md-4">
+        <Defense :userDefenseProp="defense.userData" :ancientResetPoints="ancientResetPoints" />
       </div>
     </div>
   </div>
@@ -22,13 +22,10 @@ import Defense from "@/components/utilities/Defense.vue";
 import { storeToRefs } from "pinia";
 import { defineProps } from "vue";
 
-import type { UserDefenseInterface } from "@/interaces";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import { useUserDataStore } from "@/stores/UserData";
 
-const userStore = useUserDataStore();
-
-const { defenses } = storeToRefs(userStore);
+const { defenses } = storeToRefs(useUserDataStore());
 
 defineProps({
   ancientResetPoints: {
@@ -41,9 +38,5 @@ function addDefense(): void {
   // highest incrementId + 1
   const incrementId = Math.max(...defenses.value.map((defense) => defense.incrementId), 0) + 1;
   defenses.value.push({incrementId} as UserDataStoreDefenseInterface);
-}
-
-function onDefenseChange(index: number, defense: UserDefenseInterface): void {
-  defenses.value[index].userData = defense;
 }
 </script>

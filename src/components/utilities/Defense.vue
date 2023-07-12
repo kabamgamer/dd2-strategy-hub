@@ -81,7 +81,7 @@
           </div>
 
           <div class="actions d-flex justify-content-center">
-            <button class="btn btn-danger" @click.prevent="$emit('delete')">
+            <button class="btn btn-danger" @click.prevent="deleteDefense(userDefense.incrementId)">
               Delete
             </button>
           </div>
@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineEmits, defineProps, onMounted, computed } from "vue";
+import { ref, watch, defineProps, onMounted, computed } from "vue";
 import type { PropType } from "vue";
 import type { DefenseRootInterface, UserDefenseInterface } from "@/interaces";
 
@@ -118,18 +118,21 @@ import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
+import { useUserDataStore } from "@/stores/UserData";
 import { storeToRefs } from "pinia";
 import ModType from "@/enums/ModType";
 
+const userStore = useUserDataStore();
 const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
+
 const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
+const { updateDefense, deleteDefense } = userStore
 const { totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
 const { getDefenseRoot } = useDefenseStore()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
-const emit = defineEmits(["change", "delete"]);
 const props = defineProps({
   userDefenseProp: {
     type: Object as PropType<UserDefenseInterface>,
@@ -199,7 +202,7 @@ watch(userDefense, async (newValue: UserDefenseInterface, oldValue: UserDefenseI
   // If the defense has changed, load new DefenseRoot data
   if (oldValue.id !== newValue.id) defense.value = await getDefenseRoot(newValue.id)
 
-  emit("change", newValue)
+  updateDefense(userDefense.value.incrementId, newValue)
 
   recalculate()
 }, { deep: true })

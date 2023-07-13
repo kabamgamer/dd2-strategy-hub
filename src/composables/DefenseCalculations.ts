@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import OutputModifier from "@/classes/OutputModifier";
-import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface } from "@/interaces";
+import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface, CalculatedDefenseStatsInterface } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import {
     AncientDefenseCriticalChance,
@@ -12,6 +12,7 @@ import {
 import HasAscensionPoints from "@/traits/HasAscensionPoints";
 
 import ModType from "@/enums/ModType";
+import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
 export function useDefenseCalculations(): any {
     let defense: DefenseRootInterface
@@ -20,20 +21,24 @@ export function useDefenseCalculations(): any {
     let defenseShards: ShardInterface[]
     let defenseLevel: number
     let ancientResetPoints: UserAncientResetPoints
+    let setupDefenses: UserDataStoreDefenseInterface[]
+    let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}
 
-    const totalDps = ref('')
+    const totalDps = ref<number>()
     const defenseHealth = ref(0)
     const defensePower = ref(0)
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
 
-    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints): void {
+    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}): void {
         defense = parsedDefense
         userDefenseData = parsedUserDefenseData
         defenseMods = parsedDefenseMods
         defenseShards = parsedDefenseShards
         defenseLevel = parsedDefenseLevel
         ancientResetPoints = parsedAncientResetPoints
+        setupDefenses = parsedSetupDefenses ?? []
+        defenseBoosts = parsedDefenseBoosts ?? {}
 
         defensePower.value = calculatedDefensePower()
         defenseHealth.value = calculatedDefenseHealth()
@@ -57,14 +62,36 @@ export function useDefenseCalculations(): any {
             return 0
         }
 
-        const totalDefensePower: number = defense.baseDefensePower + userDefenseData.relic.defensePower + userDefenseData.pet.defensePower;
+        let totalDefensePower: number = defense.baseDefensePower + userDefenseData.relic.defensePower + userDefenseData.pet.defensePower;
 
         let rangeGambitSubtraction = 0
         if (defense as any instanceof HasAscensionPoints) {
             rangeGambitSubtraction = (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
         }
 
-        return totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
+        totalDefensePower = totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
+        if (shouldApplyDefenseBoosts()) {
+            Object.values(defenseBoosts).forEach((defenseBoost: CalculatedDefenseStatsInterface) => {
+                totalDefensePower += defenseBoost.defensePower/10
+            })
+        }
+
+        // Add shard modifiers in defense power for Boost Aura and Buff Beam
+        if (defense.id === 'BoostAura' || defense.id === 'BuffBeam') {
+            defenseShards.forEach((shard: ShardInterface) => {
+                if (shard.id === 'destructive_pylon') {
+                    return
+                }
+
+                if (shard.defensePower?.percentage) {
+                    totalDefensePower = shard.defensePower.calculate(totalDefensePower)
+                }
+            })
+
+            totalDefensePower *= destructivePylonMultiplier()
+        }
+
+        return totalDefensePower
     }
 
     function calculatedCriticalChance(): number {
@@ -97,6 +124,11 @@ export function useDefenseCalculations(): any {
         // 50% is the base crit damage
         let criticalDamage: number = 50;
 
+        // 30% is the base crit damage for Boost Aura and Buff Beam
+        if (defense.id === 'BoostAura' || defense.id === 'BuffBeam') {
+            criticalDamage = 30
+        }
+
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
             if ((util as ModInterface).type?.id === ModType.Diverse.id) {
                 return
@@ -108,6 +140,11 @@ export function useDefenseCalculations(): any {
         })
 
         criticalDamage += diverseMods('criticalDamage', 'percentage');
+        if (shouldApplyDefenseBoosts()) {
+            Object.values(defenseBoosts).forEach((defenseBoost: CalculatedDefenseStatsInterface) => {
+                criticalDamage += defenseBoost.critDamage*100/4
+            })
+        }
 
         let criticalDamageMultiplier: number = criticalDamage / 100
 
@@ -119,10 +156,18 @@ export function useDefenseCalculations(): any {
         return criticalDamageMultiplier
     }
 
-    function calculatedDps(): string {
+    function shouldApplyDefenseBoosts(): boolean {
+        return Object.keys(defenseBoosts).length > 0 && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam'
+    }
+
+    function calculatedDps(): number {
         let baseDefensePower: number = defensePower.value
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
+            if (shard.id === 'destructive_pylon') {
+                return
+            }
+
             if (shard.defensePower?.percentage) {
                 baseDefensePower = shard.defensePower.calculate(baseDefensePower)
             }
@@ -133,9 +178,7 @@ export function useDefenseCalculations(): any {
 
         const attackDamage: number = baseDefensePower * defense.attackScalar[defenseLevel-1]
         const baseDps: number = attackDamage * (1 + criticalChance.value * criticalDamage.value) / attackRate()
-        const totalDps: number = baseDps * antiModsMultiplier()
-
-        return Math.round(totalDps).toLocaleString('en-US')
+        return baseDps * antiModsMultiplier()
     }
 
     function attackRate(): number {
@@ -205,7 +248,7 @@ export function useDefenseCalculations(): any {
 
     function diverseMods(stat: string, modifierType: string): number {
         let calculatedDiversePower = 0
-        const diverseStack = userDefenseData.diverseStack ?? 0
+        const diverseStack = setupDefenses.length > 0 ? setupDefenses.length - 1 : (userDefenseData.diverseStack ?? 0)
 
         defenseMods.forEach((mod: ModInterface): void => {
             if (mod.type?.id !== ModType.Diverse.id) {
@@ -238,7 +281,18 @@ export function useDefenseCalculations(): any {
     }
 
     function destructivePylonMultiplier(): number {
-        return 1
+        let destructivePylonPercentage: number = 1;
+        setupDefenses.forEach((setupDefense: UserDataStoreDefenseInterface): void => {
+            if (setupDefense.incrementId === userDefenseData.incrementId) {
+                return
+            }
+
+            if (setupDefense.userData.shards.filter((modId: string) => modId === 'destructive_pylon').length > 0) {
+                destructivePylonPercentage = 1.38
+            }
+        })
+
+        return destructivePylonPercentage
     }
 
     function ancientDestructionMultiplier(): number {

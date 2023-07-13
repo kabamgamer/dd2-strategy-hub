@@ -80,3 +80,17 @@ export interface UserDefenseInterface {
     diverseStack?: number;
     shards: string[];
 }
+
+export interface UserDefenseSetupInterface {
+    label: string;
+    incrementId: number;
+    defensesIncrementIds: number[];
+}
+
+export interface CalculatedDefenseStatsInterface {
+    totalDps: number;
+    critChance: number;
+    critDamage: number;
+    defenseHealth: number;
+    defensePower: number;
+}

@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="loading" />
 
     <h2 class="accordion-header" :id="id + '-heading'">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id">
+      <button class="accordion-button" type="button" @click="defense.userData.isCollapsed = !defense.userData?.isCollapsed" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
 
@@ -12,7 +12,7 @@
       </button>
     </h2>
 
-    <div :id="id" class="accordion-collapse collapse show" :aria-labelledby="id + '-heading'">
+    <div :id="id" class="accordion-collapse collapse" :class="{ show: !collapsed }" :aria-labelledby="id + '-heading'">
       <div class="accordion-body">
         <DefenseSelection v-if="!defense.userData?.label" @change="onDefenseSelection" />
 
@@ -152,6 +152,7 @@ const props = defineProps({
     type: Object as PropType<UserDataStoreDefenseInterface>,
     required: true,
   },
+  collapsed: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
   defenseBoosts: Object as PropType<{[incrementId: number]: CalculatedDefenseStatsInterface}|undefined>,
 });
@@ -193,6 +194,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
   defense.userData = {
     incrementId: defense.incrementId,
     id: defenseData.id,
+    isCollapsed: false,
     label: defenseData.name,
     pet: new PetData,
     relic: new RelicData,

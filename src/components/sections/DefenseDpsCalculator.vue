@@ -10,7 +10,7 @@
   <div class="accordion">
     <div class="row">
       <div v-for="defense in defenses" :key="defense.incrementId" class="col-md-4">
-        <Defense :defense="defense" />
+        <Defense :defense="defense" :collapsed="defense.userData?.isCollapsed" />
       </div>
     </div>
   </div>

@@ -82,7 +82,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     }
 
     function deleteDefenseSetup(defenseSetupIncrementId: number): void {
-        for (const index in defenses.value) {
+        for (const index in defenseSetups.value) {
             const item = defenseSetups.value[index]
 
             if (item.incrementId !== defenseSetupIncrementId) continue

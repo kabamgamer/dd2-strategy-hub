@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import OutputModifier from "@/classes/OutputModifier";
-import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface } from "@/interaces";
+import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface, CalculatedDefenseStatsInterface } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import {
     AncientDefenseCriticalChance,
@@ -22,14 +22,15 @@ export function useDefenseCalculations(): any {
     let defenseLevel: number
     let ancientResetPoints: UserAncientResetPoints
     let setupDefenses: UserDataStoreDefenseInterface[]
+    let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}
 
-    const totalDps = ref('')
+    const totalDps = ref<number>()
     const defenseHealth = ref(0)
     const defensePower = ref(0)
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
 
-    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[]): void {
+    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}): void {
         defense = parsedDefense
         userDefenseData = parsedUserDefenseData
         defenseMods = parsedDefenseMods
@@ -37,6 +38,7 @@ export function useDefenseCalculations(): any {
         defenseLevel = parsedDefenseLevel
         ancientResetPoints = parsedAncientResetPoints
         setupDefenses = parsedSetupDefenses ?? []
+        defenseBoosts = parsedDefenseBoosts ?? {}
 
         defensePower.value = calculatedDefensePower()
         defenseHealth.value = calculatedDefenseHealth()
@@ -60,14 +62,36 @@ export function useDefenseCalculations(): any {
             return 0
         }
 
-        const totalDefensePower: number = defense.baseDefensePower + userDefenseData.relic.defensePower + userDefenseData.pet.defensePower;
+        let totalDefensePower: number = defense.baseDefensePower + userDefenseData.relic.defensePower + userDefenseData.pet.defensePower;
 
         let rangeGambitSubtraction = 0
         if (defense as any instanceof HasAscensionPoints) {
             rangeGambitSubtraction = (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
         }
 
-        return totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
+        totalDefensePower = totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
+        if (shouldApplyDefenseBoosts()) {
+            Object.values(defenseBoosts).forEach((defenseBoost: CalculatedDefenseStatsInterface) => {
+                totalDefensePower += defenseBoost.defensePower/10
+            })
+        }
+
+        // Add shard modifiers in defense power for Boost Aura and Buff Beam
+        if (defense.id === 'BoostAura' || defense.id === 'BuffBeam') {
+            defenseShards.forEach((shard: ShardInterface) => {
+                if (shard.id === 'destructive_pylon') {
+                    return
+                }
+
+                if (shard.defensePower?.percentage) {
+                    totalDefensePower = shard.defensePower.calculate(totalDefensePower)
+                }
+            })
+
+            totalDefensePower *= destructivePylonMultiplier()
+        }
+
+        return totalDefensePower
     }
 
     function calculatedCriticalChance(): number {
@@ -100,6 +124,11 @@ export function useDefenseCalculations(): any {
         // 50% is the base crit damage
         let criticalDamage: number = 50;
 
+        // 30% is the base crit damage for Boost Aura and Buff Beam
+        if (defense.id === 'BoostAura' || defense.id === 'BuffBeam') {
+            criticalDamage = 30
+        }
+
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
             if ((util as ModInterface).type?.id === ModType.Diverse.id) {
                 return
@@ -111,6 +140,11 @@ export function useDefenseCalculations(): any {
         })
 
         criticalDamage += diverseMods('criticalDamage', 'percentage');
+        if (shouldApplyDefenseBoosts()) {
+            Object.values(defenseBoosts).forEach((defenseBoost: CalculatedDefenseStatsInterface) => {
+                criticalDamage += defenseBoost.critDamage*100/4
+            })
+        }
 
         let criticalDamageMultiplier: number = criticalDamage / 100
 
@@ -122,7 +156,11 @@ export function useDefenseCalculations(): any {
         return criticalDamageMultiplier
     }
 
-    function calculatedDps(): string {
+    function shouldApplyDefenseBoosts(): boolean {
+        return Object.keys(defenseBoosts).length > 0 && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam'
+    }
+
+    function calculatedDps(): number {
         let baseDefensePower: number = defensePower.value
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
@@ -140,9 +178,7 @@ export function useDefenseCalculations(): any {
 
         const attackDamage: number = baseDefensePower * defense.attackScalar[defenseLevel-1]
         const baseDps: number = attackDamage * (1 + criticalChance.value * criticalDamage.value) / attackRate()
-        const totalDps: number = baseDps * antiModsMultiplier()
-
-        return Math.round(totalDps).toLocaleString('en-US')
+        return baseDps * antiModsMultiplier()
     }
 
     function attackRate(): number {

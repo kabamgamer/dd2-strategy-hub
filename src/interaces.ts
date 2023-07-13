@@ -86,3 +86,11 @@ export interface UserDefenseSetupInterface {
     incrementId: number;
     defensesIncrementIds: number[];
 }
+
+export interface CalculatedDefenseStatsInterface {
+    totalDps: number;
+    critChance: number;
+    critDamage: number;
+    defenseHealth: number;
+    defensePower: number;
+}

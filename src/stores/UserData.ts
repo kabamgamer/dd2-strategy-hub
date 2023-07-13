@@ -71,6 +71,11 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     }
 
     function deleteDefense(defenseIncrementId: number): void {
+        // Delete defense from defense setups
+        for (const setup of defenseSetups.value) {
+            setup.defensesIncrementIds = setup.defensesIncrementIds.filter((id: number) => id !== defenseIncrementId)
+        }
+
         for (const index in defenses.value) {
             const item = defenses.value[index]
 
@@ -94,7 +99,10 @@ export const useUserDataStore = defineStore('userDataStore', () => {
 
     // Persist defense data on change
     watch(defenses, () => {
-        localStorage.setItem('defenses', JSON.stringify(defenses.value.map((defense: UserDataStoreDefenseInterface) => defense.userData)))
+        localStorage.setItem('defenses', JSON.stringify(defenses.value
+            .filter((defense: UserDataStoreDefenseInterface) => defense.userData)
+            .map((defense: UserDataStoreDefenseInterface) => defense.userData))
+        )
     }, { deep: true })
 
     // Persist defense setup data on change

@@ -74,10 +74,7 @@
             <div class="defense-info__relic">
               <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-relic="true" />
 
-              <!-- Show input for "custom diverse stack" if defense has diverse mods -->
-              <div v-if="hasDiverseMods">
-                <CustomInput type="number" label="Custom diverse stack" v-model="defense.userData.diverseStack" />
-              </div>
+              <i v-if="hasDiverseMods">For proper testing diverse mods, use defense setups (see section below)</i>
             </div>
 
             <hr />
@@ -109,7 +106,6 @@ import { ref, watch, defineProps, defineEmits, onMounted, computed } from "vue";
 import type { PropType } from "vue";
 import type { DefenseRootInterface, UserDefenseInterface, CalculatedDefenseStatsInterface } from "@/interaces";
 
-import CustomInput from "@/components/layout/form/Input.vue";
 import DefenseSelection from "@/components/utilities/DefenseSelection.vue";
 import Pet from "@/components/utilities/Pet.vue";
 import DefenseRelic from "@/components/utilities/DefenseRelic.vue";
@@ -205,7 +201,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
 
 watch(userDefenseMods, debounce(() => {
 hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as DefenseModData).type?.id === ModType.Diverse.id).length > 0
-}, 150), { deep: true })
+}, 200), { deep: true })
 
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)

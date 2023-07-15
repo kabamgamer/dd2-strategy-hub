@@ -22,11 +22,12 @@ import { storeToRefs } from "pinia";
 import type { UserDefenseSetupInterface } from "@/interaces";
 import { useUserDataStore } from "@/stores/UserData";
 
-const { defenseSetups } = storeToRefs(useUserDataStore());
+const userStore = useUserDataStore()
+const { defenseSetups } = storeToRefs(userStore);
+const { getNextDefenseSetupIncrementId } = userStore;
 
 function addSetup(): void {
-  // highest incrementId + 1
-  const incrementId = Math.max(...defenseSetups.value.map((setup) => setup.incrementId), 0) + 1;
+  const incrementId = getNextDefenseSetupIncrementId();
   defenseSetups.value.push({incrementId, label: "Setup " + incrementId, defensesIncrementIds: []} as UserDefenseSetupInterface);
 }
 </script>

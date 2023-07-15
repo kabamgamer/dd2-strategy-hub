@@ -153,10 +153,6 @@ export function useDefenseCalculations(): any {
                 return
             }
 
-            if (shard.id === 'destruction' && destructivePylon > 1) {
-                return
-            }
-
             if (shard.defensePower?.percentage) {
                 baseDefensePower = shard.defensePower.calculate(baseDefensePower)
             }

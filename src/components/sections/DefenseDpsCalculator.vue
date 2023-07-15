@@ -24,11 +24,11 @@ import { storeToRefs } from "pinia";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import { useUserDataStore } from "@/stores/UserData";
 
-const { defenses } = storeToRefs(useUserDataStore());
+const userStore = useUserDataStore()
+const { defenses } = storeToRefs(userStore);
+const { getNextDefenseIncrementId } = userStore;
 
 function addDefense(): void {
-  // highest incrementId + 1
-  const incrementId = Math.max(...defenses.value.map((defense) => defense.incrementId), 0) + 1;
-  defenses.value.push({incrementId} as UserDataStoreDefenseInterface);
+  defenses.value.push({incrementId: getNextDefenseIncrementId()} as UserDataStoreDefenseInterface);
 }
 </script>

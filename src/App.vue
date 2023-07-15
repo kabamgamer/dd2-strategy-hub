@@ -1,4 +1,19 @@
 <template>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light position-sticky top-0">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item">
+            <ImportExport />
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <main class="container">
     <Section section-title="Ancient power resets">
       <AncientPowerResets />
@@ -47,6 +62,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+import ImportExport from "@/components/utilities/ImportExport.vue";
 import Modal from "@/components/layout/BootstrapModal.vue";
 import Section from "@/components/layout/Section.vue";
 import AncientPowerResets from "@/components/sections/AncientPowerResets.vue";
@@ -81,3 +97,9 @@ function reloadPage(): void {
   window.location.reload();
 }
 </script>
+
+<style>
+nav {
+  z-index: 500;
+}
+</style>

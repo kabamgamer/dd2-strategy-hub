@@ -33,8 +33,8 @@
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ Math.round(criticalChance * 100) }}%</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ Math.round(criticalDamage * 100) }}%</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
               </div>
               <div class="defense-info__header-stats w-100" v-else>
                 <span class="w-100 defense-info__header-stats__stat d-flex align-items-center">
@@ -46,7 +46,7 @@
                   </div>
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power bonus:</strong> {{ Math.round(defensePower / 10) }}</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ Math.round(criticalDamage * 100 / 4) }}%</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (criticalDamage * 100 / 4).toFixed(2) }}%</span>
               </div>
             </div>
 

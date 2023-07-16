@@ -146,10 +146,10 @@ export function useDefenseCalculations(): any {
     }
 
     function defensePowerShardsAndDestructivePylon(baseDefensePower: number): number {
-        const destructivePylon: number = destructivePylonMultiplier()
+        const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
-            if (shard.id === 'destructive_pylon') {
+            if (shard.id === 'destruction' && hasDestructivePylon) {
                 return
             }
 
@@ -158,7 +158,7 @@ export function useDefenseCalculations(): any {
             }
         })
 
-        return baseDefensePower * destructivePylon
+        return baseDefensePower * destructivePylonMultiplier()
     }
 
     function calculatedDps(): number {

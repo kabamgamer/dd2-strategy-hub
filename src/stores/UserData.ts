@@ -13,6 +13,7 @@ export interface UserDataStoreDefenseInterface {
 export const useUserDataStore = defineStore('userDataStore', () => {
     const { getDefenseRoot } = useDefenseStore();
 
+    const colorMode = ref<string>(localStorage.getItem('colorMode') ?? 'light')
     const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
     const defenseSetups = ref<UserDefenseSetupInterface[]>(getDefenseSetups())
@@ -137,5 +138,10 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('ancientResetPoints', JSON.stringify(ancientPowerPoints.value))
     }, { deep: true })
 
-    return { isDev, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses }
+    // Persist ancient power data on change
+    watch(colorMode, () => {
+        localStorage.setItem('colorMode', colorMode.value)
+    })
+
+    return { isDev, colorMode, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses }
 })

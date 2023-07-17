@@ -34,6 +34,7 @@
                   </div>
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Tooltip DPS:</strong> {{ Math.round(tooltipDps).toLocaleString('en-US') }}</span>
+                <span v-if="isDev" class="w-100 defense-info__header-stats__stat"><strong>Attack damage:</strong> {{ Math.round(attackDamage).toLocaleString('en-US') }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
@@ -140,8 +141,8 @@ const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
 const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
-const { ancientPowerPoints } = storeToRefs(userStore);
-const { totalDps, tooltipDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
+const { ancientPowerPoints, isDev } = storeToRefs(userStore);
+const { totalDps, tooltipDps, attackDamage, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 

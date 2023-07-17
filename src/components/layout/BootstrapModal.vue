@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby=""
+  <div class="modal fade" tabindex="-1" aria-labelledby=""
        aria-hidden="true" ref="modalElement">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -33,11 +33,17 @@ let modalElement = ref();
 let modalObject: Modal|null = null;
 
 onMounted((): void => {
-  modalObject = new Modal(modalElement.value);
+  // Make sure modal is always last item in body
+  document.body.appendChild(modalElement.value)
+  modalObject = new Modal(modalElement.value)
 });
 
 function _show(): void {
   modalObject?.show();
 }
-defineExpose({ show: _show });
+
+function _hide(): void {
+  modalObject?.hide();
+}
+defineExpose({ show: _show, hide: _hide });
 </script>

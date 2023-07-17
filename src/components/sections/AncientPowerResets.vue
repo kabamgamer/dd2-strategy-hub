@@ -32,6 +32,7 @@
                 <th scope="col">7</th>
                 <th scope="col">8</th>
                 <th scope="col">9</th>
+                <th scope="col">10</th>
               </tr>
               </thead>
 
@@ -47,6 +48,7 @@
                 <td>5300</td>
                 <td>7850</td>
                 <td>9850</td>
+                <td>12750</td>
               </tr>
 
               <tr>
@@ -59,11 +61,14 @@
                 <td>22-27</td>
                 <td>28-98</td>
                 <td>99-299</td>
-                <td>300</td>
+                <td>300-699</td>
+                <td>700*</td>
               </tr>
               </tbody>
             </table>
           </div>
+
+          <i>* Chaos 10 is equal to floor 700, but there are no floor skips after chaos 9.</i>
         </Card>
       </div>
     </div>

@@ -24,7 +24,9 @@ export function useDefenseCalculations(): any {
     let setupDefenses: UserDataStoreDefenseInterface[]
     let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}
 
-    const totalDps = ref<number>()
+    const totalDps = ref<number>(0)
+    const tooltipDps = ref<number>(0)
+    const attackDamage = ref<number>(0)
     const defenseHealth = ref(0)
     const defensePower = ref(0)
     const criticalChance = ref(0)
@@ -77,18 +79,8 @@ export function useDefenseCalculations(): any {
         }
 
         // Add shard modifiers in defense power for Boost Aura and Buff Beam
-        if (defense.id === 'BoostAura' || defense.id === 'BuffBeam') {
-            defenseShards.forEach((shard: ShardInterface) => {
-                if (shard.id === 'destructive_pylon') {
-                    return
-                }
-
-                if (shard.defensePower?.percentage) {
-                    totalDefensePower = shard.defensePower.calculate(totalDefensePower)
-                }
-            })
-
-            totalDefensePower *= destructivePylonMultiplier()
+        if (isBuffDefense()) {
+            totalDefensePower = defensePowerShardsAndDestructivePylon(totalDefensePower)
         }
 
         return totalDefensePower
@@ -122,12 +114,7 @@ export function useDefenseCalculations(): any {
 
     function calculatedCriticalDamage(): number {
         // 50% is the base crit damage
-        let criticalDamage: number = 50;
-
-        // 30% is the base crit damage for Boost Aura and Buff Beam
-        if (defense.id === 'BoostAura' || defense.id === 'BuffBeam') {
-            criticalDamage = 30
-        }
+        let criticalDamagePercentage: number = 50;
 
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
             if ((util as ModInterface).type?.id === ModType.Diverse.id) {
@@ -135,18 +122,18 @@ export function useDefenseCalculations(): any {
             }
 
             if (util.criticalDamage instanceof OutputModifier) {
-                criticalDamage += util.criticalDamage.percentage ?? 0
+                criticalDamagePercentage += util.criticalDamage.percentage ?? 0
             }
         })
 
-        criticalDamage += diverseMods('criticalDamage', 'percentage');
+        criticalDamagePercentage += diverseMods('criticalDamage', 'percentage');
         if (shouldApplyDefenseBoosts()) {
             Object.values(defenseBoosts).forEach((defenseBoost: CalculatedDefenseStatsInterface) => {
-                criticalDamage += defenseBoost.critDamage*100/4
+                criticalDamagePercentage += defenseBoost.critDamage*100/4
             })
         }
 
-        let criticalDamageMultiplier: number = criticalDamage / 100
+        let criticalDamageMultiplier: number = criticalDamagePercentage / 100
 
         // apply ancient reset points
         if (ancientResetPoints.ancient_defense_critical_damage > 0) {
@@ -160,25 +147,45 @@ export function useDefenseCalculations(): any {
         return Object.keys(defenseBoosts).length > 0 && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam'
     }
 
-    function calculatedDps(): number {
-        let baseDefensePower: number = defensePower.value
+    function defensePowerShardsAndDestructivePylon(baseDefensePower: number, calculateTooltipDps?: boolean): number {
+        const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
-            if (shard.id === 'destructive_pylon') {
+            if (shard.id === 'destruction' && hasDestructivePylon) {
                 return
             }
 
             if (shard.defensePower?.percentage) {
                 baseDefensePower = shard.defensePower.calculate(baseDefensePower)
+
+                if (calculateTooltipDps && shard.inTooltip) {
+                    tooltipDps.value = shard.defensePower.calculate(tooltipDps.value)
+                }
             }
         })
 
-        // Add destructive pylon modifier
-        baseDefensePower *= destructivePylonMultiplier()
+        if (calculateTooltipDps) {
+            tooltipDps.value = tooltipDps.value * destructivePylonMultiplier()
+        }
+        return baseDefensePower * destructivePylonMultiplier()
+    }
 
-        const attackDamage: number = baseDefensePower * defense.attackScalar[defenseLevel-1]
-        const baseDps: number = attackDamage * (1 + criticalChance.value * criticalDamage.value) / attackRate()
-        return baseDps * antiModsMultiplier()
+    function isBuffDefense(): boolean {
+        return defense?.id === 'BoostAura' || defense?.id === 'BuffBeam'
+    }
+
+    function calculatedDps(): number {
+        tooltipDps.value = defensePower.value
+        const baseDefensePower: number = defensePowerShardsAndDestructivePylon(defensePower.value, true)
+
+        const attackScalar: number = defense.attackScalar[defenseLevel-1]
+        const critDamageMultiplier: number = (1 + criticalChance.value * criticalDamage.value)
+        const calculatedAttackRate: number = attackRate()
+        attackDamage.value = baseDefensePower * attackScalar
+
+        tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / calculatedAttackRate
+
+        return attackDamage.value * critDamageMultiplier / calculatedAttackRate * antiModsMultiplier()
     }
 
     function attackRate(): number {
@@ -316,5 +323,5 @@ export function useDefenseCalculations(): any {
     }
 
     // expose managed state as return value
-    return { totalDps, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower }
+    return { totalDps, tooltipDps, attackDamage, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
 }

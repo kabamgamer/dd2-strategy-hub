@@ -8,7 +8,7 @@
 
     <div class="relic__mods" v-if="!hideMods">
       <h5>Mods</h5>
-      <div class="relic__mods-slot" v-for="(selection, index) in userSelection" :key="index">
+      <div class="relic__mods-slot bg-dark-subtle" v-for="(selection, index) in userSelection" :key="index">
         <div class="relic__mods-slot-content" v-if="!selection.mod">
           <div class="relic__mods-name">Mod #{{ index+1 }}</div>
           <div class="relic__mods-description">
@@ -77,10 +77,9 @@ onMounted((): void => {
 
 <style scoped>
 .relic__mods-slot {
-  background: lightgray;
   padding: 5px 10px;
   margin: 10px 0;
-  border: 1px solid darkgray;
+  border: 1px solid rgba(var(--bs-black-rgb), .2);
   border-radius: 10px;
 }
 .relic__mods-slot-content .relic__mods-name {

@@ -2,7 +2,7 @@
   <div class="shards">
     <h5>Shards</h5>
 
-    <div class="shards__slot d-flex" v-for="(selection, index) in userSelection" :key="index">
+    <div class="shards__slot bg-dark-subtle d-flex" v-for="(selection, index) in userSelection" :key="index">
       <div class="shards__slot-icon">
         <img :src="selection.shard.icon" v-if="selection.shard">
       </div>
@@ -71,17 +71,16 @@ function onDeleteShard(index: number): void {
 
 <style scoped>
 .shards__slot {
-  background: lightgray;
   padding: 5px;
   margin: 10px 0;
-  border: 1px solid darkgray;
+  border: 1px solid rgba(var(--bs-black-rgb), .2);
   border-radius: 10px;
 }
 
 .shards__slot-icon {
   width: 80px;
   height: 80px;
-  border: 1px solid darkgray;
+  border: 1px solid rgba(var(--bs-black-rgb), .2);
   border-radius: 3px;
 }
 

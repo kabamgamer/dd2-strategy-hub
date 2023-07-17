@@ -13,6 +13,8 @@ export interface UserDataStoreDefenseInterface {
 export const useUserDataStore = defineStore('userDataStore', () => {
     const { getDefenseRoot } = useDefenseStore();
 
+    const colorMode = ref<string>(localStorage.getItem('colorMode') ?? 'light')
+    const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
     const defenseSetups = ref<UserDefenseSetupInterface[]>(getDefenseSetups())
     const ancientPowerPoints = ref<UserAncientResetPoints>(getAncientPowerPoints())
@@ -70,6 +72,16 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         }
     }
 
+    function getNextDefenseIncrementId(): number {
+        // highest incrementId + 1
+        return Math.max(...defenses.value.map((defense) => defense.incrementId), 0) + 1;
+    }
+
+    function getNextDefenseSetupIncrementId(): number {
+        // highest incrementId + 1
+        return Math.max(...defenseSetups.value.map((setup) => setup.incrementId), 0) + 1;
+    }
+
     function deleteDefense(defenseIncrementId: number): void {
         // Delete defense from defense setups
         for (const setup of defenseSetups.value) {
@@ -97,6 +109,17 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         }
     }
 
+    function importDefenses(importedDefenses: UserDefenseInterface[]): void {
+        importedDefenses.forEach((defense: UserDefenseInterface) => {
+            defenses.value.push({
+                incrementId: defense.incrementId,
+                userData: defense,
+            })
+        })
+
+        loadDefenseData()
+    }
+
     // Persist defense data on change
     watch(defenses, () => {
         localStorage.setItem('defenses', JSON.stringify(defenses.value
@@ -115,5 +138,10 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('ancientResetPoints', JSON.stringify(ancientPowerPoints.value))
     }, { deep: true })
 
-    return { defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup }
+    // Persist ancient power data on change
+    watch(colorMode, () => {
+        localStorage.setItem('colorMode', colorMode.value)
+    })
+
+    return { isDev, colorMode, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses }
 })

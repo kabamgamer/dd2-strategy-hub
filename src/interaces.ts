@@ -10,6 +10,7 @@ export interface ModInterface {
     id: string;
     name: string;
     description: string;
+    inTooltip: boolean;
     defensePower?: OutputModifier;
     defenseHealth?: OutputModifier;
     defenseRate?: OutputModifier;
@@ -26,6 +27,7 @@ export interface ShardInterface {
     description: string;
     icon: string;
     pack: string;
+    inTooltip: boolean;
     defensePower?: OutputModifier;
     defenseHealth?: OutputModifier;
     defenseRate?: OutputModifier;
@@ -71,6 +73,7 @@ export interface DefenseRootInterface {
 
 // This interface is used to identify user data for defenses which will be different for every user
 export interface UserDefenseInterface {
+    isCollapsed: boolean;
     incrementId: number;
     id: string;
     label: string;

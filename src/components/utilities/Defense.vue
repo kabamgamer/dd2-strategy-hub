@@ -3,26 +3,39 @@
     <LoadingSpinner v-if="loading" />
 
     <h2 class="accordion-header" :id="id + '-heading'">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + id" aria-expanded="true" :aria-controls="id">
+      <button class="accordion-button" type="button" @click="defense.userData.isCollapsed = !defense.userData?.isCollapsed" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
 
-          <span class="defense-dps" v-if="defense.defenseData?.baseDefensePower && !isBuffDefense">{{ Math.round(totalDps).toLocaleString('en-US') }}</span>
+          <span class="defense-dps" v-if="defense.defenseData?.baseDefensePower && !isBuffDefense()">{{ Math.round(totalDps).toLocaleString('en-US') }}</span>
         </span>
       </button>
     </h2>
 
-    <div :id="id" class="accordion-collapse collapse show" :aria-labelledby="id + '-heading'">
+    <div :id="id" class="accordion-collapse collapse" :class="{ show: !collapsed }" :aria-labelledby="id + '-heading'">
       <div class="accordion-body">
+
         <DefenseSelection v-if="!defense.userData?.label" @change="onDefenseSelection" />
 
         <div class="defense-info" v-else>
+          <div class="actions d-flex justify-content-between mb-2" v-if="!setupDefenses">
+            <div class="defense-info__header-label" v-if="!setupDefenses">
+              <input type="text" class="form-control" v-model="defense.userData.label" />
+            </div>
+
+            <button class="btn btn-danger" @click.prevent="deleteDefense(defense.userData.incrementId)">
+              Delete
+            </button>
+          </div>
+
           <div class="defense-info__header d-flex align-items-center flex-column">
             <div class="defense-info__header-info mb-3 w-100 d-flex">
-              <div class="defense-info__header-icon">
-                <img :src="defense.defenseData?.icon" :alt="defense.defenseData?.name">
+              <div class="defense-info__header-icon__wrapper">
+                <div class="defense-info__header-icon">
+                  <img :src="defense.defenseData?.icon" :alt="defense.defenseData?.name">
+                </div>
               </div>
-              <div class="defense-info__header-stats w-100" v-if="!isBuffDefense">
+              <div class="defense-info__header-stats w-100" v-if="!isBuffDefense()">
                 <span class="w-100 defense-info__header-stats__stat d-flex align-items-center">
                   <strong>Tier:</strong>
                   <div class="defense-info__level d-flex">
@@ -31,10 +44,12 @@
                     <button class="btn btn-link" @click="defenseLevel++" :disabled="defenseLevel===5"><IconChevronUp /></button>
                   </div>
                 </span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Tooltip DPS:</strong> {{ Math.round(tooltipDps).toLocaleString('en-US') }}</span>
+                <span v-if="isDev" class="w-100 defense-info__header-stats__stat"><strong>Attack damage:</strong> {{ Math.round(attackDamage).toLocaleString('en-US') }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ Math.round(criticalChance * 100) }}%</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ Math.round(criticalDamage * 100) }}%</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
               </div>
               <div class="defense-info__header-stats w-100" v-else>
                 <span class="w-100 defense-info__header-stats__stat d-flex align-items-center">
@@ -46,12 +61,8 @@
                   </div>
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power bonus:</strong> {{ Math.round(defensePower / 10) }}</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ Math.round(criticalDamage * 100 / 4) }}%</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (criticalDamage * 100 / 4).toFixed(2) }}%</span>
               </div>
-            </div>
-
-            <div class="defense-info__header-label" v-if="!setupDefenses">
-              <input type="text" v-model="defense.userData.label" />
             </div>
           </div>
 
@@ -61,10 +72,10 @@
             <div class="defense-info__pet">
               <div class="row">
                 <div class="col-md-6">
-                  <Pet v-model="defense.userData.pet" />
+                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-mods="true" />
                 </div>
                 <div class="col-md-6">
-                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-mods="true" />
+                  <Pet v-model="defense.userData.pet" />
                 </div>
               </div>
             </div>
@@ -74,10 +85,7 @@
             <div class="defense-info__relic">
               <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-relic="true" />
 
-              <!-- Show input for "custom diverse stack" if defense has diverse mods -->
-              <div v-if="hasDiverseMods">
-                <CustomInput type="number" label="Custom diverse stack" v-model="defense.userData.diverseStack" />
-              </div>
+              <i v-if="hasDiverseMods">For proper testing diverse mods, use defense setups (see section below)</i>
             </div>
 
             <hr />
@@ -92,12 +100,6 @@
               <AscensionPoints v-model="defense.userData.ascensionPoints" :ascensionPoints="defense.defenseData?.ascensionPoints" />
             </div>
           </slot>
-
-          <div class="actions d-flex justify-content-center" v-if="!setupDefenses">
-            <button class="btn btn-danger" @click.prevent="deleteDefense(defense.userData.incrementId)">
-              Delete
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -105,11 +107,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted, computed } from "vue";
+import { ref, watch, defineProps, defineEmits, onMounted } from "vue";
 import type { PropType } from "vue";
 import type { DefenseRootInterface, UserDefenseInterface, CalculatedDefenseStatsInterface } from "@/interaces";
 
-import CustomInput from "@/components/layout/form/Input.vue";
 import DefenseSelection from "@/components/utilities/DefenseSelection.vue";
 import Pet from "@/components/utilities/Pet.vue";
 import DefenseRelic from "@/components/utilities/DefenseRelic.vue";
@@ -141,8 +142,8 @@ const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
 const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
-const { ancientPowerPoints } = storeToRefs(userStore);
-const { totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
+const { ancientPowerPoints, isDev } = storeToRefs(userStore);
+const { totalDps, tooltipDps, attackDamage, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
@@ -152,6 +153,7 @@ const props = defineProps({
     type: Object as PropType<UserDataStoreDefenseInterface>,
     required: true,
   },
+  collapsed: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
   defenseBoosts: Object as PropType<{[incrementId: number]: CalculatedDefenseStatsInterface}|undefined>,
 });
@@ -163,7 +165,6 @@ const defenseLevel = ref<number>(1)
 const hasDiverseMods = ref<boolean>(false)
 const userDefenseMods = ref<DefenseModData[]>([])
 const userDefenseShards = ref<DefenseShardData[]>([])
-const isBuffDefense = computed((): boolean => defense.userData?.id === 'BoostAura' || defense.userData?.id === 'BuffBeam')
 
 function recalculate(): void {
   if (!defense.userData) return
@@ -193,6 +194,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
   defense.userData = {
     incrementId: defense.incrementId,
     id: defenseData.id,
+    isCollapsed: false,
     label: defenseData.name,
     pet: new PetData,
     relic: new RelicData,
@@ -203,13 +205,18 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
 
 watch(userDefenseMods, debounce(() => {
 hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as DefenseModData).type?.id === ModType.Diverse.id).length > 0
-}, 150), { deep: true })
+}, 200), { deep: true })
 
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
-watch(defense, recalculate, { deep: true })
 watch(ancientPowerPoints, recalculate, { deep: true })
-watch(props, recalculate, { deep: true })
+watch(props.setupDefenses as object, (newValue, oldValue) => {
+  if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+
+  recalculate()
+}, { deep: true })
+watch(props.defenseBoosts as object, recalculate, { deep: true })
+watch(defense.userData, recalculate, { deep: true })
 
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)
@@ -217,16 +224,22 @@ onMounted((): void => {
       .substring(1)
       .toLowerCase();
 
-  if (defense.defenseData) {
-    recalculate()
-  }
+  // Await the loading of defenseData before initializing calculations
+  const interval: any = setInterval((): void => {
+    if (defense.defenseData) {
+      clearInterval(interval)
+      recalculate()
+    }
+  }, 100)
 })
 </script>
 
 <style scoped>
-.defense-info__header-icon {
+.defense-info__header-icon__wrapper {
   width: 60%;
   max-width: 150px;
+}
+.defense-info__header-icon {
   border: 1px solid grey;
 }
 

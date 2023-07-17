@@ -8,6 +8,7 @@ export interface DefenseShardDataResponse {
     description: string;
     icon: string;
     pack: string;
+    inTooltip: boolean;
     defensePowerModifier?: string;
     defenseHealthModifier?: string;
     defenseRateModifier?: string;
@@ -22,6 +23,7 @@ export default class DefenseShardData extends HasOutputModifier implements Shard
     description: string = '';
     icon: string = '';
     pack: string = '';
+    inTooltip: boolean = true;
     defensePower?: OutputModifier;
     defenseHealth?: OutputModifier;
     defenseRate?: OutputModifier;
@@ -51,6 +53,7 @@ export default class DefenseShardData extends HasOutputModifier implements Shard
         this.description = data.description
         this.icon = data.icon
         this.pack = data.pack
+        this.inTooltip = data.inTooltip
         this.defensePower = this.getOutputModifierForValue(data.defensePowerModifier)
         this.defenseHealth = this.getOutputModifierForValue(data.defenseHealthModifier)
         this.defenseRate = this.getOutputModifierForValue(data.defenseRateModifier)

@@ -7,6 +7,7 @@ export interface DefenseModDataResponse {
     id: string;
     name: string;
     description: string;
+    inTooltip: boolean;
     type?: string;
     defensePowerModifier?: string;
     defenseHealthModifier?: string;
@@ -20,6 +21,7 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
     id: string = '';
     name: string = '';
     description: string = '';
+    inTooltip: boolean = true;
     defensePower?: OutputModifier;
     defenseHealth?: OutputModifier;
     defenseRate?: OutputModifier;
@@ -48,6 +50,7 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
         this.id = data.id
         this.name = data.name
         this.description = data.description
+        this.inTooltip = data.inTooltip
         this.type = data.type === '' || data.type === undefined ? undefined : ModType[data.type as keyof typeof ModType]
         this.defensePower = this.getOutputModifierForValue(data.defensePowerModifier)
         this.defenseHealth = this.getOutputModifierForValue(data.defenseHealthModifier)

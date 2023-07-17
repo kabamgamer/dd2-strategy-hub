@@ -209,9 +209,10 @@ hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as Defens
 
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
-watch(defense, recalculate, { deep: true })
 watch(ancientPowerPoints, recalculate, { deep: true })
-watch(props, recalculate, { deep: true })
+watch(props.setupDefenses, recalculate, { deep: true })
+watch(props.defenseBoosts, recalculate, { deep: true })
+watch(defense.userData, recalculate, { deep: true })
 
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)
@@ -219,9 +220,13 @@ onMounted((): void => {
       .substring(1)
       .toLowerCase();
 
-  if (defense.defenseData) {
-    recalculate()
-  }
+  // Await the loading of defenseData before initializing calculations
+  const interval: any = setInterval((): void => {
+    if (defense.defenseData) {
+      clearInterval(interval)
+      recalculate()
+    }
+  }, 100)
 })
 </script>
 

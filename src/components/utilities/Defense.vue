@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted, computed } from "vue";
+import { ref, watch, defineProps, defineEmits, onMounted } from "vue";
 import type { PropType } from "vue";
 import type { DefenseRootInterface, UserDefenseInterface, CalculatedDefenseStatsInterface } from "@/interaces";
 
@@ -210,8 +210,12 @@ hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as Defens
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
 watch(ancientPowerPoints, recalculate, { deep: true })
-watch(props.setupDefenses, recalculate, { deep: true })
-watch(props.defenseBoosts, recalculate, { deep: true })
+watch(props.setupDefenses as object, (newValue, oldValue) => {
+  if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+
+  recalculate()
+}, { deep: true })
+watch(props.defenseBoosts as object, recalculate, { deep: true })
 watch(defense.userData, recalculate, { deep: true })
 
 onMounted((): void => {

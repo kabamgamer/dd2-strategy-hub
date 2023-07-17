@@ -19,8 +19,10 @@
         <div class="defense-info" v-else>
           <div class="defense-info__header d-flex align-items-center flex-column">
             <div class="defense-info__header-info mb-3 w-100 d-flex">
-              <div class="defense-info__header-icon">
-                <img :src="defense.defenseData?.icon" :alt="defense.defenseData?.name">
+              <div class="defense-info__header-icon__wrapper">
+                <div class="defense-info__header-icon">
+                  <img :src="defense.defenseData?.icon" :alt="defense.defenseData?.name">
+                </div>
               </div>
               <div class="defense-info__header-stats w-100" v-if="!isBuffDefense">
                 <span class="w-100 defense-info__header-stats__stat d-flex align-items-center">
@@ -31,6 +33,7 @@
                     <button class="btn btn-link" @click="defenseLevel++" :disabled="defenseLevel===5"><IconChevronUp /></button>
                   </div>
                 </span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Tooltip DPS:</strong> {{ Math.round(tooltipDps).toLocaleString('en-US') }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
@@ -61,10 +64,10 @@
             <div class="defense-info__pet">
               <div class="row">
                 <div class="col-md-6">
-                  <Pet v-model="defense.userData.pet" />
+                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-mods="true" />
                 </div>
                 <div class="col-md-6">
-                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-mods="true" />
+                  <Pet v-model="defense.userData.pet" />
                 </div>
               </div>
             </div>
@@ -138,7 +141,7 @@ const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
 const { ancientPowerPoints } = storeToRefs(userStore);
-const { totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
+const { totalDps, tooltipDps, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
@@ -222,9 +225,11 @@ onMounted((): void => {
 </script>
 
 <style scoped>
-.defense-info__header-icon {
+.defense-info__header-icon__wrapper {
   width: 60%;
   max-width: 150px;
+}
+.defense-info__header-icon {
   border: 1px solid grey;
 }
 

@@ -10,6 +10,7 @@ export interface ModInterface {
     id: string;
     name: string;
     description: string;
+    inTooltip: boolean;
     defensePower?: OutputModifier;
     defenseHealth?: OutputModifier;
     defenseRate?: OutputModifier;
@@ -26,6 +27,7 @@ export interface ShardInterface {
     description: string;
     icon: string;
     pack: string;
+    inTooltip: boolean;
     defensePower?: OutputModifier;
     defenseHealth?: OutputModifier;
     defenseRate?: OutputModifier;

@@ -24,7 +24,8 @@ export function useDefenseCalculations(): any {
     let setupDefenses: UserDataStoreDefenseInterface[]
     let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}
 
-    const totalDps = ref<number>()
+    const totalDps = ref<number>(0)
+    const tooltipDps = ref<number>(0)
     const defenseHealth = ref(0)
     const defensePower = ref(0)
     const criticalChance = ref(0)
@@ -145,7 +146,7 @@ export function useDefenseCalculations(): any {
         return Object.keys(defenseBoosts).length > 0 && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam'
     }
 
-    function defensePowerShardsAndDestructivePylon(baseDefensePower: number): number {
+    function defensePowerShardsAndDestructivePylon(baseDefensePower: number, calculateTooltipDps?: boolean): number {
         const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
@@ -155,18 +156,30 @@ export function useDefenseCalculations(): any {
 
             if (shard.defensePower?.percentage) {
                 baseDefensePower = shard.defensePower.calculate(baseDefensePower)
+
+                if (calculateTooltipDps && shard.inTooltip) {
+                    tooltipDps.value = shard.defensePower.calculate(tooltipDps.value)
+                }
             }
         })
 
+        if (calculateTooltipDps) {
+            tooltipDps.value = tooltipDps.value * destructivePylonMultiplier()
+        }
         return baseDefensePower * destructivePylonMultiplier()
     }
 
     function calculatedDps(): number {
-        const baseDefensePower: number = defensePowerShardsAndDestructivePylon(defensePower.value)
+        tooltipDps.value = defensePower.value
+        const baseDefensePower: number = defensePowerShardsAndDestructivePylon(defensePower.value, true)
 
-        const attackDamage: number = baseDefensePower * defense.attackScalar[defenseLevel-1]
-        const baseDps: number = attackDamage * (1 + criticalChance.value * criticalDamage.value) / attackRate()
-        return baseDps * antiModsMultiplier()
+        const attackScalar: number = defense.attackScalar[defenseLevel-1]
+        const critDamageMultiplier: number = (1 + criticalChance.value * criticalDamage.value)
+        const calculatedAttackRate: number = attackRate()
+
+        tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / calculatedAttackRate
+
+        return baseDefensePower * attackScalar * critDamageMultiplier / calculatedAttackRate * antiModsMultiplier()
     }
 
     function attackRate(): number {
@@ -304,5 +317,5 @@ export function useDefenseCalculations(): any {
     }
 
     // expose managed state as return value
-    return { totalDps, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower }
+    return { totalDps, tooltipDps, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower }
 }

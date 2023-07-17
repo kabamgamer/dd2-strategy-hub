@@ -7,16 +7,27 @@
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
 
-          <span class="defense-dps" v-if="defense.defenseData?.baseDefensePower && !isBuffDefense">{{ Math.round(totalDps).toLocaleString('en-US') }}</span>
+          <span class="defense-dps" v-if="defense.defenseData?.baseDefensePower && !isBuffDefense()">{{ Math.round(totalDps).toLocaleString('en-US') }}</span>
         </span>
       </button>
     </h2>
 
     <div :id="id" class="accordion-collapse collapse" :class="{ show: !collapsed }" :aria-labelledby="id + '-heading'">
       <div class="accordion-body">
+
         <DefenseSelection v-if="!defense.userData?.label" @change="onDefenseSelection" />
 
         <div class="defense-info" v-else>
+          <div class="actions d-flex justify-content-between mb-2" v-if="!setupDefenses">
+            <div class="defense-info__header-label" v-if="!setupDefenses">
+              <input type="text" class="form-control" v-model="defense.userData.label" />
+            </div>
+
+            <button class="btn btn-danger" @click.prevent="deleteDefense(defense.userData.incrementId)">
+              Delete
+            </button>
+          </div>
+
           <div class="defense-info__header d-flex align-items-center flex-column">
             <div class="defense-info__header-info mb-3 w-100 d-flex">
               <div class="defense-info__header-icon__wrapper">
@@ -24,7 +35,7 @@
                   <img :src="defense.defenseData?.icon" :alt="defense.defenseData?.name">
                 </div>
               </div>
-              <div class="defense-info__header-stats w-100" v-if="!isBuffDefense">
+              <div class="defense-info__header-stats w-100" v-if="!isBuffDefense()">
                 <span class="w-100 defense-info__header-stats__stat d-flex align-items-center">
                   <strong>Tier:</strong>
                   <div class="defense-info__level d-flex">
@@ -52,10 +63,6 @@
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power bonus:</strong> {{ Math.round(defensePower / 10) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (criticalDamage * 100 / 4).toFixed(2) }}%</span>
               </div>
-            </div>
-
-            <div class="defense-info__header-label" v-if="!setupDefenses">
-              <input type="text" v-model="defense.userData.label" />
             </div>
           </div>
 
@@ -93,12 +100,6 @@
               <AscensionPoints v-model="defense.userData.ascensionPoints" :ascensionPoints="defense.defenseData?.ascensionPoints" />
             </div>
           </slot>
-
-          <div class="actions d-flex justify-content-center" v-if="!setupDefenses">
-            <button class="btn btn-danger" @click.prevent="deleteDefense(defense.userData.incrementId)">
-              Delete
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -164,7 +165,6 @@ const defenseLevel = ref<number>(1)
 const hasDiverseMods = ref<boolean>(false)
 const userDefenseMods = ref<DefenseModData[]>([])
 const userDefenseShards = ref<DefenseShardData[]>([])
-const isBuffDefense = computed((): boolean => defense.userData?.id === 'BoostAura' || defense.userData?.id === 'BuffBeam')
 
 function recalculate(): void {
   if (!defense.userData) return

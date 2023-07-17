@@ -26,6 +26,7 @@ export function useDefenseCalculations(): any {
 
     const totalDps = ref<number>(0)
     const tooltipDps = ref<number>(0)
+    const attackDamage = ref<number>(0)
     const defenseHealth = ref(0)
     const defensePower = ref(0)
     const criticalChance = ref(0)
@@ -78,7 +79,7 @@ export function useDefenseCalculations(): any {
         }
 
         // Add shard modifiers in defense power for Boost Aura and Buff Beam
-        if (defense.id === 'BoostAura' || defense.id === 'BuffBeam') {
+        if (isBuffDefense()) {
             totalDefensePower = defensePowerShardsAndDestructivePylon(totalDefensePower)
         }
 
@@ -169,6 +170,10 @@ export function useDefenseCalculations(): any {
         return baseDefensePower * destructivePylonMultiplier()
     }
 
+    function isBuffDefense(): boolean {
+        return defense?.id === 'BoostAura' || defense?.id === 'BuffBeam'
+    }
+
     function calculatedDps(): number {
         tooltipDps.value = defensePower.value
         const baseDefensePower: number = defensePowerShardsAndDestructivePylon(defensePower.value, true)
@@ -176,10 +181,11 @@ export function useDefenseCalculations(): any {
         const attackScalar: number = defense.attackScalar[defenseLevel-1]
         const critDamageMultiplier: number = (1 + criticalChance.value * criticalDamage.value)
         const calculatedAttackRate: number = attackRate()
+        attackDamage.value = baseDefensePower * attackScalar
 
         tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / calculatedAttackRate
 
-        return baseDefensePower * attackScalar * critDamageMultiplier / calculatedAttackRate * antiModsMultiplier()
+        return attackDamage.value * critDamageMultiplier / calculatedAttackRate * antiModsMultiplier()
     }
 
     function attackRate(): number {
@@ -317,5 +323,5 @@ export function useDefenseCalculations(): any {
     }
 
     // expose managed state as return value
-    return { totalDps, tooltipDps, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower }
+    return { totalDps, tooltipDps, attackDamage, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
 }

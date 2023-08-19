@@ -4,6 +4,20 @@
       <h5>Relic</h5>
       <Input type="number" label="Relic defense power" :placeholder="hideMods ? '' : undefined" v-model="modelValue.defensePower" />
       <Input type="number" label="Relic defense health" :placeholder="hideMods ? '' : undefined" v-model="modelValue.defenseHealth" />
+      <div v-if="!modelValue.godlyStat?.type" class="form-group mb-3">
+        <label>Relic godly stat</label>
+        <select class="form-select" @change="onGodlyStatTypeSelect">
+          <option>No godly stat</option>
+          <option value="critical_damage">Critical damage</option>
+          <option value="critical_chance">Critical chance</option>
+        </select>
+      </div>
+      <div v-else class="d-flex align-items-center">
+        <div class="form-group mb-3">
+          <label class="d-flex justify-content-between align-items-center">{{ godlyStatLabel }} <Cross class="cross" @click="onDeleteGodlyStat" /></label>
+          <input type="number" class="form-control" v-model="modelValue.godlyStat.value">
+        </div>
+      </div>
     </div>
 
     <div class="relic__mods" v-if="!hideMods">
@@ -35,7 +49,7 @@ import type { ModInterface, RelicInterface } from "@/interaces"
 import Input from "@/components/layout/form/Input.vue"
 import ModSelection from "@/components/utilities/ModSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
-import { onMounted, ref } from "vue"
+import { onMounted, ref, computed } from "vue"
 
 import { useModStore } from "@/stores/ModInfo"
 const { getModById } = useModStore()
@@ -48,6 +62,17 @@ const props = defineProps({
   defenseCompatibility: String,
   hideRelic: Boolean,
   hideMods: Boolean,
+})
+
+const godlyStatLabel = computed(() => {
+  switch (props.modelValue.godlyStat?.type) {
+    case 'critical_damage':
+      return 'Critical damage'
+    case 'critical_chance':
+      return 'Critical chance'
+    default:
+      return 'Godly stat'
+  }
 })
 
 const mods = props.modelValue?.mods ?? []
@@ -66,6 +91,17 @@ function onDeleteMod(index: number): void {
   userSelection.value.splice(index, 1)
   userSelection.value[2] = {modId: null, mod: null}
   props.modelValue?.mods.splice(index, 1)
+}
+
+function onGodlyStatTypeSelect(event: Event): void {
+  props.modelValue.godlyStat = {
+    type: (event.target as HTMLInputElement).value,
+    value: 0
+  }
+}
+
+function onDeleteGodlyStat(): void {
+  props.modelValue.godlyStat = undefined
 }
 
 onMounted((): void => {

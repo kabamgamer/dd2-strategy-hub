@@ -23,12 +23,15 @@
 
     <hr class="w-100" />
 
+    <DefenseSetupModifiers :setupIncrementId="defenseSetup.incrementId" v-model="defenseSetup.modifiers" />
+
     <div class="row">
       <div class="col-md-4" v-for="defense in setupDefenses" :key="defense.incrementId">
         <Defense
             :defense="defense"
             :setupDefenses="setupDefenses"
             :defenseBoosts="defenseBoosts"
+            :setupModifiers="defenseSetup.modifiers"
             @total-dps-calculated="(totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number) => {
               onDefenseDpsCalculated(defense, totalDps, defensePower, defenseHealth, criticalDamage, criticalChance)
             }"
@@ -74,10 +77,12 @@ import { ref, onMounted, defineProps, computed } from "vue"
 import type { PropType } from "vue"
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
-import { useUserDataStore } from "@/stores/UserData"
+import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData"
 import { storeToRefs } from "pinia"
 import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/interaces";
+
 import Defense from "@/components/utilities/Defense.vue";
+import DefenseSetupModifiers from "@/components/utilities/DefenseSetupModifiers.vue";
 
 const props = defineProps({
   defenseSetup: {
@@ -85,6 +90,10 @@ const props = defineProps({
     required: true,
   },
 })
+
+if (props.defenseSetup.modifiers === undefined) {
+  props.defenseSetup.modifiers = getDefaultSetupModifiers()
+}
 
 const userStore = useUserDataStore()
 

@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import type { DefenseRootInterface, UserDefenseInterface, UserDefenseSetupInterface } from "@/interaces";
+import type { DefenseRootInterface, UserDefenseInterface, UserDefenseSetupInterface, DefenseSetupModifiersInterface } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 
@@ -145,3 +145,21 @@ export const useUserDataStore = defineStore('userDataStore', () => {
 
     return { isDev, colorMode, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses }
 })
+
+export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {
+    return {
+        combos: {
+            petrify: false,
+            ignite: false,
+            electrocute: false,
+            shatter: false,
+        },
+        heroBuffs: {
+            talisman: false,
+            talismanChiSupercharge: false,
+            callToArms: false,
+            radiantPower: 0,
+            radiantCriticalPower: 0,
+        }
+    }
+}

@@ -20,7 +20,7 @@ import DefenseSetup from "@/components/utilities/DefenseSetup.vue";
 import { storeToRefs } from "pinia";
 
 import type { UserDefenseSetupInterface } from "@/interaces";
-import { useUserDataStore } from "@/stores/UserData";
+import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData";
 
 const userStore = useUserDataStore()
 const { defenseSetups } = storeToRefs(userStore);
@@ -28,6 +28,6 @@ const { getNextDefenseSetupIncrementId } = userStore;
 
 function addSetup(): void {
   const incrementId = getNextDefenseSetupIncrementId();
-  defenseSetups.value.push({incrementId, label: "Setup " + incrementId, defensesIncrementIds: []} as UserDefenseSetupInterface);
+  defenseSetups.value.push({incrementId, label: "Setup " + incrementId, defensesIncrementIds: [], modifiers: getDefaultSetupModifiers()} as UserDefenseSetupInterface);
 }
 </script>

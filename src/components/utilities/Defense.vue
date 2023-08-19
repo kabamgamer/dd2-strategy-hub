@@ -109,7 +109,12 @@
 <script setup lang="ts">
 import { ref, watch, defineProps, defineEmits, onMounted } from "vue";
 import type { PropType } from "vue";
-import type { DefenseRootInterface, UserDefenseInterface, CalculatedDefenseStatsInterface } from "@/interaces";
+import type {
+  DefenseRootInterface,
+  UserDefenseInterface,
+  CalculatedDefenseStatsInterface,
+  DefenseSetupModifiersInterface
+} from "@/interaces";
 
 import DefenseSelection from "@/components/utilities/DefenseSelection.vue";
 import Pet from "@/components/utilities/Pet.vue";
@@ -156,6 +161,7 @@ const props = defineProps({
   collapsed: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
   defenseBoosts: Object as PropType<{[incrementId: number]: CalculatedDefenseStatsInterface}|undefined>,
+  setupModifiers: Object as PropType<DefenseSetupModifiersInterface|undefined>,
 });
 
 let defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
@@ -183,7 +189,7 @@ function recalculate(): void {
   const interval: any = setInterval((): void => {
     if (userDefenseMods.value.length === defense.userData.relic.mods.length && userDefenseShards.value.length === defense.userData.shards.length) {
       clearInterval(interval)
-      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.defenseBoosts)
+      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.defenseBoosts, props.setupModifiers)
       emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHealth.value, criticalDamage.value, criticalChance.value)
     }
   }, 100)
@@ -216,6 +222,7 @@ watch(props.setupDefenses as object, (newValue, oldValue) => {
   recalculate()
 }, { deep: true })
 watch(props.defenseBoosts as object, recalculate, { deep: true })
+watch(props.setupModifiers as object, recalculate, { deep: true })
 watch(defense.userData, recalculate, { deep: true })
 
 onMounted((): void => {

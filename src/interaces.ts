@@ -40,6 +40,7 @@ export interface ShardInterface {
 export interface RelicInterface {
     defensePower: number;
     defenseHealth: number;
+    godlyStat?: { type: string; value: number };
     mods: string[];
 }
 
@@ -71,6 +72,26 @@ export interface DefenseRootInterface {
     hpScalar: number[];
 }
 
+export interface SetupElementalCombosInterface {
+    petrify: boolean;
+    ignite: boolean;
+    electrocute: boolean;
+    shatter: boolean;
+}
+
+export interface SetupHeroBuffsInterface {
+    talisman: boolean;
+    talismanChiSupercharge: boolean;
+    callToArms: boolean;
+    radiantPower: number;
+    radiantCriticalPower: number;
+}
+
+export interface DefenseSetupModifiersInterface {
+    combos: SetupElementalCombosInterface;
+    heroBuffs: SetupHeroBuffsInterface;
+}
+
 // This interface is used to identify user data for defenses which will be different for every user
 export interface UserDefenseInterface {
     isCollapsed: boolean;
@@ -87,6 +108,7 @@ export interface UserDefenseInterface {
 export interface UserDefenseSetupInterface {
     label: string;
     incrementId: number;
+    modifiers: DefenseSetupModifiersInterface;
     defensesIncrementIds: number[];
 }
 

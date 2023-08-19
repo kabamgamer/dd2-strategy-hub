@@ -1,6 +1,13 @@
 import { ref } from 'vue'
 import OutputModifier from "@/classes/OutputModifier";
-import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface, CalculatedDefenseStatsInterface } from "@/interaces";
+import type {
+    DefenseRootInterface,
+    ModInterface,
+    ShardInterface,
+    UserDefenseInterface,
+    CalculatedDefenseStatsInterface,
+    DefenseSetupModifiersInterface
+} from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import {
     AncientDefenseCriticalChance,
@@ -13,6 +20,7 @@ import HasAscensionPoints from "@/traits/HasAscensionPoints";
 
 import ModType from "@/enums/ModType";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+import { getDefaultSetupModifiers } from "@/stores/UserData";
 
 export function useDefenseCalculations(): any {
     let defense: DefenseRootInterface
@@ -23,6 +31,7 @@ export function useDefenseCalculations(): any {
     let ancientResetPoints: UserAncientResetPoints
     let setupDefenses: UserDataStoreDefenseInterface[]
     let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}
+    let setupModifiers: DefenseSetupModifiersInterface
 
     const totalDps = ref<number>(0)
     const tooltipDps = ref<number>(0)
@@ -32,7 +41,7 @@ export function useDefenseCalculations(): any {
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
 
-    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}): void {
+    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}, parsedSetupModifiers?: DefenseSetupModifiersInterface): void {
         defense = parsedDefense
         userDefenseData = parsedUserDefenseData
         defenseMods = parsedDefenseMods
@@ -41,6 +50,7 @@ export function useDefenseCalculations(): any {
         ancientResetPoints = parsedAncientResetPoints
         setupDefenses = parsedSetupDefenses ?? []
         defenseBoosts = parsedDefenseBoosts ?? {}
+        setupModifiers = parsedSetupModifiers ?? getDefaultSetupModifiers()
 
         defensePower.value = calculatedDefensePower()
         defenseHealth.value = calculatedDefenseHealth()
@@ -83,6 +93,22 @@ export function useDefenseCalculations(): any {
             totalDefensePower = defensePowerShardsAndDestructivePylon(totalDefensePower)
         }
 
+        // Add 14% defense power per radiant power shard
+        if (setupModifiers.heroBuffs.radiantPower > 0) {
+            for (let i = 0; i < (setupModifiers.heroBuffs.radiantPower > 4 ? 4 : setupModifiers.heroBuffs.radiantPower); i++) {
+                totalDefensePower *= 1.14
+            }
+        }
+
+        // Add 86% defense power if talisman is active (base 60% + 26% from gilded Chi Supercharge)
+        if (setupModifiers.heroBuffs.talisman) {
+            totalDefensePower *= 1.60
+
+            if (setupModifiers.heroBuffs.talismanChiSupercharge) {
+                totalDefensePower *= 1.26
+            }
+        }
+
         return totalDefensePower
     }
 
@@ -101,6 +127,14 @@ export function useDefenseCalculations(): any {
         })
 
         critChance += diverseMods('criticalChance', 'percentage');
+
+        if (userDefenseData.relic.godlyStat?.type === 'critical_chance') {
+            critChance += userDefenseData.relic.godlyStat.value
+        }
+
+        if (setupModifiers.heroBuffs.radiantCriticalPower > 0) {
+            critChance += 3 * (setupModifiers.heroBuffs.radiantCriticalPower > 4 ? 4 : setupModifiers.heroBuffs.radiantCriticalPower)
+        }
 
         let critChanceMultiplier: number = critChance / 100
 
@@ -131,6 +165,18 @@ export function useDefenseCalculations(): any {
             Object.values(defenseBoosts).forEach((defenseBoost: CalculatedDefenseStatsInterface) => {
                 criticalDamagePercentage += defenseBoost.critDamage*100/4
             })
+        }
+
+        if (userDefenseData.relic.godlyStat?.type === 'critical_damage') {
+            criticalDamagePercentage += userDefenseData.relic.godlyStat.value
+        }
+
+        if (setupModifiers.heroBuffs.radiantCriticalPower > 0) {
+            criticalDamagePercentage += 5 * (setupModifiers.heroBuffs.radiantCriticalPower > 4 ? 4 : setupModifiers.heroBuffs.radiantCriticalPower)
+        }
+
+        if (setupModifiers.heroBuffs.talisman) {
+            criticalDamagePercentage += 20
         }
 
         let criticalDamageMultiplier: number = criticalDamagePercentage / 100
@@ -181,11 +227,11 @@ export function useDefenseCalculations(): any {
         const attackScalar: number = defense.attackScalar[defenseLevel-1]
         const critDamageMultiplier: number = (1 + criticalChance.value * criticalDamage.value)
         const calculatedAttackRate: number = attackRate()
-        attackDamage.value = baseDefensePower * attackScalar
+        attackDamage.value = baseDefensePower * attackScalar * defenseSetupHeroBuffs()
 
-        tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / calculatedAttackRate
+        tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / calculatedAttackRate * defenseSetupHeroBuffs()
 
-        return attackDamage.value * critDamageMultiplier / calculatedAttackRate * antiModsMultiplier()
+        return attackDamage.value * critDamageMultiplier / calculatedAttackRate * antiModsMultiplier() * defenseSetupComboBuffs()
     }
 
     function attackRate(): number {
@@ -320,6 +366,26 @@ export function useDefenseCalculations(): any {
         }
 
         return multiplier
+    }
+
+    function defenseSetupComboBuffs(): number {
+        let comboModifier = 1
+
+        if (setupModifiers.combos.ignite) {
+            comboModifier *= 1.25
+        }
+
+        return comboModifier
+    }
+
+    function defenseSetupHeroBuffs(): number {
+        let heroBuffModifier = 1
+
+        if (setupModifiers.heroBuffs.callToArms) {
+            heroBuffModifier *= 1.45
+        }
+
+        return heroBuffModifier
     }
 
     // expose managed state as return value

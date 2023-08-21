@@ -66,6 +66,11 @@
                          :id="'talismanChiSuperchargeHeroBuff' + setupIncrementId">
                   <label class="form-check-label" :for="'talismanChiSuperchargeHeroBuff' + setupIncrementId">Talisman Chi Supercharge (gilded)</label>
                 </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" v-model="setupModifiers.heroBuffs.talismanChiBurst"
+                         :id="'talismanChiBurstHeroBuff' + setupIncrementId">
+                  <label class="form-check-label" :for="'talismanChiBurstHeroBuff' + setupIncrementId">Talisman Chi Burst (gilded)</label>
+                </div>
               </div>
 
               <div class="col-md-3">
@@ -74,8 +79,33 @@
                          :id="'callToArmsHeroBuff' + setupIncrementId">
                   <label class="form-check-label" :for="'callToArmsHeroBuff' + setupIncrementId">Call to Arms</label>
                 </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" v-model="setupModifiers.heroBuffs.callToArmsInspiredShout"
+                         :id="'callToArmsInspiredShoutHeroBuff' + setupIncrementId">
+                  <label class="form-check-label" :for="'callToArmsInspiredShoutHeroBuff' + setupIncrementId">Call to Arms Inspired Shout (gilded)</label>
+                </div>
               </div>
 
+              <div class="col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" v-model="setupModifiers.heroBuffs.eruption"
+                         :id="'eruptionHeroBuff' + setupIncrementId">
+                  <label class="form-check-label" :for="'eruptionHeroBuff' + setupIncrementId">Eruption</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" v-model="setupModifiers.heroBuffs.eruptionTwiceAsBright"
+                         :id="'eruptionTwiceAsBrightHeroBuff' + setupIncrementId">
+                  <label class="form-check-label" :for="'eruptionTwiceAsBrightHeroBuff' + setupIncrementId">Eruption Twice As Bright (gilded)</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-modifiers__hero-buffs mt-3">
+            <strong>
+              Radiant buffs:
+            </strong>
+            <div class="row">
               <div class="col-md-3">
                 <label :for="'radiantPowerHeroBuff' + setupIncrementId" class="form-label">Radiant power</label>
                 <input type="number" min="0" max="4" class="form-control form-control-sm" :id="'radiantPowerHeroBuff' + setupIncrementId" v-model="setupModifiers.heroBuffs.radiantPower">

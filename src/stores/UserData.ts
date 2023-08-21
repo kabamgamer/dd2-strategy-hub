@@ -157,7 +157,11 @@ export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {
         heroBuffs: {
             talisman: false,
             talismanChiSupercharge: false,
+            talismanChiBurst: false,
             callToArms: false,
+            callToArmsInspiredShout: false,
+            eruption: false,
+            eruptionTwiceAsBright: false,
             radiantPower: 0,
             radiantCriticalPower: 0,
         }

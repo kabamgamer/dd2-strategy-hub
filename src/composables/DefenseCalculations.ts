@@ -177,6 +177,10 @@ export function useDefenseCalculations(): any {
 
         if (setupModifiers.heroBuffs.talisman) {
             criticalDamagePercentage += 20
+
+            if (setupModifiers.heroBuffs.talismanChiBurst) {
+                criticalDamagePercentage += 26
+            }
         }
 
         let criticalDamageMultiplier: number = criticalDamagePercentage / 100
@@ -382,7 +386,21 @@ export function useDefenseCalculations(): any {
         let heroBuffModifier = 1
 
         if (setupModifiers.heroBuffs.callToArms) {
-            heroBuffModifier *= 1.45
+            let callToArmsMultiplier = 1.45;
+            if (setupModifiers.heroBuffs.callToArmsInspiredShout) {
+                callToArmsMultiplier = 1.70
+            }
+
+            heroBuffModifier *= callToArmsMultiplier
+        }
+
+        if (setupModifiers.heroBuffs.eruption) {
+            let eruptionMultiplier = 1.3;
+            if (setupModifiers.heroBuffs.eruptionTwiceAsBright) {
+                eruptionMultiplier = 2.12
+            }
+
+            heroBuffModifier *= eruptionMultiplier
         }
 
         return heroBuffModifier

@@ -82,7 +82,11 @@ export interface SetupElementalCombosInterface {
 export interface SetupHeroBuffsInterface {
     talisman: boolean;
     talismanChiSupercharge: boolean;
+    talismanChiBurst: boolean;
     callToArms: boolean;
+    callToArmsInspiredShout: boolean;
+    eruption: boolean;
+    eruptionTwiceAsBright: boolean;
     radiantPower: number;
     radiantCriticalPower: number;
 }

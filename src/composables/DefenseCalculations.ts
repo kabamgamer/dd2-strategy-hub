@@ -284,7 +284,12 @@ export function useDefenseCalculations(): any {
             return 0
         }
 
-        const vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
+        let vampiricEmpowermentBaseStat: number
+        if (defense.id === 'BuffBeam') {
+            vampiricEmpowermentBaseStat = userDefenseData.relic.defenseHealth
+        } else {
+            vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
+        }
 
         return vampiricEmpowermentBaseStat * .76
     }

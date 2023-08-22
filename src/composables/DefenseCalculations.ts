@@ -175,11 +175,11 @@ export function useDefenseCalculations(): any {
             criticalDamagePercentage += 5 * (setupModifiers.heroBuffs.radiantCriticalPower > 4 ? 4 : setupModifiers.heroBuffs.radiantCriticalPower)
         }
 
-        if (setupModifiers.heroBuffs.talisman) {
+        if (setupModifiers.heroBuffs.talisman && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
             criticalDamagePercentage += 20
 
             if (setupModifiers.heroBuffs.talismanChiBurst) {
-                criticalDamagePercentage += 26
+                criticalDamagePercentage += 20
             }
         }
 

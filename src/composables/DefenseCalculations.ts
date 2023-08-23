@@ -391,7 +391,7 @@ export function useDefenseCalculations(): any {
     function defenseSetupHeroBuffs(): number {
         let heroBuffModifier = 1
 
-        if (setupModifiers.heroBuffs.callToArms) {
+        if (setupModifiers.heroBuffs.callToArms && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
             let callToArmsMultiplier = 1.45;
             if (setupModifiers.heroBuffs.callToArmsInspiredShout) {
                 callToArmsMultiplier = 1.70

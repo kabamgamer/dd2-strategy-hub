@@ -210,9 +210,22 @@ export function useDefenseCalculations(): any {
 
     function defensePowerShardsAndDestructivePylon(baseDefensePower: number, calculateTooltipDps?: boolean): number {
         const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
+        const hasBoostedPower: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_power').length > 0
+        const hasMassDestruction: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'mass_destruction').length > 0
+
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
             if (shard.id === 'destruction' && hasDestructivePylon) {
+                return
+            }
+
+            if (shard.id === 'boosted_power' && hasMassDestruction) {
+                return
+            }
+
+            if (shard.id === 'mass_destruction' && hasBoostedPower) {
+                baseDefensePower *= ((1 + shard.defensePower?.percentage / 100) + 0.20)
+                tooltipDps.value *= ((1 + shard.defensePower?.percentage / 100) + 0.20)
                 return
             }
 

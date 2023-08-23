@@ -100,11 +100,12 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        // Add 86% defense power if talisman is active (base 60% + 26% from gilded Chi Supercharge)
-        if (setupModifiers.heroBuffs.talisman) {
+        if (setupModifiers.heroBuffs.talisman && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
+            // Add 60% defense power if talisman is active
             totalDefensePower *= 1.60
 
             if (setupModifiers.heroBuffs.talismanChiSupercharge) {
+                // Add an additional 26% defense power if talisman is active and has a chi supercharge shard
                 totalDefensePower *= 1.26
             }
         }
@@ -179,7 +180,7 @@ export function useDefenseCalculations(): any {
             criticalDamagePercentage += 20
 
             if (setupModifiers.heroBuffs.talismanChiBurst) {
-                criticalDamagePercentage += 20
+                criticalDamagePercentage += 26
             }
         }
 

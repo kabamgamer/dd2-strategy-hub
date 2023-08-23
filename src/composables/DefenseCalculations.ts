@@ -400,7 +400,7 @@ export function useDefenseCalculations(): any {
             heroBuffModifier *= callToArmsMultiplier
         }
 
-        if (setupModifiers.heroBuffs.eruption) {
+        if (setupModifiers.heroBuffs.eruption && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
             let eruptionMultiplier = 1.3;
             if (setupModifiers.heroBuffs.eruptionTwiceAsBright) {
                 eruptionMultiplier = 2.12

@@ -100,13 +100,19 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        // Add 86% defense power if talisman is active (base 60% + 26% from gilded Chi Supercharge)
-        if (setupModifiers.heroBuffs.talisman) {
+        if (setupModifiers.heroBuffs.talisman && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
+            // Add 60% defense power if talisman is active
             totalDefensePower *= 1.60
 
             if (setupModifiers.heroBuffs.talismanChiSupercharge) {
+                // Add an additional 26% defense power if talisman is active and has a chi supercharge shard
                 totalDefensePower *= 1.26
             }
+        }
+
+        if (isBuffDefense()) {
+            const attackScalar: number = defense.attackScalar[defenseLevel-1]
+            totalDefensePower *= attackScalar
         }
 
         return totalDefensePower
@@ -175,7 +181,7 @@ export function useDefenseCalculations(): any {
             criticalDamagePercentage += 5 * (setupModifiers.heroBuffs.radiantCriticalPower > 4 ? 4 : setupModifiers.heroBuffs.radiantCriticalPower)
         }
 
-        if (setupModifiers.heroBuffs.talisman) {
+        if (setupModifiers.heroBuffs.talisman && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
             criticalDamagePercentage += 20
 
             if (setupModifiers.heroBuffs.talismanChiBurst) {
@@ -190,6 +196,11 @@ export function useDefenseCalculations(): any {
             criticalDamageMultiplier += AncientDefenseCriticalDamage.upgrades[ancientResetPoints.ancient_defense_critical_damage - 1]
         }
 
+        if (isBuffDefense()) {
+            const attackScalar: number = defense.attackScalar[defenseLevel-1]
+            criticalDamageMultiplier *= attackScalar
+        }
+
         return criticalDamageMultiplier
     }
 
@@ -199,9 +210,33 @@ export function useDefenseCalculations(): any {
 
     function defensePowerShardsAndDestructivePylon(baseDefensePower: number, calculateTooltipDps?: boolean): number {
         const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
+        const hasMassDestruction: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'mass_destruction').length > 0
+        const boostedPowerShard: ShardInterface|undefined = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_power')[0]
+        const boostedBeamShard: ShardInterface|undefined = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_beam')[0]
+
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
             if (shard.id === 'destruction' && hasDestructivePylon) {
+                return
+            }
+
+            if (shard.id === 'boosted_power' && hasMassDestruction) {
+                return
+            }
+
+            if (shard.id === 'boosted_beam' && hasMassDestruction) {
+                return
+            }
+
+            if (shard.id === 'mass_destruction' && boostedPowerShard) {
+                baseDefensePower *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedPowerShard.defensePower?.percentage ?? 0)) / 100)
+                tooltipDps.value *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedPowerShard.defensePower?.percentage ?? 0)) / 100)
+                return
+            }
+
+            if (shard.id === 'mass_destruction' && boostedBeamShard) {
+                baseDefensePower *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedBeamShard.defensePower?.percentage ?? 0)) / 100)
+                tooltipDps.value *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedBeamShard.defensePower?.percentage ?? 0)) / 100)
                 return
             }
 
@@ -284,9 +319,24 @@ export function useDefenseCalculations(): any {
             return 0
         }
 
-        const vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
+        let vampiricEmpowermentBaseStat: number
+        if (defense.id === 'BuffBeam') {
+            vampiricEmpowermentBaseStat = userDefenseData.relic.defenseHealth
+        } else {
+            vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
+        }
 
-        return vampiricEmpowermentBaseStat * .76
+        const baseVampiricDefensePower = vampiricEmpowermentBaseStat * .76
+        if (defenseLevel === 1) {
+            return baseVampiricDefensePower
+        }
+
+        const currentHealthScalar: number = defense.hpScalar[defenseLevel-1]
+        const tier1HealthScalar: number = defense.hpScalar[0]
+
+        const vampiricUpgradeBonus: number = (vampiricEmpowermentBaseStat - ascensionDefenseHealth()) * (currentHealthScalar / tier1HealthScalar - 1) * .76
+
+        return baseVampiricDefensePower + vampiricUpgradeBonus
     }
 
     function powerMods(): number {
@@ -385,7 +435,7 @@ export function useDefenseCalculations(): any {
     function defenseSetupHeroBuffs(): number {
         let heroBuffModifier = 1
 
-        if (setupModifiers.heroBuffs.callToArms) {
+        if (setupModifiers.heroBuffs.callToArms && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
             let callToArmsMultiplier = 1.45;
             if (setupModifiers.heroBuffs.callToArmsInspiredShout) {
                 callToArmsMultiplier = 1.70
@@ -394,7 +444,7 @@ export function useDefenseCalculations(): any {
             heroBuffModifier *= callToArmsMultiplier
         }
 
-        if (setupModifiers.heroBuffs.eruption) {
+        if (setupModifiers.heroBuffs.eruption && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
             let eruptionMultiplier = 1.3;
             if (setupModifiers.heroBuffs.eruptionTwiceAsBright) {
                 eruptionMultiplier = 2.12

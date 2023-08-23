@@ -210,8 +210,9 @@ export function useDefenseCalculations(): any {
 
     function defensePowerShardsAndDestructivePylon(baseDefensePower: number, calculateTooltipDps?: boolean): number {
         const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
-        const hasBoostedPower: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_power').length > 0
         const hasMassDestruction: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'mass_destruction').length > 0
+        const boostedPowerShard: ShardInterface|undefined = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_power')[0]
+        const boostedBeamShard: ShardInterface|undefined = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_beam')[0]
 
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
@@ -223,9 +224,19 @@ export function useDefenseCalculations(): any {
                 return
             }
 
-            if (shard.id === 'mass_destruction' && hasBoostedPower) {
-                baseDefensePower *= ((1 + shard.defensePower?.percentage / 100) + 0.20)
-                tooltipDps.value *= ((1 + shard.defensePower?.percentage / 100) + 0.20)
+            if (shard.id === 'boosted_beam' && hasMassDestruction) {
+                return
+            }
+
+            if (shard.id === 'mass_destruction' && boostedPowerShard) {
+                baseDefensePower *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedPowerShard.defensePower?.percentage ?? 0)) / 100)
+                tooltipDps.value *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedPowerShard.defensePower?.percentage ?? 0)) / 100)
+                return
+            }
+
+            if (shard.id === 'mass_destruction' && boostedBeamShard) {
+                baseDefensePower *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedBeamShard.defensePower?.percentage ?? 0)) / 100)
+                tooltipDps.value *= (1 + ((shard.defensePower?.percentage ?? 0) + (boostedBeamShard.defensePower?.percentage ?? 0)) / 100)
                 return
             }
 

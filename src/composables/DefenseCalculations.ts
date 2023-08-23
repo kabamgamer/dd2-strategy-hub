@@ -315,7 +315,17 @@ export function useDefenseCalculations(): any {
             vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
         }
 
-        return vampiricEmpowermentBaseStat * .76
+        const baseVampiricDefensePower = vampiricEmpowermentBaseStat * .76
+        if (defenseLevel === 1) {
+            return baseVampiricDefensePower
+        }
+
+        const currentHealthScalar: number = defense.hpScalar[defenseLevel-1]
+        const tier1HealthScalar: number = defense.hpScalar[0]
+
+        const vampiricUpgradeBonus: number = (vampiricEmpowermentBaseStat - ascensionDefenseHealth()) * (currentHealthScalar / tier1HealthScalar - 1) * .76
+
+        return baseVampiricDefensePower + vampiricUpgradeBonus
     }
 
     function powerMods(): number {

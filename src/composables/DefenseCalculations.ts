@@ -110,6 +110,11 @@ export function useDefenseCalculations(): any {
             }
         }
 
+        if (isBuffDefense()) {
+            const attackScalar: number = defense.attackScalar[defenseLevel-1]
+            totalDefensePower *= attackScalar
+        }
+
         return totalDefensePower
     }
 
@@ -189,6 +194,11 @@ export function useDefenseCalculations(): any {
         // apply ancient reset points
         if (ancientResetPoints.ancient_defense_critical_damage > 0) {
             criticalDamageMultiplier += AncientDefenseCriticalDamage.upgrades[ancientResetPoints.ancient_defense_critical_damage - 1]
+        }
+
+        if (isBuffDefense()) {
+            const attackScalar: number = defense.attackScalar[defenseLevel-1]
+            criticalDamageMultiplier *= attackScalar
         }
 
         return criticalDamageMultiplier

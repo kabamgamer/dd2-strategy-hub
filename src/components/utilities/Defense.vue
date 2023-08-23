@@ -195,6 +195,8 @@ function recalculate(): void {
   }, 100)
 }
 
+const unwatchUserData = watch(defense.userData, recalculate, { deep: true })
+
 function onDefenseSelection(defenseData: DefenseRootInterface): void {
   defense.defenseData = defenseData
   defense.userData = {
@@ -207,6 +209,9 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
     shards: [],
     ascensionPoints: {},
   } as UserDefenseInterface;
+
+  unwatchUserData()
+  watch(defense.userData, recalculate, { deep: true })
 }
 
 watch(userDefenseMods, debounce(() => {
@@ -223,7 +228,6 @@ watch(props.setupDefenses as object, (newValue, oldValue) => {
 }, { deep: true })
 watch(props.defenseBoosts as object, recalculate, { deep: true })
 watch(props.setupModifiers as object, recalculate, { deep: true })
-watch(defense.userData, recalculate, { deep: true })
 
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)

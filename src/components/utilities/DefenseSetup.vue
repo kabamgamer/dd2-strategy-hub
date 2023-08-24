@@ -14,6 +14,9 @@
           <button class="btn btn-danger delete-btn" @click.prevent="deleteDefenseSetup(defenseSetup.incrementId)">
             Delete
           </button>
+          <button ref="shareButtonElement" class="btn btn-info share-btn" @click.prevent="shareSetup">
+            Share
+          </button>
           <button class="btn btn-primary add-btn" :class="{ disabled: defenses.length === 0 }" :disabled="defenses.length === 0" @click.prevent="addDefense">
             Add defense
           </button>
@@ -101,6 +104,7 @@ const { defenses } = storeToRefs(userStore)
 const { deleteDefenseSetup } = userStore
 
 const id = ref<string>()
+const shareButtonElement = ref()
 const defensesStats = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const defenseBoosts = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const defenseSelect = ref<boolean>(false)
@@ -153,6 +157,17 @@ function selectDefense(): void {
   selectedDefense.value = null
 }
 
+function shareSetup(): void {
+  const sharableLink = encodeURI(window.location.origin + '?shared=' + JSON.stringify({defenses: setupDefenses.value.map((defense: UserDataStoreDefenseInterface) => defense.userData), setups: [props.defenseSetup]}))
+
+  navigator.clipboard.writeText(sharableLink);
+
+  shareButtonElement.value.classList.add('coppied')
+  setTimeout(() => {
+    shareButtonElement.value.classList.remove('coppied')
+  }, 5000)
+}
+
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
@@ -177,5 +192,23 @@ onMounted((): void => {
     display: flex;
     align-items: center;
     margin-right: 10px;
+  }
+
+  .share-btn {
+    margin-left: 1rem;
+    position: relative
+  }
+  .share-btn.coppied::after {
+    background: var(--bs-secondary-bg-subtle);
+    color: var(--bs-body-color);
+    border-radius: 4px;
+    bottom: 120%;
+    content: 'Coppied to clipboard! Share this URL with your friends.';
+    display: block;
+    left: -175%;
+    padding: 1em;
+    position: absolute;
+    width: 280px;
+    z-index: 1;
   }
 </style>

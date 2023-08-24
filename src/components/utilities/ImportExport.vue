@@ -62,10 +62,22 @@
       <button class="btn btn-primary" @click.prevent="exportData" v-if="!isImport">Export</button>
     </template>
   </Modal>
+
+  <Modal title="Shared setup" ref="sharedSetupModal">
+    <template #body>
+      Do you want to import the shared setup?
+<!--      <div class="setup" v-if="parsedDefenseSetup">-->
+<!--        <DefenseSetup :defenseSetup="parsedDefenseSetup" />-->
+<!--      </div>-->
+    </template>
+    <template #footer>
+      <button class="btn btn-primary" @click.prevent="importSharedData">Yes</button>
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useUserDataStore } from "@/stores/UserData"
 import { storeToRefs } from "pinia"
 
@@ -79,6 +91,8 @@ const { defenses, defenseSetups } = storeToRefs(userStore)
 const { getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses } = userStore
 
 const importExportModal = ref<typeof Modal|null>(null);
+const sharedSetupModal = ref<typeof Modal|null>(null)
+
 const isImport = ref<boolean>(true);
 const exportType = ref<number>();
 const importFile = ref();
@@ -86,6 +100,7 @@ const importLabelPrefix = ref<string>("");
 const validationMessage = ref<null|string>(null);
 const defenseExportSelection = ref<number[]>([]);
 const defenseSetupExportSelection = ref<null|number>(null);
+const parsedDefenseSetup = ref<UserDefenseSetupInterface|undefined>()
 
 interface ImportExportDataInterface { defenses: UserDefenseInterface[], setups?: UserDefenseSetupInterface[] }
 
@@ -251,4 +266,29 @@ function getDefensesFromSetups(setups: UserDefenseSetupInterface[]): UserDataSto
 
   return Object.values(setupDefenses)
 }
+
+function importSharedData(): void {
+  let data: ImportExportDataInterface = remapData(parsedDefenseSetup.value) as ImportExportDataInterface
+
+  importDefenses(data.defenses)
+  if (data.setups) {
+    defenseSetups.value = defenseSetups.value.concat(data.setups)
+  }
+
+  let url = new URL(location.href);
+  url.searchParams.delete('shared');
+  window.history.pushState({}, document.title, url);
+
+  sharedSetupModal.value?.hide();
+}
+
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const defenseSetup = urlParams.get('shared');
+  parsedDefenseSetup.value = defenseSetup ? JSON.parse(defenseSetup) as UserDefenseSetupInterface : undefined;
+
+  if (parsedDefenseSetup.value) {
+    sharedSetupModal.value?.show();
+  }
+});
 </script>

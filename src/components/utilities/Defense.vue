@@ -221,13 +221,13 @@ hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as Defens
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
 watch(ancientPowerPoints, recalculate, { deep: true })
-watch(props.setupDefenses as object, (newValue, oldValue) => {
+watch(() => props.defenseBoosts, recalculate, { deep: true })
+watch(() => props.setupModifiers, recalculate, { deep: true })
+watch(() => props.setupDefenses, (newValue, oldValue) => {
   if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
 
   recalculate()
 }, { deep: true })
-watch(props.defenseBoosts as object, recalculate, { deep: true })
-watch(props.setupModifiers as object, recalculate, { deep: true })
 
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)
@@ -283,7 +283,7 @@ onMounted((): void => {
 
 .accordion-header {
   position: sticky;
-  top: 0;
+  top: 54px; /* height of navbar */
   z-index: 100;
 }
 .accordion-button {

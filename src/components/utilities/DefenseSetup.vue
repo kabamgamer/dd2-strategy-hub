@@ -81,6 +81,7 @@ import type { PropType } from "vue"
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
 import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData"
+import { useShortUrl } from "@/composables/ShortUrl"
 import { storeToRefs } from "pinia"
 import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/interaces";
 
@@ -98,6 +99,7 @@ if (props.defenseSetup.modifiers === undefined) {
   props.defenseSetup.modifiers = getDefaultSetupModifiers()
 }
 
+const { shortenUrl } = useShortUrl()
 const userStore = useUserDataStore()
 
 const { defenses } = storeToRefs(userStore)
@@ -157,15 +159,17 @@ function selectDefense(): void {
   selectedDefense.value = null
 }
 
-function shareSetup(): void {
+async function shareSetup(): Promise<void> {
   const sharableLink = encodeURI(window.location.origin + '?shared=' + JSON.stringify({defenses: setupDefenses.value.map((defense: UserDataStoreDefenseInterface) => defense.userData), setups: [props.defenseSetup]}))
 
-  navigator.clipboard.writeText(sharableLink);
+  navigator.clipboard.writeText(await shortenUrl(sharableLink));
 
   shareButtonElement.value.classList.add('coppied')
   setTimeout(() => {
     shareButtonElement.value.classList.remove('coppied')
   }, 5000)
+
+  return Promise.resolve()
 }
 
 onMounted((): void => {

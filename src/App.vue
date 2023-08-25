@@ -52,7 +52,7 @@
       <span class="text-muted">
         &copy; {{ (new Date).getFullYear() }} DD2 Strategy Hub |
         <a href="https://github.com/kabamgamer/dd2-strategy-hub" target="_blank" rel="noopener noreferrer">
-          <IconGithub /> Github
+          <span class="icon-github"><IconGithub /></span> Github
         </a>
       </span>
     </div>
@@ -126,5 +126,12 @@ nav {
 
 .btn-color-mode {
   margin-right: 10px;
+}
+
+body[data-bs-theme="dark"] .icon-github {
+  color: #fff;
+}
+body[data-bs-theme="light"] .icon-github {
+  color: #000;
 }
 </style>

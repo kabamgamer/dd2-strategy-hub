@@ -277,7 +277,7 @@ onMounted((): void => {
   margin: 0;
 }
 .defense-info__level .btn svg {
-  color: var(--bs-primary);
+  color: var(--bs-accordion-color);
   width: 15px;
 }
 

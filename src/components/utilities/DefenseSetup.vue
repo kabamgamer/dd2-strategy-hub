@@ -7,7 +7,7 @@
 
       <div class="setup__toolbar_right d-flex">
         <div class="setup__toolbar_total-dps">
-          Total setup DPS: {{ Math.round(totalDps).toLocaleString('en-US') }}
+          Setup DPS: {{ Math.round(totalDps).toLocaleString('en-US') }}
         </div>
 
         <div class="setup__toolbar_actions">
@@ -33,6 +33,7 @@
         <Defense
             :defense="defense"
             :setupDefenses="setupDefenses"
+            :setupDefenseOptions="defenseSetup.defenses"
             :defenseBoosts="defenseBoosts"
             :setupModifiers="defenseSetup.modifiers"
             @total-dps-calculated="(totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number) => {
@@ -40,6 +41,17 @@
             }"
         >
           <template #defense-details>
+            <div class="setup-defense-options" v-if="defense.defenseData && !defense.defenseData.isUnique && defense.userData.id !== 'BoostAura' && defense.userData.id !== 'BuffBeam'">
+              <hr />
+
+              <div class="mb-3 row">
+                <label for="defenseCount" class="col-sm-4 col-form-label">Defense count:</label>
+                <div class="col-sm-8">
+                  <input type="number" v-model="defenseSetup.defenses[defense.incrementId].defenseCount" class="form-control" id="defenseCount">
+                </div>
+              </div>
+            </div>
+
             <div class="d-flex justify-content-center">
               <button class="btn btn-danger" @click.prevent="deleteDefense(defense.incrementId)">
                 Delete
@@ -112,9 +124,20 @@ const defenseBoosts = ref<{[incrementId: number]: CalculatedDefenseStatsInterfac
 const defenseSelect = ref<boolean>(false)
 const selectedDefense = ref<number|null>(null)
 
-const setupDefenses = computed(() => defenses.value.filter((defense) => props.defenseSetup.defensesIncrementIds.includes(defense.incrementId)))
-const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && !props.defenseSetup.defensesIncrementIds.includes(defense.incrementId)))
-const totalDps = computed((): number => Object.values(defensesStats.value).reduce((totalDps, defense: CalculatedDefenseStatsInterface) => totalDps + defense.totalDps, 0))
+const setupDefenses = computed(() => defenses.value.filter((defense) => props.defenseSetup.defenses[defense.incrementId] !== undefined))
+const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && props.defenseSetup.defenses[defense.incrementId] === undefined))
+const totalDps = computed((): number => {
+  let totalDps = 0
+
+  for (const defense of setupDefenses.value) {
+    const defenseStats = defensesStats.value[defense.incrementId]
+    if (defenseStats) {
+      totalDps += defenseStats.totalDps * props.defenseSetup.defenses[defense.incrementId].defenseCount
+    }
+  }
+
+  return totalDps
+})
 
 function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number): void {
   const calculatedStats: CalculatedDefenseStatsInterface = {
@@ -146,7 +169,7 @@ function deleteDefense(defenseIncrementId: number): void {
   if (defenseBoosts.value[defenseIncrementId]) {
     delete defenseBoosts.value[defenseIncrementId]
   }
-  props.defenseSetup.defensesIncrementIds.splice(props.defenseSetup.defensesIncrementIds.indexOf(defenseIncrementId), 1)
+  delete props.defenseSetup.defenses[defenseIncrementId]
   defensesStats.value[defenseIncrementId].totalDps = 0
 }
 
@@ -154,7 +177,7 @@ function selectDefense(): void {
   if (selectedDefense.value === null || selectedDefense.value === 0) {
     return
   }
-  props.defenseSetup.defensesIncrementIds.push(selectedDefense.value)
+  props.defenseSetup.defenses[selectedDefense.value] = {defenseCount: 1}
   defenseSelect.value = false
   selectedDefense.value = null
 }

@@ -6,7 +6,8 @@ import type {
     ShardInterface,
     UserDefenseInterface,
     CalculatedDefenseStatsInterface,
-    DefenseSetupModifiersInterface
+    DefenseSetupModifiersInterface,
+    UserSetupDefenseInterface
 } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import {
@@ -30,6 +31,7 @@ export function useDefenseCalculations(): any {
     let defenseLevel: number
     let ancientResetPoints: UserAncientResetPoints
     let setupDefenses: UserDataStoreDefenseInterface[]
+    let setupDefenseOptions: { [defensesIncrementId: number]: UserSetupDefenseInterface }
     let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}
     let setupModifiers: DefenseSetupModifiersInterface
 
@@ -40,8 +42,9 @@ export function useDefenseCalculations(): any {
     const defensePower = ref(0)
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
+    const attackRate = ref(0)
 
-    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}, parsedSetupModifiers?: DefenseSetupModifiersInterface): void {
+    function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedSetupDefenseOptions?: { [defensesIncrementId: number]: UserSetupDefenseInterface }, parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}, parsedSetupModifiers?: DefenseSetupModifiersInterface): void {
         defense = parsedDefense
         userDefenseData = parsedUserDefenseData
         defenseMods = parsedDefenseMods
@@ -49,6 +52,7 @@ export function useDefenseCalculations(): any {
         defenseLevel = parsedDefenseLevel
         ancientResetPoints = parsedAncientResetPoints
         setupDefenses = parsedSetupDefenses ?? []
+        setupDefenseOptions = parsedSetupDefenseOptions ?? {}
         defenseBoosts = parsedDefenseBoosts ?? {}
         setupModifiers = parsedSetupModifiers ?? getDefaultSetupModifiers()
 
@@ -56,6 +60,7 @@ export function useDefenseCalculations(): any {
         defenseHealth.value = calculatedDefenseHealth()
         criticalChance.value = calculatedCriticalChance()
         criticalDamage.value = calculatedCriticalDamage()
+        attackRate.value = calculatedAttackRate()
         totalDps.value = calculatedDps()
     }
 
@@ -90,7 +95,7 @@ export function useDefenseCalculations(): any {
 
         // Add shard modifiers in defense power for Boost Aura and Buff Beam
         if (isBuffDefense()) {
-            totalDefensePower = defensePowerShardsAndDestructivePylon(totalDefensePower)
+            totalDefensePower = defensePowerModifiersAndDestructivePylon(totalDefensePower)
         }
 
         // Add 14% defense power per radiant power shard
@@ -127,6 +132,12 @@ export function useDefenseCalculations(): any {
                 return
             }
 
+            if ((util as ModInterface).type?.id === ModType.Unique.id) {
+                if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
+                    return;
+                }
+            }
+
             if (util.criticalChance instanceof OutputModifier) {
                 critChance += util.criticalChance.percentage ?? 0
             }
@@ -159,6 +170,12 @@ export function useDefenseCalculations(): any {
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
             if ((util as ModInterface).type?.id === ModType.Diverse.id) {
                 return
+            }
+
+            if ((util as ModInterface).type?.id === ModType.Unique.id) {
+                if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
+                    return;
+                }
             }
 
             if (util.criticalDamage instanceof OutputModifier) {
@@ -208,7 +225,7 @@ export function useDefenseCalculations(): any {
         return Object.keys(defenseBoosts).length > 0 && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam'
     }
 
-    function defensePowerShardsAndDestructivePylon(baseDefensePower: number, calculateTooltipDps?: boolean): number {
+    function defensePowerModifiersAndDestructivePylon(baseDefensePower: number, calculateTooltipDps: boolean = false): number {
         const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
         const hasMassDestruction: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'mass_destruction').length > 0
         const boostedPowerShard: ShardInterface|undefined = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_power')[0]
@@ -249,10 +266,73 @@ export function useDefenseCalculations(): any {
             }
         })
 
+        // Calculate percentage modifiers
+        defenseMods.forEach((mod: ModInterface) => {
+            if (mod.type?.id === ModType.Diverse.id) {
+                return
+            }
+
+            if (mod.type?.id === ModType.Power.id) {
+                return
+            }
+
+            if (mod.type?.id === ModType.Anti.id) {
+                return
+            }
+
+            if (mod.type?.id === ModType.Unique.id) {
+                if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
+                    return;
+                }
+            }
+
+            if (mod.id === 'unique_power_servo') {
+                return
+            }
+
+            if (mod.id === 'motherly_instinct' && mod.defensePower instanceof OutputModifier) {
+                baseDefensePower = motherlyInstinctModifier(baseDefensePower, mod.defensePower.percentage ?? 0, calculateTooltipDps)
+
+                return;
+            }
+
+            if (mod.defensePower instanceof OutputModifier) {
+                baseDefensePower = mod.defensePower.calculate(baseDefensePower)
+
+                if (calculateTooltipDps && mod.inTooltip) {
+                    tooltipDps.value = mod.defensePower.calculate(tooltipDps.value)
+                }
+            }
+        })
+
         if (calculateTooltipDps) {
             tooltipDps.value = tooltipDps.value * destructivePylonMultiplier()
         }
         return baseDefensePower * destructivePylonMultiplier()
+    }
+
+    function motherlyInstinctModifier(baseDefensePower: number, percentage: number, calculateTooltipDps: boolean): number {
+        let dragonsNestsCount: number = 0
+        setupDefenses.forEach((setupDefense: UserDataStoreDefenseInterface) => {
+            if (setupDefense.userData.id === defense.id) {
+                return
+            }
+
+            if (setupDefense.userData.id === 'Dragon\'sNest') {
+                dragonsNestsCount += setupDefenseOptions[setupDefense.incrementId].defenseCount
+            }
+        })
+
+        // Add defense power per dragons nest
+        for (let i = 0; i < dragonsNestsCount; i++) {
+            baseDefensePower *= (1 + percentage / 100)
+
+            if (calculateTooltipDps) {
+                tooltipDps.value *= (1 + percentage / 100)
+            }
+        }
+
+        return baseDefensePower
     }
 
     function isBuffDefense(): boolean {
@@ -261,22 +341,27 @@ export function useDefenseCalculations(): any {
 
     function calculatedDps(): number {
         tooltipDps.value = defensePower.value
-        const baseDefensePower: number = defensePowerShardsAndDestructivePylon(defensePower.value, true)
+        const baseDefensePower: number = defensePowerModifiersAndDestructivePylon(defensePower.value, true)
 
         const attackScalar: number = defense.attackScalar[defenseLevel-1]
         const critDamageMultiplier: number = (1 + criticalChance.value * criticalDamage.value)
-        const calculatedAttackRate: number = attackRate()
         attackDamage.value = baseDefensePower * attackScalar * defenseSetupHeroBuffs()
 
-        tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / calculatedAttackRate * defenseSetupHeroBuffs()
+        tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / attackRate.value * defenseSetupHeroBuffs()
 
-        return attackDamage.value * critDamageMultiplier / calculatedAttackRate * antiModsMultiplier() * defenseSetupComboBuffs()
+        return attackDamage.value * critDamageMultiplier / attackRate.value * antiModsMultiplier() * defenseSetupComboBuffs()
     }
 
-    function attackRate(): number {
+    function calculatedAttackRate(): number {
         let attackRatePercentageBuffed: number = 0;
 
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
+            if ((util as ModInterface).type?.id === ModType.Unique.id) {
+                if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
+                    return;
+                }
+            }
+            
             if (util.defenseRate instanceof OutputModifier) {
                 attackRatePercentageBuffed += util.defenseRate.percentage ?? 0
             }
@@ -343,8 +428,14 @@ export function useDefenseCalculations(): any {
         let powerModsAdditive: number = 0;
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type?.id !== ModType.Power.id) {
+            if (mod.type?.id !== ModType.Power.id && mod.id !== 'unique_power_servo') {
                 return
+            }
+
+            if (mod.type?.id === ModType.Unique.id) {
+                if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
+                    return;
+                }
             }
 
             powerModsAdditive += mod.defensePower?.additive ?? 0

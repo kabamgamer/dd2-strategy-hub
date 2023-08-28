@@ -82,13 +82,13 @@ import { useUserDataStore } from "@/stores/UserData"
 import { storeToRefs } from "pinia"
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
-import type { UserDefenseSetupInterface, UserDefenseInterface } from "@/interaces";
+import type {UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface} from "@/interaces";
 
 import Modal from "@/components/layout/BootstrapModal.vue";
 
 const userStore = useUserDataStore()
 const { defenses, defenseSetups } = storeToRefs(userStore)
-const { getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses } = userStore
+const { getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups } = userStore
 
 const importExportModal = ref<typeof Modal|null>(null);
 const sharedSetupModal = ref<typeof Modal|null>(null)
@@ -131,12 +131,13 @@ function importData(): void {
 
       importDefenses(data.defenses)
       if (data.setups) {
-        defenseSetups.value = defenseSetups.value.concat(data.setups)
+        importDefenseSetups(data.setups)
       }
 
       validationMessage.value = null
       importExportModal.value?.hide();
     } catch (e: any) {
+      console.error(e)
       validationMessage.value = "Invalid import: " + (e as Error).message
       return
     }
@@ -185,18 +186,28 @@ function remapData(data: any): object {
   })
 
   let nextDefenseSetupIncrementId = getNextDefenseSetupIncrementId()
-  data.setups?.map((setup: UserDefenseSetupInterface) => {
-    setup.incrementId = nextDefenseSetupIncrementId
-    if (importLabelPrefix.value !== "") {
-      setup.label = importLabelPrefix.value + " " + setup.label
-    }
+  if (data.setups) {
+    data.setups.map((setup: UserDefenseSetupInterface) => {
+      setup.incrementId = nextDefenseSetupIncrementId
+      if (importLabelPrefix.value !== "") {
+        setup.label = importLabelPrefix.value + " " + setup.label
+      }
 
-    setup.defensesIncrementIds = setup.defensesIncrementIds.map((defenseIncrementId: number) => defenseIncrementIdMapping[defenseIncrementId])
+      if (setup.defensesIncrementIds) {
+        setup.defensesIncrementIds = (setup.defensesIncrementIds as number[]).map((defenseIncrementId: number) => defenseIncrementIdMapping[defenseIncrementId])
+      } else {
+        let mappedDefenses: { [defensesIncrementId: number]: UserSetupDefenseInterface } = {}
+        for (const defensesIncrementId in setup.defenses) {
+          mappedDefenses[defenseIncrementIdMapping[defensesIncrementId]] = setup.defenses[defensesIncrementId]
+        }
+        setup.defenses = mappedDefenses
+      }
 
-    nextDefenseSetupIncrementId++
+      nextDefenseSetupIncrementId++
 
-    return setup
-  })
+      return setup
+    })
+  }
 
   return data
 }
@@ -257,11 +268,12 @@ function download(content: string, fileName: string, contentType: string): void 
 function getDefensesFromSetups(setups: UserDefenseSetupInterface[]): UserDataStoreDefenseInterface[] {
   const setupDefenses: {[defenseIncrementId: number]: UserDataStoreDefenseInterface} = []
   setups.forEach((setup: UserDefenseSetupInterface) => {
-    setup.defensesIncrementIds.forEach((defenseIncrementId: number) => {
+    for (const index in setup.defenses) {
+      const defenseIncrementId: number = parseInt(index)
       if (!(defenseIncrementId in setupDefenses)) {
         setupDefenses[defenseIncrementId] = defenses.value.find((defense) => defense.incrementId === defenseIncrementId) as UserDataStoreDefenseInterface
       }
-    })
+    }
   })
 
   return Object.values(setupDefenses)
@@ -272,7 +284,7 @@ function importSharedData(): void {
 
   importDefenses(data.defenses)
   if (data.setups) {
-    defenseSetups.value = defenseSetups.value.concat(data.setups)
+    importDefenseSetups(data.setups)
   }
 
   let url = new URL(location.href);

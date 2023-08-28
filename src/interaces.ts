@@ -109,11 +109,16 @@ export interface UserDefenseInterface {
     shards: string[];
 }
 
+export interface UserSetupDefenseInterface {
+    defenseCount: number;
+}
+
 export interface UserDefenseSetupInterface {
     label: string;
     incrementId: number;
     modifiers: DefenseSetupModifiersInterface;
-    defensesIncrementIds: number[];
+    defensesIncrementIds?: number[]; // @deprecated since v1.1.7
+    defenses: { [defensesIncrementId: number]: UserSetupDefenseInterface };
 }
 
 export interface CalculatedDefenseStatsInterface {

@@ -2,6 +2,7 @@ import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { DefenseRootInterface, UserDefenseInterface, UserDefenseSetupInterface, DefenseSetupModifiersInterface } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
+import DataMigrations from "@/data/DataMigrations";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 
 export interface UserDataStoreDefenseInterface {
@@ -12,6 +13,8 @@ export interface UserDataStoreDefenseInterface {
 
 export const useUserDataStore = defineStore('userDataStore', () => {
     const { getDefenseRoot } = useDefenseStore();
+
+    const dataMigration = new DataMigrations
 
     const colorMode = ref<string>(localStorage.getItem('colorMode') ?? 'light')
     const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
@@ -36,7 +39,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     }
 
     function getDefenseSetups(): UserDefenseSetupInterface[] {
-        return JSON.parse(localStorage.getItem('defenseSetups') ?? '[]') as UserDefenseSetupInterface[]
+        return dataMigration.migrateDefenseSetups(JSON.parse(localStorage.getItem('defenseSetups') ?? '[]')) as UserDefenseSetupInterface[]
     }
 
     function getAncientPowerPoints(): UserAncientResetPoints {
@@ -85,7 +88,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     function deleteDefense(defenseIncrementId: number): void {
         // Delete defense from defense setups
         for (const setup of defenseSetups.value) {
-            setup.defensesIncrementIds = setup.defensesIncrementIds.filter((id: number) => id !== defenseIncrementId)
+            delete setup.defenses[defenseIncrementId]
         }
 
         for (const index in defenses.value) {
@@ -120,6 +123,10 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         loadDefenseData()
     }
 
+    function importDefenseSetups(setups: UserDefenseSetupInterface[]): void {
+        defenseSetups.value = defenseSetups.value.concat(dataMigration.migrateDefenseSetups(setups))
+    }
+
     // Persist defense data on change
     watch(defenses, () => {
         localStorage.setItem('defenses', JSON.stringify(defenses.value
@@ -143,7 +150,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('colorMode', colorMode.value)
     })
 
-    return { isDev, colorMode, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses }
+    return { isDev, colorMode, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
 })
 
 export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {

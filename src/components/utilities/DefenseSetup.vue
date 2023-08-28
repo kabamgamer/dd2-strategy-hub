@@ -33,6 +33,7 @@
         <Defense
             :defense="defense"
             :setupDefenses="setupDefenses"
+            :setupDefenseOptions="defenseSetup.defenses"
             :defenseBoosts="defenseBoosts"
             :setupModifiers="defenseSetup.modifiers"
             @total-dps-calculated="(totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number) => {

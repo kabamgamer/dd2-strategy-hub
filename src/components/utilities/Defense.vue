@@ -113,7 +113,8 @@ import type {
   DefenseRootInterface,
   UserDefenseInterface,
   CalculatedDefenseStatsInterface,
-  DefenseSetupModifiersInterface
+  DefenseSetupModifiersInterface,
+  UserSetupDefenseInterface
 } from "@/interaces";
 
 import DefenseSelection from "@/components/utilities/DefenseSelection.vue";
@@ -160,6 +161,7 @@ const props = defineProps({
   },
   collapsed: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
+  setupDefenseOptions: Object as PropType<{ [defensesIncrementId: number]: UserSetupDefenseInterface }|undefined>,
   defenseBoosts: Object as PropType<{[incrementId: number]: CalculatedDefenseStatsInterface}|undefined>,
   setupModifiers: Object as PropType<DefenseSetupModifiersInterface|undefined>,
 });
@@ -189,7 +191,7 @@ function recalculate(): void {
   const interval: any = setInterval((): void => {
     if (userDefenseMods.value.length === defense.userData.relic.mods.length && userDefenseShards.value.length === defense.userData.shards.length) {
       clearInterval(interval)
-      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.defenseBoosts, props.setupModifiers)
+      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
       emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHealth.value, criticalDamage.value, criticalChance.value)
     }
   }, 100)
@@ -223,6 +225,7 @@ watch(defenseLevel, recalculate)
 watch(ancientPowerPoints, recalculate, { deep: true })
 watch(() => props.defenseBoosts, recalculate, { deep: true })
 watch(() => props.setupModifiers, recalculate, { deep: true })
+watch(() => props.setupDefenseOptions, recalculate, { deep: true })
 watch(() => props.setupDefenses, (newValue, oldValue) => {
   if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
 

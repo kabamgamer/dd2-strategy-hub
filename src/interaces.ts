@@ -70,6 +70,7 @@ export interface DefenseRootInterface {
     ascensionPoints: AscensionPointInterface[];
     attackScalar: number[];
     hpScalar: number[];
+    isUnique: boolean;
 }
 
 export interface SetupElementalCombosInterface {

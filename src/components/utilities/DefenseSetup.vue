@@ -41,7 +41,7 @@
             }"
         >
           <template #defense-details>
-            <div class="setup-defense-options" v-if="defense.userData.id !== 'BoostAura' && defense.userData.id !== 'BuffBeam'">
+            <div class="setup-defense-options" v-if="defense.defenseData && !defense.defenseData.isUnique && defense.userData.id !== 'BoostAura' && defense.userData.id !== 'BuffBeam'">
               <hr />
 
               <div class="mb-3 row">

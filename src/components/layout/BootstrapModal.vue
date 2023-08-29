@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" tabindex="-1" aria-labelledby=""
+  <div class="modal fade" :class="{ 'modal-xl': isLarge }" tabindex="-1" aria-labelledby=""
        aria-hidden="true" ref="modalElement">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -22,17 +22,24 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineEmits } from "vue";
 import { Modal } from "bootstrap";
 
 defineProps({
   title: String,
+  isLarge: Boolean,
 });
+
+const emit = defineEmits(['show', 'hide']);
 
 let modalElement = ref();
 let modalObject: Modal|null = null;
 
 onMounted((): void => {
+  modalElement.value.addEventListener('hidden.bs.modal', function () {
+    emit('hide');
+  })
+
   // Make sure modal is always last item in body
   document.body.appendChild(modalElement.value)
   modalObject = new Modal(modalElement.value)

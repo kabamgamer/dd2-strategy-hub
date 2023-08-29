@@ -2,7 +2,7 @@
   <div class="setup">
     <div class="setup__toolbar d-flex justify-content-between mb-2">
       <div class="setup__toolbar_left">
-        <h3>{{ defenseSetup.label }} <span v-if="defenses.length === 0">(Configure a defense first)</span></h3>
+        <h3><input type="text" v-model="defenseSetup.label" class="form-control-plaintext p-0"> <span v-if="defenses.length === 0">(Configure a defense first)</span></h3>
       </div>
 
       <div class="setup__toolbar_right d-flex">

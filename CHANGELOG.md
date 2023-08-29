@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.1.8](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.1.8)
+
+* Hide shards/mods if they are incompatible with the defense
+* Added defense rate stat
+* Added option to rename setups
+* Fixed bug where toggle collapse in a setup would also toggle collapse in defenses section
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.1.7...v1.1.8)
+
+
+
 ## [v1.1.7](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.1.7) (2023-08-28)
 
 * Added defense count input for configuring more of the same defense in a setup

@@ -38,11 +38,11 @@ export function useDefenseCalculations(): any {
     const totalDps = ref<number>(0)
     const tooltipDps = ref<number>(0)
     const attackDamage = ref<number>(0)
+    const attackRate = ref(0)
     const defenseHealth = ref(0)
     const defensePower = ref(0)
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
-    const attackRate = ref(0)
 
     function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedSetupDefenseOptions?: { [defensesIncrementId: number]: UserSetupDefenseInterface }, parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}, parsedSetupModifiers?: DefenseSetupModifiersInterface): void {
         defense = parsedDefense
@@ -548,5 +548,5 @@ export function useDefenseCalculations(): any {
     }
 
     // expose managed state as return value
-    return { totalDps, tooltipDps, attackDamage, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
+    return { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
 }

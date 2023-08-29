@@ -15,6 +15,7 @@ export interface DefenseModDataResponse {
     defenseRangeModifier?: string;
     criticalChanceModifier?: string;
     criticalDamageModifier?: string;
+    compatibilities?: string;
 }
 
 export default class DefenseModData extends HasOutputModifier implements ModInterface {
@@ -58,5 +59,9 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
         this.defenseRange = this.getOutputModifierForValue(data.defenseRangeModifier)
         this.criticalChance = this.getOutputModifierForValue(data.criticalChanceModifier)
         this.criticalDamage = this.getOutputModifierForValue(data.criticalDamageModifier)
+
+        if (data.compatibilities !== undefined) {
+            this.compatibilities = data.compatibilities.split(',')
+        }
     }
 }

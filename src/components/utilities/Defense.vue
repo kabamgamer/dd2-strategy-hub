@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="loading" />
 
     <h2 class="accordion-header" :id="id + '-heading'">
-      <button class="accordion-button" type="button" @click="defense.userData.isCollapsed = !defense.userData?.isCollapsed" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
+      <button class="accordion-button" type="button" @click="defense.userData.isCollapsed = setupDefenses ? defense.userData?.isCollapsed : !defense.userData?.isCollapsed" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
 
@@ -238,7 +238,7 @@ onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
       .substring(1)
-      .toLowerCase();
+      .toLowerCase() + defense.incrementId
 
   // Await the loading of defenseData before initializing calculations
   const interval: any = setInterval((): void => {

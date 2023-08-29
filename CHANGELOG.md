@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.1.8](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.1.8)
+## [v1.1.8](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.1.8) (2023-08-29)
 
 * Hide shards/mods if they are incompatible with the defense
 * Added defense rate stat

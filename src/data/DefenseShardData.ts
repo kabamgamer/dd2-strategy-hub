@@ -15,6 +15,7 @@ export interface DefenseShardDataResponse {
     defenseRangeModifier?: string;
     criticalChanceModifier?: string;
     criticalDamageModifier?: string;
+    compatibilities?: string;
 }
 
 export default class DefenseShardData extends HasOutputModifier implements ShardInterface {
@@ -60,5 +61,9 @@ export default class DefenseShardData extends HasOutputModifier implements Shard
         this.defenseRange = this.getOutputModifierForValue(data.defenseRangeModifier)
         this.criticalChance = this.getOutputModifierForValue(data.criticalChanceModifier)
         this.criticalDamage = this.getOutputModifierForValue(data.criticalDamageModifier)
+
+        if (data.compatibilities !== undefined) {
+            this.compatibilities = data.compatibilities.split(',')
+        }
     }
 }

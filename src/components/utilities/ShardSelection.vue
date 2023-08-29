@@ -1,7 +1,7 @@
 <template>
   <select class="form-select" v-model="selectedShard">
 
-    <optgroup :label="tier.toString()" v-for="(tierShards, tier) in availableShards" :key="tier">
+    <optgroup :label="tier.toString()" v-for="(tierShards, tier) in compatibleShards" :key="tier">
       <option :value="shard" v-for="(shard, index) in tierShards" :key="index">{{ shard.name }}</option>
     </optgroup>
   </select>
@@ -11,7 +11,7 @@
 import type { ShardInterface } from "@/interaces";
 
 import type { PropType } from "vue";
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 
 import { useShardStore } from "@/stores/ShardInfo";
 const { getAllShardsCategorizedByTier } = useShardStore();
@@ -28,6 +28,22 @@ const props = defineProps({
 
 const selectedShard = ref('');
 const availableShards = ref<{[tier: string]: ShardInterface[]}>({});
+const compatibleShards = computed((): {[tier: string]: ShardInterface[]} => {
+  if (props.defenseCompatibility === '') return availableShards.value;
+
+  const filteredShards: {[tier: string]: ShardInterface[]} = {};
+  for (const tier in availableShards.value) {
+    filteredShards[tier] = availableShards.value[tier].filter((shard: ShardInterface): boolean => {
+      if (shard.compatibilities === undefined) return true;
+
+      return shard.compatibilities.includes(props.defenseCompatibility);
+    });
+
+    if (filteredShards[tier].length === 0) delete filteredShards[tier];
+  }
+
+  return filteredShards;
+});
 
 getAllShardsCategorizedByTier().then((shards: {[tier: string]: ShardInterface[]}): void => {
   availableShards.value = shards;

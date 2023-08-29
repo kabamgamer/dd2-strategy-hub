@@ -72,7 +72,7 @@
             <div class="defense-info__pet">
               <div class="row">
                 <div class="col-md-6">
-                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-mods="true" />
+                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-mods="true" />
                 </div>
                 <div class="col-md-6">
                   <Pet v-model="defense.userData.pet" />
@@ -83,7 +83,7 @@
             <hr />
 
             <div class="defense-info__relic">
-              <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.defenseData?.id" :hide-relic="true" />
+              <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-relic="true" />
 
               <i v-if="hasDiverseMods">For proper testing diverse mods, use defense setups (see section below)</i>
             </div>
@@ -91,7 +91,7 @@
             <hr />
 
             <div class="defense-info__shards">
-              <Shards v-model="defense.userData.shards" :defenseCompatibility="defense.defenseData?.id" />
+              <Shards v-model="defense.userData.shards" :defenseCompatibility="defense.userData.id" />
             </div>
 
             <hr />

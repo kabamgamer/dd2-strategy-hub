@@ -23,7 +23,10 @@ const props = defineProps({
     type: Object as PropType<ShardInterface>,
     default: () => ({}),
   },
-  defenseCompatibility: String,
+  defenseCompatibility: {
+    type: String,
+    default: '',
+  },
 });
 
 const selectedShard = ref('');

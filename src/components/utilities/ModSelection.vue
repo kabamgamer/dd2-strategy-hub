@@ -14,7 +14,10 @@ const { getAllMods } = useModStore();
 
 const props = defineProps({
   modelValue: Object as PropType<ModInterface | null>,
-  defenseCompatibility: String,
+  defenseCompatibility: {
+    type: String,
+    default: '',
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])

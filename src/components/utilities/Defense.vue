@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="loading" />
 
     <h2 class="accordion-header" :id="id + '-heading'">
-      <button class="accordion-button" type="button" @click="defense.userData.isCollapsed = setupDefenses ? defense.userData?.isCollapsed : !defense.userData?.isCollapsed" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
+      <button class="accordion-button" type="button" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
 
@@ -12,7 +12,7 @@
       </button>
     </h2>
 
-    <div :id="id" class="accordion-collapse collapse" :class="{ show: !collapsed }" :aria-labelledby="id + '-heading'">
+    <div :id="id" ref="accordionCollapse" class="accordion-collapse collapse" :class="{ show: !collapsed }" :aria-labelledby="id + '-heading'">
       <div class="accordion-body">
 
         <DefenseSelection v-if="!defense.userData?.label" @change="onDefenseSelection" />
@@ -170,6 +170,7 @@ const props = defineProps({
 let defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
 
 const id = ref<string>()
+const accordionCollapse = ref()
 const defenseLevel = ref<number>(1)
 const hasDiverseMods = ref<boolean>(false)
 const userDefenseMods = ref<DefenseModData[]>([])
@@ -239,6 +240,19 @@ onMounted((): void => {
       .toString(16)
       .substring(1)
       .toLowerCase() + defense.incrementId
+
+  accordionCollapse.value.addEventListener('hidden.bs.collapse', function () {
+    if (props.setupDefenses) {
+      return
+    }
+    defense.userData.isCollapsed = true
+  })
+  accordionCollapse.value.addEventListener('shown.bs.collapse', function () {
+    if (props.setupDefenses) {
+      return
+    }
+    defense.userData.isCollapsed = false
+  })
 
   // Await the loading of defenseData before initializing calculations
   const interval: any = setInterval((): void => {

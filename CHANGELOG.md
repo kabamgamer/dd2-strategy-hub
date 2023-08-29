@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
+
+* 
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.1.7...HEAD)
+
+
+
 ## [v1.1.7](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.1.7) (2023-08-28)
 
 * Added defense count input for configuring more of the same defense in a setup

@@ -50,7 +50,7 @@
   <footer class="footer mt-auto py-3" :class="'bg-' + colorMode">
     <div class="container text-center">
       <span class="text-muted">
-        &copy; {{ (new Date).getFullYear() }} DD2 Strategy Hub |
+        Build: <ChangelogModal /> | &copy; {{ (new Date).getFullYear() }} DD2 Strategy Hub |
         <a href="https://github.com/kabamgamer/dd2-strategy-hub" target="_blank" rel="noopener noreferrer">
           <span class="icon-github"><IconGithub /></span> Github
         </a>
@@ -81,6 +81,7 @@ import RerollTracker from "@/components/sections/RerollTracker.vue";
 import DefenseDpsCalculator from "@/components/sections/DefenseDpsCalculator.vue";
 import DefenseSetups from "@/components/sections/DefenseSetups.vue";
 import IconGithub from "@/components/icons/IconGithub.vue";
+import ChangelogModal from "@/components/utilities/ChangelogModal.vue";
 
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useUserDataStore } from "@/stores/UserData";

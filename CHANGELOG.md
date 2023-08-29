@@ -4,6 +4,7 @@
 
 * Hide shards/mods if they are incompatible with the defense
 * Added defense rate stat
+* Added option to rename setups
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.1.7...HEAD)
 

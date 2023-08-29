@@ -48,6 +48,7 @@
                 <span v-if="isDev" class="w-100 defense-info__header-stats__stat"><strong>Attack damage:</strong> {{ Math.round(attackDamage).toLocaleString('en-US') }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Defense Rate:</strong> {{ attackRate }} ({{ attackRatePercentage }}%)</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
               </div>
@@ -107,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted } from "vue";
+import { ref, watch, defineProps, defineEmits, onMounted, computed } from "vue";
 import type { PropType } from "vue";
 import type {
   DefenseRootInterface,
@@ -149,7 +150,7 @@ const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
 const { ancientPowerPoints, isDev } = storeToRefs(userStore);
-const { totalDps, tooltipDps, attackDamage, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
+const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
@@ -173,6 +174,7 @@ const defenseLevel = ref<number>(1)
 const hasDiverseMods = ref<boolean>(false)
 const userDefenseMods = ref<DefenseModData[]>([])
 const userDefenseShards = ref<DefenseShardData[]>([])
+const attackRatePercentage = computed(() => Math.round((attackRate.value - (defense.defenseData?.baseAttackRate ?? 0)) / ((defense.defenseData?.maxAttackRate ?? 0) - (defense.defenseData?.baseAttackRate ?? 0)) * 100))
 
 function recalculate(): void {
   if (!defense.userData) return

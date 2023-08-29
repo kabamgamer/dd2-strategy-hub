@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
 
 * Hide shards/mods if they are incompatible with the defense
+* Added defense rate stat
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.1.7...HEAD)
 

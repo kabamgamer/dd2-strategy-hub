@@ -26,6 +26,8 @@ export interface DefenseDataResponse {
     ascDefPwr: number;
     ascDefHp: number;
     ascGambit: number;
+    hero: string;
+    defenseUnits: number;
     isUnique: boolean;
 }
 
@@ -43,6 +45,8 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
     attackScalar: number[];
     hpScalar: number[];
     ascensionPoints: AscensionPointInterface[] = [];
+    hero: string;
+    defenseUnits: number;
     isUnique: boolean = false;
 
     constructor(data: DefenseDataResponse) {
@@ -71,6 +75,8 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
         this.baseAttackRange = data.baseAtkRange;
         this.maxAttackRange = data.maxAtkRange;
         this.rangeScalar = data.rangeScalar;
+        this.hero = data.hero;
+        this.defenseUnits = data.defenseUnits;
         this.isUnique = data.isUnique;
         this.attackScalar = [
             data.t1AtkScalar,

@@ -70,6 +70,8 @@ export interface DefenseRootInterface {
     ascensionPoints: AscensionPointInterface[];
     attackScalar: number[];
     hpScalar: number[];
+    hero: string;
+    defenseUnits: number;
     isUnique: boolean;
 }
 

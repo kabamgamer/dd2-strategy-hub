@@ -40,6 +40,7 @@ export function useDefenseCalculations(): any {
     const attackDamage = ref<number>(0)
     const attackRate = ref(0)
     const defenseHealth = ref(0)
+    const defenseHitPoints = ref(0)
     const defensePower = ref(0)
     const defenseRange = ref(0)
     const criticalChance = ref(0)
@@ -59,6 +60,7 @@ export function useDefenseCalculations(): any {
 
         defensePower.value = calculatedDefensePower()
         defenseHealth.value = calculatedDefenseHealth()
+        defenseHitPoints.value = defenseHealth.value * defense.hpScalar[defenseLevel - 1]
         criticalChance.value = calculatedCriticalChance()
         criticalDamage.value = calculatedCriticalDamage()
         attackRate.value = calculatedAttackRate()
@@ -68,13 +70,33 @@ export function useDefenseCalculations(): any {
     }
 
     function calculatedDefenseHealth(): number {
-        let totalDefenseHealth: number = userDefenseData.pet.defenseHealth * ancientFortificationMultiplier() + defense.baseDefenseHealth;
+        let totalDefenseHealth: number = userDefenseData.pet.defenseHealth + userDefenseData.relic.defenseHealth + defense.baseDefenseHealth;
 
-        totalDefenseHealth += userDefenseData.relic.defenseHealth ?? 0;
-
+        totalDefenseHealth *= ancientFortificationMultiplier()
         totalDefenseHealth += ascensionDefenseHealth()
 
-        return totalDefenseHealth
+        let healthAdditive = 0;
+        let healthMultiplier = 1;
+        [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
+            if (util.id === 'boosted_blockade') {
+                return
+            }
+
+            if (util.id === 'health_pylon') {
+                return
+            }
+
+            if (util.defenseHealth instanceof OutputModifier) {
+                healthAdditive += util.defenseHealth.additive ?? 0
+                if (util.defenseHealth.percentage) {
+                    healthMultiplier += util.defenseHealth.percentage / 100
+                }
+            }
+        })
+
+        totalDefenseHealth = (totalDefenseHealth + healthAdditive) * healthMultiplier
+
+        return totalDefenseHealth * boostedBlockadeAndHealthPylonMultiplier()
     }
 
     function calculatedDefensePower(): number {
@@ -132,11 +154,11 @@ export function useDefenseCalculations(): any {
         let rangeAdditive = 0;
         let rangeMultiplier = 1;
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
-            if ((util as ModInterface).id === 'diffusion') {
+            if (util.id === 'diffusion') {
                 return
             }
 
-            if ((util as ModInterface).id === 'range_pylon') {
+            if (util.id === 'range_pylon') {
                 return
             }
 
@@ -564,6 +586,31 @@ export function useDefenseCalculations(): any {
         return rangeMultiplier
     }
 
+    function boostedBlockadeAndHealthPylonMultiplier(): number {
+        let healthMultiplier: number = 1;
+        let healthPylonApplied: boolean = false;
+        let boostedBlockadeApplied: boolean = false;
+        setupDefenses.forEach((setupDefense: UserDataStoreDefenseInterface): void => {
+            if (setupDefense.incrementId === userDefenseData.incrementId) {
+                return
+            }
+
+            if (setupDefense.userData.shards.filter((shardId: string) => shardId === 'health_pylon').length > 0 && !healthPylonApplied) {
+                // ToDo read values from database
+                healthMultiplier *= 1.356
+                healthPylonApplied = true
+            }
+
+            if (setupDefense.userData.shards.filter((shardId: string) => shardId === 'boosted_blockade').length > 0 && !boostedBlockadeApplied) {
+                // ToDo read values from database
+                healthMultiplier *= 1.26
+                boostedBlockadeApplied = true
+            }
+        })
+
+        return healthMultiplier
+    }
+
     function ancientDestructionMultiplier(): number {
         let multiplier: number = 1;
 
@@ -619,5 +666,5 @@ export function useDefenseCalculations(): any {
     }
 
     // expose managed state as return value
-    return { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, defenseRange, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
+    return { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
 }

@@ -151,7 +151,7 @@ export function useDefenseCalculations(): any {
     function calculatedDefenseRange(): number {
         let totalDefenseRange: number = (100 + ancientResetPoints.ancient_strikes) / 100 * defense.baseRange + ascensionDefenseRange();
 
-        let rangeAdditive = 0;
+        let rangeAdditive = userDefenseData.relic.godlyStat?.type === 'defense_range' ? userDefenseData.relic.godlyStat.value : 0;
         let rangeMultiplier = 1;
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
             if (util.id === 'diffusion') {

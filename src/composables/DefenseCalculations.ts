@@ -41,6 +41,7 @@ export function useDefenseCalculations(): any {
     const attackRate = ref(0)
     const defenseHealth = ref(0)
     const defensePower = ref(0)
+    const defenseRange = ref(0)
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
 
@@ -62,6 +63,8 @@ export function useDefenseCalculations(): any {
         criticalDamage.value = calculatedCriticalDamage()
         attackRate.value = calculatedAttackRate()
         totalDps.value = calculatedDps()
+
+        defenseRange.value = calculatedDefenseRange()
     }
 
     function calculatedDefenseHealth(): number {
@@ -121,6 +124,33 @@ export function useDefenseCalculations(): any {
         }
 
         return totalDefensePower
+    }
+
+    function calculatedDefenseRange(): number {
+        let totalDefenseRange: number = (100 + ancientResetPoints.ancient_strikes) / 100 * defense.baseRange + ascensionDefenseRange();
+
+        let rangeAdditive = 0;
+        let rangeMultiplier = 1;
+        [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
+            if ((util as ModInterface).id === 'diffusion') {
+                return
+            }
+
+            if ((util as ModInterface).id === 'range_pylon') {
+                return
+            }
+
+            if (util.defenseRange instanceof OutputModifier) {
+                rangeAdditive += util.defenseRange.additive ?? 0
+                if (util.defenseRange.percentage) {
+                    rangeMultiplier *= (1 + util.defenseRange.percentage / 100)
+                }
+            }
+        })
+
+        totalDefenseRange = (totalDefenseRange + rangeAdditive) * rangeMultiplier * rangePylonAndDiffusionMultiplier()
+
+        return Math.round((totalDefenseRange > defense.maxRange ? defense.maxRange : totalDefenseRange) * defense.rangeScalar)
     }
 
     function calculatedCriticalChance(): number {
@@ -233,6 +263,10 @@ export function useDefenseCalculations(): any {
 
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
+            if (shard.id === 'vampiric_empowerment') {
+                return
+            }
+
             if (shard.id === 'destruction' && hasDestructivePylon) {
                 return
             }
@@ -399,10 +433,21 @@ export function useDefenseCalculations(): any {
         return (defense as unknown as HasAscensionPoints).defenseHealthAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_health ?? 0)?.defenseHealth ?? 0
     }
 
+    function ascensionDefenseRange(): number {
+        if (!defense as any instanceof HasAscensionPoints) {
+            return 0;
+        }
+
+        return (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defenseRange ?? 0
+    }
+
     function vampiricEmpowerment(): number {
-        if (userDefenseData.shards?.filter((shardId: string) => shardId === 'vampiric_empowerment').length === 0) {
+        const vampiricEmpowermentShard: ShardInterface|undefined = defenseShards.find((shard: ShardInterface) => shard.id === 'vampiric_empowerment')
+        if (!vampiricEmpowermentShard) {
             return 0
         }
+
+        const vampiricEmpowermentHealthPercentage: number = (vampiricEmpowermentShard.defensePower?.percentage ?? 0) / 100
 
         let vampiricEmpowermentBaseStat: number
         if (defense.id === 'BuffBeam') {
@@ -411,7 +456,7 @@ export function useDefenseCalculations(): any {
             vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
         }
 
-        const baseVampiricDefensePower = vampiricEmpowermentBaseStat * .76
+        const baseVampiricDefensePower = vampiricEmpowermentBaseStat * vampiricEmpowermentHealthPercentage
         if (defenseLevel === 1) {
             return baseVampiricDefensePower
         }
@@ -419,7 +464,7 @@ export function useDefenseCalculations(): any {
         const currentHealthScalar: number = defense.hpScalar[defenseLevel-1]
         const tier1HealthScalar: number = defense.hpScalar[0]
 
-        const vampiricUpgradeBonus: number = (vampiricEmpowermentBaseStat - ascensionDefenseHealth()) * (currentHealthScalar / tier1HealthScalar - 1) * .76
+        const vampiricUpgradeBonus: number = (vampiricEmpowermentBaseStat - ascensionDefenseHealth()) * (currentHealthScalar / tier1HealthScalar - 1) * vampiricEmpowermentHealthPercentage
 
         return baseVampiricDefensePower + vampiricUpgradeBonus
     }
@@ -485,12 +530,38 @@ export function useDefenseCalculations(): any {
                 return
             }
 
-            if (setupDefense.userData.shards.filter((modId: string) => modId === 'destructive_pylon').length > 0) {
+            if (setupDefense.userData.shards.filter((shardId: string) => shardId === 'destructive_pylon').length > 0) {
+                // ToDo read values from database
                 destructivePylonPercentage = 1.38
             }
         })
 
         return destructivePylonPercentage
+    }
+
+    function rangePylonAndDiffusionMultiplier(): number {
+        let rangeMultiplier: number = 1;
+        let rangePylonApplied: boolean = false;
+        let diffusionApplied: boolean = false;
+        setupDefenses.forEach((setupDefense: UserDataStoreDefenseInterface): void => {
+            if (setupDefense.incrementId === userDefenseData.incrementId) {
+                return
+            }
+
+            if (setupDefense.userData.shards.filter((shardId: string) => shardId === 'range_pylon').length > 0 && !rangePylonApplied) {
+                // ToDo read values from database
+                rangeMultiplier *= 1.24
+                rangePylonApplied = true
+            }
+
+            if (setupDefense.userData.shards.filter((shardId: string) => shardId === 'diffusion').length > 0 && !diffusionApplied) {
+                // ToDo read values from database
+                rangeMultiplier *= 1.25
+                diffusionApplied = true
+            }
+        })
+
+        return rangeMultiplier
     }
 
     function ancientDestructionMultiplier(): number {
@@ -548,5 +619,5 @@ export function useDefenseCalculations(): any {
     }
 
     // expose managed state as return value
-    return { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
+    return { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, defenseRange, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
 }

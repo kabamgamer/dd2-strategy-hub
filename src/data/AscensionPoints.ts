@@ -9,6 +9,7 @@ export class DefenseHealthAP implements AscensionPointInterface {
     defenseHealth: number = 0
     defenseHealthMultiplier: number = 20
     defenseRate: number = 0
+    defenseRange: number = 0
 
     constructor(
         defenseHealthMultiplier: number = 15,
@@ -35,6 +36,7 @@ export class DefensePowerAP implements AscensionPointInterface {
     defensePowerMultiplier: number = 20
     defenseHealth: number = 0
     defenseRate: number = 0
+    defenseRange: number = 0
 
     constructor(
         defensePowerMultiplier: number = 20,
@@ -61,18 +63,23 @@ export class DefenseRangeAP implements AscensionPointInterface {
     defensePowerMultiplier: number = -30
     defenseHealth: number = 0
     defenseRate: number = 0
+    defenseRange: number = 0
+    defenseRangeMultiplier: number = 0
 
     constructor(
         defensePowerMultiplier: number = -30,
+        defenseRangeMultiplier: number = 30,
         maxLevel: number = 50,
     ) {
         this.defensePowerMultiplier = defensePowerMultiplier;
+        this.defenseRangeMultiplier = defenseRangeMultiplier;
         this.maxLevel = maxLevel;
     }
 
     setUpgradeLevel(upgradeLevel: number = 0): AscensionPointInterface {
         this.upgradeLevel = upgradeLevel;
         this.defensePower = upgradeLevel * this.defensePowerMultiplier;
+        this.defenseRange = upgradeLevel * this.defenseRangeMultiplier;
 
         return this
     }
@@ -87,6 +94,7 @@ export class DefenseRateAP implements AscensionPointInterface {
     defenseHealth: number = 0;
     defenseRate: number = 0;
     defenseRatePercentage: number = 1.75;
+    defenseRange: number = 0
 
     constructor(
         defenseRatePercentage: number = 1.75,

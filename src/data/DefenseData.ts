@@ -10,6 +10,8 @@ export interface DefenseDataResponse {
     baseDefHealth: number;
     baseAtkRate: number;
     maxAtkRate: number;
+    baseRange: number;
+    maxRange: number;
     baseAtkRange: number;
     maxAtkRange: number;
     rangeScalar: number;
@@ -26,7 +28,6 @@ export interface DefenseDataResponse {
     ascDefPwr: number;
     ascDefHp: number;
     ascGambit: number;
-    hero: string;
     defenseUnits: number;
     isUnique: boolean;
 }
@@ -39,6 +40,8 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
     baseDefenseHealth: number;
     baseAttackRate: number;
     maxAttackRate: number;
+    baseRange: number;
+    maxRange: number;
     baseAttackRange: number;
     maxAttackRange: number;
     rangeScalar: number;
@@ -72,6 +75,8 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
         this.baseDefenseHealth = data.baseDefHealth;
         this.baseAttackRate = data.baseAtkRate;
         this.maxAttackRate = data.maxAtkRate;
+        this.baseRange = data.baseRange;
+        this.maxRange = data.maxRange;
         this.baseAttackRange = data.baseAtkRange;
         this.maxAttackRange = data.maxAtkRange;
         this.rangeScalar = data.rangeScalar;

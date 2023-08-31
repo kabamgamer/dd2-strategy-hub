@@ -52,6 +52,7 @@ export interface AscensionPointInterface {
     defensePower?: number;
     defenseHealth?: number;
     defenseRate?: number;
+    defenseRange?: number;
     setUpgradeLevel: (level: number) => AscensionPointInterface;
 }
 
@@ -64,6 +65,8 @@ export interface DefenseRootInterface {
     baseDefenseHealth: number;
     baseAttackRate: number;
     maxAttackRate: number;
+    baseRange: number;
+    maxRange: number;
     baseAttackRange: number;
     maxAttackRange: number;
     rangeScalar: number;

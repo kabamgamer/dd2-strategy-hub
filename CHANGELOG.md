@@ -3,9 +3,12 @@
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
 
 * Added DU calculator to defense setups
+* Added range calculator to defenses
 * Fixed a bug in the UI causing collapse to snap instead of transition
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.1.8...HEAD)
+
+
 
 ## [v1.1.8](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.1.8) (2023-08-29)
 

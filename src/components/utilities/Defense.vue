@@ -51,6 +51,7 @@
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Rate:</strong> {{ attackRate }} ({{ attackRatePercentage }}%)</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseRange }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
               </div>
@@ -154,7 +155,7 @@ const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
 const { ancientPowerPoints, isDev } = storeToRefs(userStore);
-const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
+const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, defenseRange, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 

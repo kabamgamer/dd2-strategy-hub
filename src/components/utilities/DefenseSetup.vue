@@ -6,8 +6,13 @@
       </div>
 
       <div class="setup__toolbar_right d-flex">
-        <div class="setup__toolbar_total-dps">
-          Setup DPS: {{ Math.round(totalDps).toLocaleString('en-US') }}
+        <div class="setup__toolbar_stats d-flex">
+          <div class="setup__toolbar_stats__stat setup__toolbar_total-du">
+            DU: {{ totalDu }}
+          </div>
+          <div class="setup__toolbar_stats__stat setup__toolbar_total-dps">
+            DPS: {{ Math.round(totalDps).toLocaleString('en-US') }}
+          </div>
         </div>
 
         <div class="setup__toolbar_actions">
@@ -41,11 +46,12 @@
             }"
         >
           <template #defense-details>
-            <div class="setup-defense-options" v-if="defense.defenseData && !defense.defenseData.isUnique && defense.userData.id !== 'BoostAura' && defense.userData.id !== 'BuffBeam'">
+            <div class="setup-defense-options" v-if="defense.defenseData && !defense.defenseData.isUnique && defense.userData.id !== 'BoostAura'">
               <hr />
 
               <div class="mb-3 row">
-                <label for="defenseCount" class="col-sm-4 col-form-label">Defense count:</label>
+                <label for="defenseCount" class="col-sm-4 col-form-label" v-if="defense.defenseData?.hero === 'Ev2'">Node count:</label>
+                <label for="defenseCount" class="col-sm-4 col-form-label" v-else>Defense count:</label>
                 <div class="col-sm-8">
                   <input type="number" v-model="defenseSetup.defenses[defense.incrementId].defenseCount" class="form-control" id="defenseCount">
                 </div>
@@ -126,6 +132,7 @@ const selectedDefense = ref<number|null>(null)
 
 const setupDefenses = computed(() => defenses.value.filter((defense) => props.defenseSetup.defenses[defense.incrementId] !== undefined))
 const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && props.defenseSetup.defenses[defense.incrementId] === undefined))
+const totalDu = computed((): number => setupDefenses.value.reduce((accumulator, defense: UserDataStoreDefenseInterface) => accumulator + ((defense.defenseData?.defenseUnits ?? 0) * props.defenseSetup.defenses[defense.incrementId].defenseCount), 0))
 const totalDps = computed((): number => {
   let totalDps = 0
 
@@ -212,13 +219,16 @@ onMounted((): void => {
     position: relative;
   }
 
-  .setup__toolbar_total-dps {
+  .setup__toolbar_stats {
     font-size: 1.1rem;
     font-weight: bold;
     height: 100%;
     display: flex;
     align-items: center;
     margin-right: 10px;
+  }
+  .setup__toolbar_stats__stat {
+    margin-left: 15px;
   }
 
   .share-btn {

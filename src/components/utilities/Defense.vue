@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="loading" />
 
     <h2 class="accordion-header" :id="id + '-heading'">
-      <button class="accordion-button" type="button" @click="defense.userData.isCollapsed = setupDefenses ? defense.userData?.isCollapsed : !defense.userData?.isCollapsed" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
+      <button class="accordion-button" type="button" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
 
@@ -12,7 +12,7 @@
       </button>
     </h2>
 
-    <div :id="id" class="accordion-collapse collapse" :class="{ show: !collapsed }" :aria-labelledby="id + '-heading'">
+    <div :id="id" ref="accordionCollapse" class="accordion-collapse collapse" :class="{ show: !collapsed }" :aria-labelledby="id + '-heading'">
       <div class="accordion-body">
 
         <DefenseSelection v-if="!defense.userData?.label" @change="onDefenseSelection" />
@@ -43,12 +43,14 @@
                     <span class="defense-info__level-value">{{ defenseLevel }}</span>
                     <button class="btn btn-link" @click="defenseLevel++" :disabled="defenseLevel===5"><IconChevronUp /></button>
                   </div>
+
+                  <span class="badge rounded-pill bg-success du-badge">{{ defense.defenseData?.defenseUnits }} DU</span>
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Tooltip DPS:</strong> {{ Math.round(tooltipDps).toLocaleString('en-US') }}</span>
                 <span v-if="isDev" class="w-100 defense-info__header-stats__stat"><strong>Attack damage:</strong> {{ Math.round(attackDamage).toLocaleString('en-US') }}</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power:</strong> {{ Math.round(defensePower) }}</span>
-                <span class="w-100 defense-info__header-stats__stat"><strong>Defense Health:</strong> {{ Math.round(defenseHealth) }}</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Defense HP:</strong> {{ Math.round(defenseHitPoints).toLocaleString('en-US') }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Rate:</strong> {{ attackRate }} ({{ attackRatePercentage }}%)</span>
+                <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseRange }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
               </div>
@@ -60,6 +62,8 @@
                     <span class="defense-info__level-value">{{ defenseLevel }}</span>
                     <button class="btn btn-link" @click="defenseLevel++" :disabled="defenseLevel===5"><IconChevronUp /></button>
                   </div>
+
+                  <span class="badge rounded-pill bg-success du-badge">{{ defense.defenseData?.defenseUnits }} DU</span>
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power bonus:</strong> {{ Math.round(defensePower / 10) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (criticalDamage * 100 / 4).toFixed(2) }}%</span>
@@ -150,7 +154,7 @@ const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
 const { ancientPowerPoints, isDev } = storeToRefs(userStore);
-const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
+const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
@@ -170,6 +174,7 @@ const props = defineProps({
 let defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
 
 const id = ref<string>()
+const accordionCollapse = ref()
 const defenseLevel = ref<number>(1)
 const hasDiverseMods = ref<boolean>(false)
 const userDefenseMods = ref<DefenseModData[]>([])
@@ -194,7 +199,7 @@ function recalculate(): void {
     if (userDefenseMods.value.length === defense.userData.relic.mods.length && userDefenseShards.value.length === defense.userData.shards.length) {
       clearInterval(interval)
       calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
-      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHealth.value, criticalDamage.value, criticalChance.value)
+      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value)
     }
   }, 100)
 }
@@ -240,6 +245,19 @@ onMounted((): void => {
       .substring(1)
       .toLowerCase() + defense.incrementId
 
+  accordionCollapse.value.addEventListener('hidden.bs.collapse', function () {
+    if (props.setupDefenses) {
+      return
+    }
+    defense.userData.isCollapsed = true
+  })
+  accordionCollapse.value.addEventListener('shown.bs.collapse', function () {
+    if (props.setupDefenses) {
+      return
+    }
+    defense.userData.isCollapsed = false
+  })
+
   // Await the loading of defenseData before initializing calculations
   const interval: any = setInterval((): void => {
     if (defense.defenseData) {
@@ -268,10 +286,12 @@ onMounted((): void => {
   font-size: larger;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 .defense-info__header-stats__stat {
   font-size: 12pt;
+}
+.du-badge {
+  margin-left: auto
 }
 
 .defense-dps {

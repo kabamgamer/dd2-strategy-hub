@@ -63,7 +63,7 @@
                     <button class="btn btn-link" @click="defenseLevel++" :disabled="defenseLevel===5"><IconChevronUp /></button>
                   </div>
 
-                  <span class="badge rounded-pill bg-success du-badge">{{ defense.defenseData.defenseUnits }} DU</span>
+                  <span class="badge rounded-pill bg-success du-badge">{{ defense.defenseData?.defenseUnits }} DU</span>
                 </span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power bonus:</strong> {{ Math.round(defensePower / 10) }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (criticalDamage * 100 / 4).toFixed(2) }}%</span>

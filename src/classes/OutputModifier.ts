@@ -2,7 +2,7 @@ export default class OutputModifier {
     percentage?: number;
     additive?: number;
 
-    constructor(percentage: undefined | number, additive: undefined | number) {
+    constructor(percentage?: number, additive?: number) {
         this.percentage = percentage;
         this.additive = additive;
     }

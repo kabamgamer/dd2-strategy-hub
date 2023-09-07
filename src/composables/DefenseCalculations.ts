@@ -151,7 +151,7 @@ export function useDefenseCalculations(): any {
     function calculatedDefenseRange(): number {
         let totalDefenseRange: number = (100 + ancientResetPoints.ancient_strikes) / 100 * defense.baseRange + ascensionDefenseRange();
 
-        let rangeAdditive = 0;
+        let rangeAdditive = userDefenseData.relic.godlyStat?.type === 'defense_range' ? userDefenseData.relic.godlyStat.value : 0;
         let rangeMultiplier = 1;
         [...defenseMods, ...defenseShards].forEach((util: ModInterface | ShardInterface) => {
             if (util.id === 'diffusion') {
@@ -379,13 +379,15 @@ export function useDefenseCalculations(): any {
             }
         })
 
+        let baseDefensePowerBonus: number = 1
         // Add defense power per dragons nest
         for (let i = 0; i < dragonsNestsCount; i++) {
-            baseDefensePower *= (1 + percentage / 100)
+            baseDefensePowerBonus += (percentage / 100)
+        }
 
-            if (calculateTooltipDps) {
-                tooltipDps.value *= (1 + percentage / 100)
-            }
+        baseDefensePower *= baseDefensePowerBonus
+        if (calculateTooltipDps) {
+            tooltipDps.value *= baseDefensePowerBonus
         }
 
         return baseDefensePower

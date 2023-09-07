@@ -10,6 +10,8 @@
           <option>No godly stat</option>
           <option value="critical_damage">Critical damage</option>
           <option value="critical_chance">Critical chance</option>
+          <option value="defense_range">Defense range</option>
+          <option value="defense_resistance">Defense resistance</option>
         </select>
       </div>
       <div v-else class="d-flex align-items-center">
@@ -70,6 +72,10 @@ const godlyStatLabel = computed(() => {
       return 'Critical damage'
     case 'critical_chance':
       return 'Critical chance'
+    case 'defense_range':
+      return 'Defense range'
+    case 'defense_resistance':
+      return 'Defense resistance'
     default:
       return 'Godly stat'
   }

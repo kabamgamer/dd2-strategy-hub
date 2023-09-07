@@ -379,13 +379,15 @@ export function useDefenseCalculations(): any {
             }
         })
 
+        let baseDefensePowerBonus: number = 1
         // Add defense power per dragons nest
         for (let i = 0; i < dragonsNestsCount; i++) {
-            baseDefensePower *= (1 + percentage / 100)
+            baseDefensePowerBonus += (percentage / 100)
+        }
 
-            if (calculateTooltipDps) {
-                tooltipDps.value *= (1 + percentage / 100)
-            }
+        baseDefensePower *= baseDefensePowerBonus
+        if (calculateTooltipDps) {
+            tooltipDps.value *= baseDefensePowerBonus
         }
 
         return baseDefensePower

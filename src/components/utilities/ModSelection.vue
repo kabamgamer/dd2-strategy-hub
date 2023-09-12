@@ -1,13 +1,13 @@
 <template>
-  <select class="form-select" v-model="selectedMod">
-    <option :value="mod" v-for="mod in compatibleMods" :key="mod.name">{{ mod.name }}</option>
-  </select>
+  <SearchableSelect v-model="selectedMod" :options="compatibleMods" label-attr="name" />
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { defineProps, defineEmits, watch, ref, computed } from 'vue'
 import type { ModInterface } from '@/interaces'
+
+import SearchableSelect from "@/components/layout/form/SearchableSelect.vue";
 
 import { useModStore } from "@/stores/ModInfo";
 const { getAllMods } = useModStore();

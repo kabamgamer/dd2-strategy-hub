@@ -1,17 +1,13 @@
 <template>
-  <select class="form-select" v-model="selectedDefense">
-    <option selected>Select a defense</option>
-
-    <optgroup :label="hero.toString()" v-for="(heroDefenses, hero) in allDefenses" :key="hero">
-      <option :value="defense" v-for="defense in heroDefenses" :key="defense.id">{{ defense.name }}</option>
-    </optgroup>
-  </select>
+  <SearchableSelect v-model="selectedDefense" :options="allDefenses" grouped label-attr="name" />
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { defineProps, defineEmits, watch, ref } from 'vue'
 import type { DefenseRootInterface } from '@/interaces'
+
+import SearchableSelect from "@/components/layout/form/SearchableSelect.vue";
 
 import { useDefenseStore } from "@/stores/DefenseInfo";
 const { getAllDefensesCategorizedByHero } = useDefenseStore();

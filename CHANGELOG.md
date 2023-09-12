@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
 
 * Added search function to all select boxes (defenses, shards, mods)
+* Added additional collapse in defense to collapse user details only
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.2.1...HEAD)
 

@@ -1,11 +1,10 @@
 <template>
   <div class="searchable">
     <input ref="searchInputElement" type="text" class="form-select" :placeholder="placeholder" v-model="searchCriteria" @keydown="onKeyDown" @focusout="activeIndex = 0">
-    <div class="select-options">
+    <div v-if="!grouped" class="select-options">
       <span
           class="select-options__option"
           :class="{ 'bg-primary-subtle': modelValue === option || index === activeIndex }"
-          v-if="!grouped"
           v-for="(option, index) in criteriaResult"
           :key="index"
           :data-value="option"
@@ -13,21 +12,21 @@
           v-html="searchCriteria.length > 0 ? labelWithBaldCriteria(option[labelAttr]) : option[labelAttr]"
           ref="searchResultInputElements"
       ></span>
+    </div>
 
-      <div v-else>
-        <div class="select-options__group" v-for="(group, groupTitle) in groupedResult" :key="groupTitle">
-          <div class="select-options__group-title">{{ groupTitle.toString() }}</div>
-          <span
-              class="select-options__option"
-              :class="{ 'bg-primary-subtle': modelValue === option || parseInt(index) === activeIndex }"
-              v-for="(option, index) in group"
-              :key="index"
-              :data-value="option"
-              @mousedown="onOptionSelect(option)"
-              v-html="searchCriteria.length > 0 ? labelWithBaldCriteria(option[labelAttr]) : option[labelAttr]"
-              ref="searchResultInputElements"
-          ></span>
-        </div>
+    <div v-else class="select-options">
+      <div class="select-options__group" v-for="(group, groupTitle) in groupedResult" :key="groupTitle">
+        <div class="select-options__group-title">{{ groupTitle.toString() }}</div>
+        <span
+            class="select-options__option"
+            :class="{ 'bg-primary-subtle': modelValue === option || parseInt(index.toString()) === activeIndex }"
+            v-for="(option, index) in group"
+            :key="index"
+            :data-value="option"
+            @mousedown="onOptionSelect(option)"
+            v-html="searchCriteria.length > 0 ? labelWithBaldCriteria(option[labelAttr]) : option[labelAttr]"
+            ref="searchResultInputElements"
+        ></span>
       </div>
     </div>
   </div>
@@ -43,8 +42,8 @@ const props = defineProps({
     default: 'Select an option',
   },
   options: {
-    type: Array,
-    default: [],
+    type: Object,
+    default: () => {},
   },
   labelAttr: {
     type: String,
@@ -55,8 +54,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
-const criteriaResult = computed((): any[]|{ index: any[] } => {
-  if (searchCriteria.value === '') return props.options;
+const criteriaResult = computed((): any[]|{ [index: string]: any[] } => {
+  if (searchCriteria.value === '') return props.options as any[];
 
   if (!props.grouped) {
     return Object.values(props.options.filter((option: any): boolean => {
@@ -64,9 +63,9 @@ const criteriaResult = computed((): any[]|{ index: any[] } => {
     }));
   }
 
-  const mappedGroups: { index: any[] } = {};
+  const mappedGroups: { [index: string]: any } = {};
   for (const index in props.options) {
-    let mappedGroup = props.options[index].filter((option: any): boolean => {
+    let mappedGroup = (props.options[index] as any[]).filter((option: any): boolean => {
       return option[props.labelAttr].toLowerCase().includes(searchCriteria.value.toLowerCase());
     });
 
@@ -80,14 +79,15 @@ const criteriaResult = computed((): any[]|{ index: any[] } => {
   return mappedGroups;
 });
 
-const groupedResult = computed((): any[]|{ index: any[] } => {
-  const result = criteriaResult.value;
+const groupedResult = computed((): { [key: string]: any[] } => {
+  const result = criteriaResult.value as { [key: string]: any[] }
   if (!props.grouped) return result;
 
   let incrementId = 0;
-  const remappedResult: { index: any[] } = {};
+  const remappedResult: { [key: string]: any } = {}
+
   for (const index in result) {
-    remappedResult[index] = {};
+    remappedResult[index] = {}
     for (const option of result[index]) {
       remappedResult[index][incrementId] = option
       incrementId++
@@ -141,6 +141,8 @@ function selectPreviousItem(): void {
 }
 
 function onKeyDown(event: KeyboardEvent): void {
+  let selectedValue;
+
   switch (event.key) {
     case "ArrowDown":
       event.preventDefault()
@@ -151,7 +153,6 @@ function onKeyDown(event: KeyboardEvent): void {
       selectPreviousItem()
       break;
     case "Enter":
-      let selectedValue;
       if (props.grouped) {
         for (const group of Object.values(groupedResult.value)) {
           if (group[activeIndex.value] !== undefined) {
@@ -160,7 +161,7 @@ function onKeyDown(event: KeyboardEvent): void {
           }
         }
       } else {
-        selectedValue = criteriaResult.value[activeIndex.value]
+        selectedValue = (criteriaResult.value as any[])[activeIndex.value]
       }
       onOptionSelect(selectedValue);
       break;

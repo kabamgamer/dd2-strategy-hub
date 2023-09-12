@@ -115,6 +115,8 @@ export const useUserDataStore = defineStore('userDataStore', () => {
 
     function importDefenses(importedDefenses: UserDefenseInterface[]): void {
         importedDefenses.forEach((defense: UserDefenseInterface) => {
+            defense.isCollapsed = false
+            defense.isUserDataCollapsed = true
             defenses.value.push({
                 incrementId: defense.incrementId,
                 userData: defense,

@@ -4,6 +4,7 @@
 
 * Added search function to all select boxes (defenses, shards, mods)
 * Added additional collapse in defense to collapse user details only
+* Start node count at 2 instead of 1 when adding a node type defense to a setup
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.2.1...HEAD)
 

@@ -78,10 +78,10 @@
           <div class="accordion-collapse collapse show">
             <div class="accordion-body">
               <select class="form-select" @change="selectDefense" v-model="selectedDefense">
-                <option :value="0" selected>
+                <option :value="null" selected>
                   Select a defense
                 </option>
-                <option v-for="defense in defenseSelection" :key="defense.incrementId" :value="defense.incrementId">
+                <option v-for="defense in defenseSelection" :key="defense.incrementId" :value="defense">
                   {{ defense.userData.label }}
                 </option>
               </select>
@@ -128,7 +128,7 @@ const shareButtonElement = ref()
 const defensesStats = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const defenseBoosts = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const defenseSelect = ref<boolean>(false)
-const selectedDefense = ref<number|null>(null)
+const selectedDefense = ref<UserDataStoreDefenseInterface|null>(null)
 
 const setupDefenses = computed(() => defenses.value.filter((defense) => props.defenseSetup.defenses[defense.incrementId] !== undefined))
 const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && props.defenseSetup.defenses[defense.incrementId] === undefined))
@@ -184,7 +184,7 @@ function selectDefense(): void {
   if (selectedDefense.value === null || selectedDefense.value === 0) {
     return
   }
-  props.defenseSetup.defenses[selectedDefense.value] = {defenseCount: 1}
+  props.defenseSetup.defenses[selectedDefense.value.incrementId] = {defenseCount: selectedDefense.value.defenseData.hero !== 'Ev2' ? 1 : 2}
   defenseSelect.value = false
   selectedDefense.value = null
 }

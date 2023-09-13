@@ -278,18 +278,18 @@ export function useDefenseCalculations(): any {
     }
 
     function defensePowerModifiersAndDestructivePylon(baseDefensePower: number, calculateTooltipDps: boolean = false): number {
-        const hasDestructivePylon: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'destructive_pylon').length > 0
-        const hasMassDestruction: boolean = defenseShards.filter((shard: ShardInterface) => shard.id === 'mass_destruction').length > 0
-        const boostedPowerShard: ShardInterface|undefined = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_power')[0]
-        const boostedBeamShard: ShardInterface|undefined = defenseShards.filter((shard: ShardInterface) => shard.id === 'boosted_beam')[0]
+        const hasDestruction: boolean = getDefenseShardById('destruction') !== undefined
+        const hasMassDestruction: boolean = getDefenseShardById('mass_destruction') !== undefined
+        const boostedPowerShard: ShardInterface|undefined = getDefenseShardById('boosted_power')
+        const boostedBeamShard: ShardInterface|undefined = getDefenseShardById('boosted_beam')
 
         // Calculate percentage modifiers
         defenseShards.forEach((shard: ShardInterface) => {
-            if (shard.id === 'vampiric_empowerment') {
+            if (shard.id === 'vampiric_empowerment' || shard.id === 'explosive_shielding_guard' || shard.id === 'explosive_guard') {
                 return
             }
 
-            if (shard.id === 'destruction' && hasDestructivePylon) {
+            if (shard.id === 'destructive_pylon' && hasDestruction) {
                 return
             }
 
@@ -407,7 +407,7 @@ export function useDefenseCalculations(): any {
 
         tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / attackRate.value * defenseSetupHeroBuffs()
 
-        return attackDamage.value * critDamageMultiplier / attackRate.value * antiModsMultiplier() * defenseSetupComboBuffs()
+        return attackDamage.value * critDamageMultiplier / attackRate.value * antiModsMultiplier() * defenseSetupComboBuffs() + explosiveGuard()
     }
 
     function calculatedAttackRate(): number {
@@ -465,8 +465,20 @@ export function useDefenseCalculations(): any {
         return (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defenseRange ?? 0
     }
 
+    function explosiveGuard(): number {
+        const explosiveShard: ShardInterface|undefined = getDefenseShardById('explosive_guard') || getDefenseShardById('explosive_shielding_guard')
+
+        if (!explosiveShard) {
+            return 0
+        }
+
+        // ToDo implement explosive guard
+
+        return 0
+    }
+
     function vampiricEmpowerment(): number {
-        const vampiricEmpowermentShard: ShardInterface|undefined = defenseShards.find((shard: ShardInterface) => shard.id === 'vampiric_empowerment')
+        const vampiricEmpowermentShard: ShardInterface|undefined = getDefenseShardById('vampiric_empowerment')
         if (!vampiricEmpowermentShard) {
             return 0
         }
@@ -485,10 +497,14 @@ export function useDefenseCalculations(): any {
             return baseVampiricDefensePower
         }
 
+        if (defense.id !== 'BuffBeam') {
+            vampiricEmpowermentBaseStat -= ascensionDefenseHealth()
+        }
+
         const currentHealthScalar: number = defense.hpScalar[defenseLevel-1]
         const tier1HealthScalar: number = defense.hpScalar[0]
 
-        const vampiricUpgradeBonus: number = (vampiricEmpowermentBaseStat - ascensionDefenseHealth()) * (currentHealthScalar / tier1HealthScalar - 1) * vampiricEmpowermentHealthPercentage
+        const vampiricUpgradeBonus: number = vampiricEmpowermentBaseStat * (currentHealthScalar / tier1HealthScalar - 1) * vampiricEmpowermentHealthPercentage
 
         return baseVampiricDefensePower + vampiricUpgradeBonus
     }
@@ -665,6 +681,10 @@ export function useDefenseCalculations(): any {
         }
 
         return heroBuffModifier
+    }
+
+    function getDefenseShardById(shardId: string): ShardInterface|undefined {
+        return defenseShards.find((shard: ShardInterface) => shard.id === shardId)
     }
 
     // expose managed state as return value

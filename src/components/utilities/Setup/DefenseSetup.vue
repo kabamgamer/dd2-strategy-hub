@@ -103,8 +103,8 @@ import { useShortUrl } from "@/composables/ShortUrl"
 import { storeToRefs } from "pinia"
 import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/interaces";
 
-import Defense from "@/components/utilities/Defense.vue";
-import DefenseSetupModifiers from "@/components/utilities/DefenseSetupModifiers.vue";
+import Defense from "@/components/utilities/Defense/Defense.vue";
+import DefenseSetupModifiers from "@/components/utilities/Setup/DefenseSetupModifiers.vue";
 
 const props = defineProps({
   defenseSetup: {

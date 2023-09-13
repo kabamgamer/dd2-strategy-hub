@@ -49,7 +49,7 @@ import type { PropType } from "vue"
 import type { ModInterface, RelicInterface } from "@/interaces"
 
 import Input from "@/components/layout/form/Input.vue"
-import ModSelection from "@/components/utilities/ModSelection.vue"
+import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
 import { onMounted, ref, computed } from "vue"
 

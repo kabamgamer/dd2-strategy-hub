@@ -2,7 +2,7 @@
   <div class="accordion-item position-relative mb-3">
     <LoadingSpinner v-if="loading" />
 
-    <h2 class="accordion-header" :id="id + '-heading'">
+    <h2 class="accordion-header defense-header" :id="id + '-heading'">
       <button class="accordion-button" type="button" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
@@ -131,10 +131,10 @@ import type {
   UserSetupDefenseInterface
 } from "@/interaces";
 
-import DefenseSelection from "@/components/utilities/DefenseSelection.vue";
-import Pet from "@/components/utilities/Pet.vue";
-import DefenseRelic from "@/components/utilities/DefenseRelic.vue";
-import Shards from "@/components/utilities/Shards.vue";
+import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
+import Pet from "@/components/utilities/Defense/Pet.vue";
+import DefenseRelic from "@/components/utilities/Defense/Relic/DefenseRelic.vue";
+import Shards from "@/components/utilities/Defense/Shards.vue";
 import AscensionPoints from "@/components/utilities/AscensionPoints.vue";
 import IconChevronUp from "@/components/icons/IconChevronUp.vue";
 import IconChevronDown from "@/components/icons/IconChevronDown.vue";
@@ -324,7 +324,7 @@ onMounted((): void => {
   width: 15px;
 }
 
-.accordion-header {
+.defense-header {
   position: sticky;
   top: 54px; /* height of navbar */
   z-index: 100;

@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import DefenseSetup from "@/components/utilities/DefenseSetup.vue";
+import DefenseSetup from "@/components/utilities/Setup/DefenseSetup.vue";
 
 import { storeToRefs } from "pinia";
 

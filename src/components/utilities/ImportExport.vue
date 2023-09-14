@@ -63,15 +63,18 @@
     </template>
   </Modal>
 
-  <Modal title="Shared setup" ref="sharedSetupModal">
+  <Modal title="Shared setup" is-large ref="sharedSetupModal">
     <template #body>
-      Do you want to import the shared setup?
-<!--      <div class="setup" v-if="parsedDefenseSetup">-->
-<!--        <DefenseSetup :defenseSetup="parsedDefenseSetup" />-->
-<!--      </div>-->
+      <div class="shared-defenses" v-if="parsedDefenseSetup">
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-3" v-for="defense in parsedDefenseSetup.defenses">
+            <DefensePreview :defense="defense" />
+          </div>
+        </div>
+      </div>
     </template>
     <template #footer>
-      <button class="btn btn-primary" @click.prevent="importSharedData">Yes</button>
+      <button class="btn btn-primary" @click.prevent="importSharedData">Import this setup</button>
     </template>
   </Modal>
 </template>
@@ -85,6 +88,7 @@ import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
 import type {UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface} from "@/interaces";
 
 import Modal from "@/components/layout/BootstrapModal.vue";
+import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 
 const userStore = useUserDataStore()
 const { defenses, defenseSetups } = storeToRefs(userStore)
@@ -298,6 +302,8 @@ onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const defenseSetup = urlParams.get('shared');
   parsedDefenseSetup.value = defenseSetup ? JSON.parse(defenseSetup) as UserDefenseSetupInterface : undefined;
+
+  console.log(parsedDefenseSetup.value);
 
   if (parsedDefenseSetup.value) {
     sharedSetupModal.value?.show();

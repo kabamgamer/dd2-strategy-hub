@@ -105,6 +105,7 @@ export interface DefenseSetupModifiersInterface {
 // This interface is used to identify user data for defenses which will be different for every user
 export interface UserDefenseInterface {
     isCollapsed: boolean;
+    isUserDataCollapsed: boolean;
     incrementId: number;
     id: string;
     label: string;

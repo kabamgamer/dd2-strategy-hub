@@ -2,7 +2,7 @@
   <div class="accordion-item position-relative mb-3">
     <LoadingSpinner v-if="loading" />
 
-    <h2 class="accordion-header" :id="id + '-heading'">
+    <h2 class="accordion-header defense-header" :id="id + '-heading'">
       <button class="accordion-button" type="button" :class="{ collapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!collapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">{{ defense.userData?.label }}</span>
@@ -73,37 +73,45 @@
           </div>
 
           <slot name="defense-details">
-            <hr />
+            <div class="accordion-header">
+              <button class="accordion-button user-details-collapse p-0" :class="{ collapsed: defense.userData.isUserDataCollapsed }" type="button" data-bs-toggle="collapse" :data-bs-target="'#userDetails' + id">
+                User details
+              </button>
+            </div>
 
-            <div class="defense-info__pet">
-              <div class="row">
-                <div class="col-md-6">
-                  <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-mods="true" />
-                </div>
-                <div class="col-md-6">
-                  <Pet v-model="defense.userData.pet" />
+            <div :id="'userDetails' + id" class="collapse" :class="{ show: !defense.userData.isUserDataCollapsed }">
+              <hr />
+
+              <div class="defense-info__pet">
+                <div class="row">
+                  <div class="col-md-6">
+                    <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-mods="true" />
+                  </div>
+                  <div class="col-md-6">
+                    <Pet v-model="defense.userData.pet" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <hr />
+              <hr />
 
-            <div class="defense-info__relic">
-              <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-relic="true" />
+              <div class="defense-info__relic">
+                <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-relic="true" />
 
-              <i v-if="hasDiverseMods">For proper testing diverse mods, use defense setups (see section below)</i>
-            </div>
+                <i v-if="hasDiverseMods">For proper testing diverse mods, use defense setups (see section below)</i>
+              </div>
 
-            <hr />
+              <hr />
 
-            <div class="defense-info__shards">
-              <Shards v-model="defense.userData.shards" :defenseCompatibility="defense.userData.id" />
-            </div>
+              <div class="defense-info__shards">
+                <Shards v-model="defense.userData.shards" :defenseCompatibility="defense.userData.id" />
+              </div>
 
-            <hr />
+              <hr />
 
-            <div class="defense-info__shards">
-              <AscensionPoints v-model="defense.userData.ascensionPoints" :ascensionPoints="defense.defenseData?.ascensionPoints" />
+              <div class="defense-info__shards">
+                <AscensionPoints v-model="defense.userData.ascensionPoints" :ascensionPoints="defense.defenseData?.ascensionPoints" />
+              </div>
             </div>
           </slot>
         </div>
@@ -123,10 +131,10 @@ import type {
   UserSetupDefenseInterface
 } from "@/interaces";
 
-import DefenseSelection from "@/components/utilities/DefenseSelection.vue";
-import Pet from "@/components/utilities/Pet.vue";
-import DefenseRelic from "@/components/utilities/DefenseRelic.vue";
-import Shards from "@/components/utilities/Shards.vue";
+import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
+import Pet from "@/components/utilities/Defense/Pet.vue";
+import DefenseRelic from "@/components/utilities/Defense/Relic/DefenseRelic.vue";
+import Shards from "@/components/utilities/Defense/Shards.vue";
 import AscensionPoints from "@/components/utilities/AscensionPoints.vue";
 import IconChevronUp from "@/components/icons/IconChevronUp.vue";
 import IconChevronDown from "@/components/icons/IconChevronDown.vue";
@@ -213,6 +221,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
     incrementId: defense.incrementId,
     id: defenseData.id,
     isCollapsed: false,
+    isUserDataCollapsed: false,
     label: defenseData.name,
     pet: new PetData,
     relic: new RelicData,
@@ -246,16 +255,24 @@ onMounted((): void => {
       .substring(1)
       .toLowerCase() + defense.incrementId
 
-  accordionCollapse.value.addEventListener('hidden.bs.collapse', function () {
-    if (props.setupDefenses) {
+  accordionCollapse.value.addEventListener('hidden.bs.collapse', function (event: Event) {
+    if (props.setupDefenses) return
+
+    if ((event.target as HTMLElement).id !== id.value) {
+      defense.userData.isUserDataCollapsed = true
       return
     }
+
     defense.userData.isCollapsed = true
   })
-  accordionCollapse.value.addEventListener('shown.bs.collapse', function () {
-    if (props.setupDefenses) {
+  accordionCollapse.value.addEventListener('shown.bs.collapse', function (event: Event) {
+    if (props.setupDefenses) return
+
+    if ((event.target as HTMLElement).id !== id.value) {
+      defense.userData.isUserDataCollapsed = false
       return
     }
+
     defense.userData.isCollapsed = false
   })
 
@@ -307,7 +324,7 @@ onMounted((): void => {
   width: 15px;
 }
 
-.accordion-header {
+.defense-header {
   position: sticky;
   top: 54px; /* height of navbar */
   z-index: 100;
@@ -316,6 +333,12 @@ onMounted((): void => {
   font-weight: bold;
 }
 .accordion-button:focus {
+  box-shadow: none;
+}
+
+.accordion-button.user-details-collapse {
+  background: transparent;
+  color: var(--bs-body-color);
   box-shadow: none;
 }
 </style>

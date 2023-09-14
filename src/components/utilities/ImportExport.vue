@@ -63,15 +63,18 @@
     </template>
   </Modal>
 
-  <Modal title="Shared setup" ref="sharedSetupModal">
+  <Modal title="Shared setup" is-large ref="sharedSetupModal">
     <template #body>
-      Do you want to import the shared setup?
-<!--      <div class="setup" v-if="parsedDefenseSetup">-->
-<!--        <DefenseSetup :defenseSetup="parsedDefenseSetup" />-->
-<!--      </div>-->
+      <div class="shared-defenses" v-if="parsedDefenseSetup">
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-3" v-for="(defense, index) in parsedDefenseSetup.defenses" :key="index">
+            <DefensePreview :defense="defense" />
+          </div>
+        </div>
+      </div>
     </template>
     <template #footer>
-      <button class="btn btn-primary" @click.prevent="importSharedData">Yes</button>
+      <button class="btn btn-primary" @click.prevent="importSharedData">Import this setup</button>
     </template>
   </Modal>
 </template>
@@ -82,9 +85,10 @@ import { useUserDataStore } from "@/stores/UserData"
 import { storeToRefs } from "pinia"
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
-import type {UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface} from "@/interaces";
+import type { UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface } from "@/interaces";
 
 import Modal from "@/components/layout/BootstrapModal.vue";
+import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 
 const userStore = useUserDataStore()
 const { defenses, defenseSetups } = storeToRefs(userStore)
@@ -100,7 +104,7 @@ const importLabelPrefix = ref<string>("");
 const validationMessage = ref<null|string>(null);
 const defenseExportSelection = ref<number[]>([]);
 const defenseSetupExportSelection = ref<null|number>(null);
-const parsedDefenseSetup = ref<UserDefenseSetupInterface|undefined>()
+const parsedDefenseSetup = ref<ImportExportDataInterface|undefined>()
 
 interface ImportExportDataInterface { defenses: UserDefenseInterface[], setups?: UserDefenseSetupInterface[] }
 
@@ -297,7 +301,7 @@ function importSharedData(): void {
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const defenseSetup = urlParams.get('shared');
-  parsedDefenseSetup.value = defenseSetup ? JSON.parse(defenseSetup) as UserDefenseSetupInterface : undefined;
+  parsedDefenseSetup.value = defenseSetup ? JSON.parse(defenseSetup) as ImportExportDataInterface : undefined;
 
   if (parsedDefenseSetup.value) {
     sharedSetupModal.value?.show();

@@ -1,10 +1,5 @@
 <template>
-  <select class="form-select" v-model="selectedShard">
-
-    <optgroup :label="tier.toString()" v-for="(tierShards, tier) in compatibleShards" :key="tier">
-      <option :value="shard" v-for="(shard, index) in tierShards" :key="index">{{ shard.name }}</option>
-    </optgroup>
-  </select>
+  <SearchableSelect v-model="selectedShard" :options="compatibleShards" grouped label-attr="name" />
 </template>
 
 <script setup lang="ts">
@@ -12,6 +7,8 @@ import type { ShardInterface } from "@/interaces";
 
 import type { PropType } from "vue";
 import { ref, watch, computed } from "vue";
+
+import SearchableSelect from "@/components/layout/form/SearchableSelect.vue";
 
 import { useShardStore } from "@/stores/ShardInfo";
 const { getAllShardsCategorizedByTier } = useShardStore();

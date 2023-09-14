@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.3.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.0) (2023-09-14)
+
+* Added search function to all select boxes (defenses, shards, mods)
+* Added additional collapse in defense to collapse user details only
+* Start node count at 2 instead of 1 when adding a node type defense to a setup
+* Added setup preview when visit a shared link
+* Added support for explosive (shielding) guard shard
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.2.1...v1.3.0)
+
+
+
 ## [v1.2.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.2.1) (2023-09-07)
 
 * Fixed an issue in motherly instinct calculations

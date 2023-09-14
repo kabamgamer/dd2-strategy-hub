@@ -29,7 +29,7 @@
 import type { PropType } from "vue"
 import type { ShardInterface } from "@/interaces"
 
-import ShardSelection from "@/components/utilities/ShardSelection.vue"
+import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
 import { ref } from "vue"
 

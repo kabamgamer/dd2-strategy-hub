@@ -4,9 +4,9 @@
       <div class="reset-calculators__calculator col-md-4">
         <Card cardTitle="Minimum ascension calculator">
           <form id="minAscCalcForm" @submit.prevent="onSubmitMinAscCalcForm">
-            <Input label="Max Onslaught Floor Reached Ever" type="number" :save-value-local="true"
+            <Input label="Max onslaught floor reached ever" type="number" :save-value-local="true"
                    v-model="maxFloorReached"/>
-            <Input label="Max Ascension Level Reached ever" type="number" :save-value-local="true"
+            <Input label="Max ascension level reached ever" type="number" :save-value-local="true"
                    v-model="maxAscensionReached"/>
 
             <div v-if="minAscCalcFormMessage" class="mb-3">{{ minAscCalcFormMessage }}</div>

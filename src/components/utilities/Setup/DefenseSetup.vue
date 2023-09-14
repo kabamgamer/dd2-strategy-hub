@@ -181,10 +181,10 @@ function deleteDefense(defenseIncrementId: number): void {
 }
 
 function selectDefense(): void {
-  if (selectedDefense.value === null || selectedDefense.value === 0) {
+  if (selectedDefense.value === null) {
     return
   }
-  props.defenseSetup.defenses[selectedDefense.value.incrementId] = {defenseCount: selectedDefense.value.defenseData.hero !== 'Ev2' ? 1 : 2}
+  props.defenseSetup.defenses[selectedDefense.value.incrementId] = {defenseCount: selectedDefense.value.defenseData?.hero !== 'Ev2' ? 1 : 2}
   defenseSelect.value = false
   selectedDefense.value = null
 }

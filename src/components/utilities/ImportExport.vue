@@ -67,7 +67,7 @@
     <template #body>
       <div class="shared-defenses" v-if="parsedDefenseSetup">
         <div class="row">
-          <div class="col-md-6 col-lg-4 mb-3" v-for="defense in parsedDefenseSetup.defenses">
+          <div class="col-md-6 col-lg-4 mb-3" v-for="(defense, index) in parsedDefenseSetup.defenses" :key="index">
             <DefensePreview :defense="defense" />
           </div>
         </div>
@@ -85,7 +85,7 @@ import { useUserDataStore } from "@/stores/UserData"
 import { storeToRefs } from "pinia"
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
-import type {UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface} from "@/interaces";
+import type { UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface } from "@/interaces";
 
 import Modal from "@/components/layout/BootstrapModal.vue";
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
@@ -104,7 +104,7 @@ const importLabelPrefix = ref<string>("");
 const validationMessage = ref<null|string>(null);
 const defenseExportSelection = ref<number[]>([]);
 const defenseSetupExportSelection = ref<null|number>(null);
-const parsedDefenseSetup = ref<UserDefenseSetupInterface|undefined>()
+const parsedDefenseSetup = ref<ImportExportDataInterface|undefined>()
 
 interface ImportExportDataInterface { defenses: UserDefenseInterface[], setups?: UserDefenseSetupInterface[] }
 
@@ -301,7 +301,7 @@ function importSharedData(): void {
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const defenseSetup = urlParams.get('shared');
-  parsedDefenseSetup.value = defenseSetup ? JSON.parse(defenseSetup) as UserDefenseSetupInterface : undefined;
+  parsedDefenseSetup.value = defenseSetup ? JSON.parse(defenseSetup) as ImportExportDataInterface : undefined;
 
   console.log(parsedDefenseSetup.value);
 

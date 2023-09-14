@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
+## [v1.3.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.0) (2023-09-14)
 
 * Added search function to all select boxes (defenses, shards, mods)
 * Added additional collapse in defense to collapse user details only
@@ -8,7 +8,7 @@
 * Added setup preview when visit a shared link
 * Added support for explosive (shielding) guard shard
 
-[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.2.1...HEAD)
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.2.1...v1.3.0)
 
 
 

@@ -303,8 +303,6 @@ onMounted(() => {
   const defenseSetup = urlParams.get('shared');
   parsedDefenseSetup.value = defenseSetup ? JSON.parse(defenseSetup) as ImportExportDataInterface : undefined;
 
-  console.log(parsedDefenseSetup.value);
-
   if (parsedDefenseSetup.value) {
     sharedSetupModal.value?.show();
   }

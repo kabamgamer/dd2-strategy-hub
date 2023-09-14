@@ -472,9 +472,10 @@ export function useDefenseCalculations(): any {
             return 0
         }
 
-        // ToDo implement explosive guard
+        const explosiveShardMultiplier = (explosiveShard.defensePower?.percentage ?? 100) / 100
+        const explosiveShardProcChanceMultiplier = .35
 
-        return 0
+        return defenseHealth.value * explosiveShardMultiplier * explosiveShardProcChanceMultiplier
     }
 
     function vampiricEmpowerment(): number {

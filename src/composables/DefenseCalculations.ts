@@ -7,7 +7,8 @@ import type {
     UserDefenseInterface,
     CalculatedDefenseStatsInterface,
     DefenseSetupModifiersInterface,
-    UserSetupDefenseInterface
+    UserSetupDefenseInterface,
+    DefenseStatInterface
 } from "@/interaces";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import {
@@ -16,6 +17,8 @@ import {
     AncientDestruction,
     AncientFortification
 } from "@/data/AncientPowers";
+
+import NetherArcherBouncesStat from "@/defense_stats/NetherArcherBouncesStat";
 
 import HasAscensionPoints from "@/traits/HasAscensionPoints";
 
@@ -45,6 +48,7 @@ export function useDefenseCalculations(): any {
     const defenseRange = ref(0)
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
+    const defenseSpecificStats = ref<DefenseStatInterface[]>([])
 
     function calculateDefensePower(parsedDefense: DefenseRootInterface, parsedUserDefenseData: UserDefenseInterface, parsedDefenseMods: ModInterface[], parsedDefenseShards: ShardInterface[], parsedDefenseLevel: number, parsedAncientResetPoints: UserAncientResetPoints, parsedSetupDefenses?: UserDataStoreDefenseInterface[], parsedSetupDefenseOptions?: { [defensesIncrementId: number]: UserSetupDefenseInterface }, parsedDefenseBoosts?: {[incrementId: number]: CalculatedDefenseStatsInterface}, parsedSetupModifiers?: DefenseSetupModifiersInterface): void {
         defense = parsedDefense
@@ -65,6 +69,8 @@ export function useDefenseCalculations(): any {
         criticalDamage.value = calculatedCriticalDamage()
         attackRate.value = calculatedAttackRate()
         totalDps.value = calculatedDps()
+
+        defenseSpecificStats.value = getDefenseSpecificStats()
 
         defenseRange.value = calculatedDefenseRange()
     }
@@ -688,6 +694,17 @@ export function useDefenseCalculations(): any {
         return defenseShards.find((shard: ShardInterface) => shard.id === shardId)
     }
 
+    function getDefenseSpecificStats(): DefenseStatInterface[] {
+        switch (defense.id) {
+            case 'NetherArcher':
+                return [
+                    new NetherArcherBouncesStat(totalDps.value, defenseMods, defenseShards)
+                ]
+            default:
+                return []
+        }
+    }
+
     // expose managed state as return value
-    return { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, calculateDefensePower, isBuffDefense }
+    return { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, defenseSpecificStats, calculateDefensePower, isBuffDefense }
 }

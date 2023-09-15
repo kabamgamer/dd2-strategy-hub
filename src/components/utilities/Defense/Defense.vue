@@ -53,6 +53,10 @@
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseRange }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
+
+                <div v-for="(stat, index) in defenseSpecificStats" :key="index">
+                  <DefenseSpecificStat :stat="stat" />
+                </div>
               </div>
               <div class="defense-info__header-stats w-100" v-else>
                 <span class="w-100 defense-info__header-stats__stat d-flex align-items-center">
@@ -155,6 +159,7 @@ import { useShardStore } from "@/stores/ShardInfo"
 import { useUserDataStore } from "@/stores/UserData";
 import { storeToRefs } from "pinia";
 import ModType from "@/enums/ModType";
+import DefenseSpecificStat from "@/components/utilities/Defense/DefenseSpecificStat.vue";
 
 const userStore = useUserDataStore();
 const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
@@ -163,7 +168,7 @@ const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
 const { ancientPowerPoints, isDev } = storeToRefs(userStore);
-const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
+const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, defenseSpecificStats, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
@@ -305,9 +310,7 @@ onMounted((): void => {
   display: flex;
   flex-direction: column;
 }
-.defense-info__header-stats__stat {
-  font-size: 12pt;
-}
+
 .du-badge {
   margin-left: auto
 }
@@ -340,5 +343,11 @@ onMounted((): void => {
   background: transparent;
   color: var(--bs-body-color);
   box-shadow: none;
+}
+</style>
+
+<style>
+.defense-info__header-stats__stat {
+  font-size: 12pt;
 }
 </style>

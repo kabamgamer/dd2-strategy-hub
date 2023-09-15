@@ -196,7 +196,7 @@ function onKeyDown(event: KeyboardEvent): void {
   padding: 0;
   position: absolute;
   width: 100%;
-  z-index: 10;
+  z-index: 150;
 }
 .searchable .form-select:focus + .select-options,
 .select-options__group {

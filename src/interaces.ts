@@ -139,5 +139,5 @@ export interface CalculatedDefenseStatsInterface {
 export interface DefenseStatInterface {
     get label(): string;
     get value(): any;
-    hasCustomTemplate: boolean;
+    template?: string;
 }

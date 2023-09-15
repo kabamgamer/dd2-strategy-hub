@@ -1,7 +1,7 @@
 import type { DefenseStatInterface, ModInterface, ShardInterface } from "@/interaces";
 
 export default class NetherArcherBouncesStat implements DefenseStatInterface {
-    public readonly hasCustomTemplate: boolean = true
+    public readonly template: string = 'NetherArcherBouncesStatTemplate'
     private readonly totalDps: number
     private readonly defenseMods: ModInterface[]
     private readonly defenseShards: ShardInterface[]

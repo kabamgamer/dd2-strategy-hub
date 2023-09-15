@@ -55,10 +55,7 @@
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
 
                 <div v-for="(stat, index) in defenseSpecificStats" :key="index">
-                  <component v-if="stat.hasCustomTemplate" :is="loadTemplate(stat.constructor.name)" v-bind="{stat}"></component>
-                  <span v-else class="w-100 defense-info__header-stats__stat">
-                    <strong>{{ stat.label }}:</strong> {{ stat.value }}
-                  </span>
+                  <DefenseSpecificStat :stat="stat" />
                 </div>
               </div>
               <div class="defense-info__header-stats w-100" v-else>
@@ -128,7 +125,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted, computed, defineAsyncComponent } from "vue";
+import { ref, watch, defineProps, defineEmits, onMounted, computed } from "vue";
 import type { PropType } from "vue";
 import type {
   DefenseRootInterface,
@@ -162,6 +159,7 @@ import { useShardStore } from "@/stores/ShardInfo"
 import { useUserDataStore } from "@/stores/UserData";
 import { storeToRefs } from "pinia";
 import ModType from "@/enums/ModType";
+import DefenseSpecificStat from "@/components/utilities/Defense/DefenseSpecificStat.vue";
 
 const userStore = useUserDataStore();
 const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
@@ -238,10 +236,6 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
 
   unwatchUserData()
   watch(defense.userData, recalculate, { deep: true })
-}
-
-function loadTemplate(template: string): string {
-  return defineAsyncComponent(() => import(`../../../defense_stats/templates/${template}.vue`))
 }
 
 watch(userDefenseMods, debounce(() => {

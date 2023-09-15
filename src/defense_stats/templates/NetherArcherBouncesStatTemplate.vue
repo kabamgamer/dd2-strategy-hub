@@ -22,15 +22,16 @@
 
 <script setup lang="ts">
 import { defineProps, ref } from "vue";
+import type { PropType } from "vue";
 import type { Modal } from "bootstrap";
 
 import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 
-import NetherArcherBouncesStat from "../NetherArcherBouncesStat";
+import type { DefenseStatInterface } from "@/interaces";
 
 defineProps({
   stat: {
-    type: NetherArcherBouncesStat,
+    type: Object as PropType<DefenseStatInterface>,
     required: true,
   },
 })

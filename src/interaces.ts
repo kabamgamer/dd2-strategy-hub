@@ -135,3 +135,9 @@ export interface CalculatedDefenseStatsInterface {
     defenseHealth: number;
     defensePower: number;
 }
+
+export interface DefenseStatInterface {
+    get label: string;
+    get value: any;
+    hasCustomTemplate: boolean;
+}

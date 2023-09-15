@@ -53,6 +53,13 @@
                 <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseRange }}</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (criticalChance * 100).toFixed(2) }}%</span>
                 <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (criticalDamage * 100).toFixed(2) }}%</span>
+
+                <div v-for="(stat, index) in defenseSpecificStats" :key="index">
+                  <component v-if="stat.hasCustomTemplate" :is="loadTemplate(stat.constructor.name)" v-bind="{stat}"></component>
+                  <span v-else class="w-100 defense-info__header-stats__stat">
+                    <strong>{{ stat.label }}:</strong> {{ stat.value }}
+                  </span>
+                </div>
               </div>
               <div class="defense-info__header-stats w-100" v-else>
                 <span class="w-100 defense-info__header-stats__stat d-flex align-items-center">
@@ -121,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted, computed } from "vue";
+import { ref, watch, defineProps, defineEmits, onMounted, computed, defineAsyncComponent } from "vue";
 import type { PropType } from "vue";
 import type {
   DefenseRootInterface,
@@ -163,7 +170,7 @@ const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
 const { ancientPowerPoints, isDev } = storeToRefs(userStore);
-const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, isBuffDefense } = useDefenseCalculations()
+const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, defenseSpecificStats, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
@@ -231,6 +238,10 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
 
   unwatchUserData()
   watch(defense.userData, recalculate, { deep: true })
+}
+
+function loadTemplate(template: string): string {
+  return defineAsyncComponent(() => import(`../../../defense_stats/templates/${template}.vue`))
 }
 
 watch(userDefenseMods, debounce(() => {
@@ -305,9 +316,7 @@ onMounted((): void => {
   display: flex;
   flex-direction: column;
 }
-.defense-info__header-stats__stat {
-  font-size: 12pt;
-}
+
 .du-badge {
   margin-left: auto
 }
@@ -340,5 +349,11 @@ onMounted((): void => {
   background: transparent;
   color: var(--bs-body-color);
   box-shadow: none;
+}
+</style>
+
+<style>
+.defense-info__header-stats__stat {
+  font-size: 12pt;
 }
 </style>

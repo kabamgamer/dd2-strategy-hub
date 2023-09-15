@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.3.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.1) (2023-09-15)
+
+* Added table with detailed information regarding subsequent bounces of nether archers
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.3.0...v1.3.1)
+
+
+
 ## [v1.3.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.0) (2023-09-14)
 
 * Added search function to all select boxes (defenses, shards, mods)

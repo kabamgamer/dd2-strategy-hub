@@ -10,7 +10,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(damage, bounce) in stat.value">
+        <tr v-for="(damage, bounce) in stat.value" :key="bounce">
           <td>{{ bounce }}</td>
           <td>{{ Math.round(damage).toLocaleString('en-US') }}</td>
         </tr>
@@ -20,24 +20,20 @@
   </BootstrapModal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps, ref } from "vue";
-import { Modal } from "bootstrap";
+import type { Modal } from "bootstrap";
 
 import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 
 import NetherArcherBouncesStat from "../NetherArcherBouncesStat";
 
-const props = defineProps({
+defineProps({
   stat: {
     type: NetherArcherBouncesStat,
     required: true,
   },
 })
 
-const arrowBouncesModal = ref<Modal|null>null
+const arrowBouncesModal = ref<Modal|null>(null)
 </script>
-
-<style scoped>
-
-</style>

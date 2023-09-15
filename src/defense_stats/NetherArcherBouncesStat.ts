@@ -20,11 +20,11 @@ export default class NetherArcherBouncesStat implements DefenseStatInterface {
         return "DPS per bounce"
     }
 
-    get value(): object {
+    get value(): { [bounce: number]: number } {
         const bouncesDamageMultipliers = this.getBouncesDamageMultipliers()
 
-        let bounces = {}
-        for (let i = 1; i <= this.bounces; i++) {
+        const bounces: { [bounce: number]: number } = {}
+        for (let i: number = 1; i <= this.bounces; i++) {
             bounces[i] = this.totalDps * bouncesDamageMultipliers[i]
         }
 
@@ -47,7 +47,7 @@ export default class NetherArcherBouncesStat implements DefenseStatInterface {
         return this.defenseShards.some(shard => shard.id === 'ghost_arrows')
     }
 
-    getBouncesDamageMultipliers(): object {
+    getBouncesDamageMultipliers(): { [bounce: number]: number } {
         if (this.hasSpectralArrows) {
             return {
                 1: 1,

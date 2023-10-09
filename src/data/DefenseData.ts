@@ -6,6 +6,7 @@ export interface DefenseDataResponse {
     defense: string;
     hero: string;
     iconUrl: string;
+    mapIcon: string;
     baseDefPwr: number;
     baseDefHealth: number;
     baseAtkRate: number;
@@ -36,6 +37,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
     id: string;
     name: string;
     icon: string;
+    mapIcon: string;
     baseDefensePower: number;
     baseDefenseHealth: number;
     baseAttackRate: number;
@@ -71,6 +73,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
         this.id = data.defense.replace(/\s/g, '');
         this.name = data.defense;
         this.icon = data.iconUrl;
+        this.mapIcon = data.mapIcon;
         this.baseDefensePower = data.baseDefPwr;
         this.baseDefenseHealth = data.baseDefHealth;
         this.baseAttackRate = data.baseAtkRate;

@@ -61,6 +61,7 @@ export interface DefenseRootInterface {
     id: string;
     name: string;
     icon: string;
+    mapIcon: string;
     baseDefensePower: number;
     baseDefenseHealth: number;
     baseAttackRate: number;

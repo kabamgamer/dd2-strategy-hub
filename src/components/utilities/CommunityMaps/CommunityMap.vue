@@ -1,11 +1,22 @@
 <template>
   <div class="map">
-    <img src="/assets/maps/map_dragonfall_town_gates_of_dragonfall.png" alt="Gates of Dragonfall">
+    <img :src="'/assets/maps/' + map" alt="Gates of Dragonfall">
 
     <slot name="defenses">
     </slot>
   </div>
 </template>
+
+<script setup lang="ts">
+import { defineProps } from "vue";
+
+defineProps({
+  map: {
+    type: String,
+    required: true
+  }
+});
+</script>
 
 <style scoped>
 .map img {

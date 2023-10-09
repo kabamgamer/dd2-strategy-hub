@@ -1,14 +1,18 @@
 <template>
   <div class="map-defense">
-    <ContextMenu ref="contextMenu">
+    <div class="defense" ref="defenseElement" v-if="!editMode" :style="defensePositionCss">
+      <img :src="'/assets/maps/defenses/' + icon" alt="Defense icon">
+    </div>
+
+    <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
-        <div class="defense" ref="defenseElement">
-          <img src="/assets/maps/defenses/squire_ballista.png" alt="Defense ballista">
+        <div class="defense" ref="defenseElement" :style="{transform: `rotate(${rotation}deg)`}">
+          <img :src="'/assets/maps/defenses/' + icon" alt="Defense icon">
         </div>
       </template>
 
       <template #menu-items>
-        <a href="#" class="context-menu-item delete" @click.prevent><IconCross /></a>
+        <a href="#" class="context-menu-item delete" @click.prevent="emit('delete')"><IconCross /></a>
         <a href="#" class="context-menu-item rotate" @click.prevent="onRotate"><IconRotate /></a>
       </template>
     </ContextMenu>
@@ -17,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted, defineProps, defineEmits } from "vue";
 // @ts-ignore
 import Draggabilly from "draggabilly/draggabilly.js";
 
@@ -27,23 +31,55 @@ import { useRotateElement } from "@/composables/RotateElement";
 import IconCross from "@/components/icons/IconCross.vue";
 import IconRotate from "@/components/icons/IconRotate.vue";
 
-const { rotate } = useRotateElement();
-const defenseElement = ref<HTMLElement | null>(null);
-const contextMenu = ref<ContextMenu>();
-const draggableDefenseElement = ref<Draggabilly>();
+const props = defineProps({
+  editMode: {
+    type: Boolean,
+    default: false,
+  },
+  icon: {
+    type: String,
+    required: true,
+  },
+  rotation: {
+    type: Number,
+    default: 0,
+  },
+  position: {
+    type: Object,
+    required: false,
+  },
+});
+
+const emit = defineEmits(['delete', 'update:position', 'update:rotation']);
+
+const { rotate } = useRotateElement(emit, 'update:rotation')
+const defenseElement = ref<HTMLElement | null>(null)
+const contextMenu = ref<ContextMenu>()
+const draggableDefenseElement = ref<Draggabilly>()
+const defensePositionCss = computed(() => ({
+  top: `${props.position.y}px`,
+  left: `${props.position.x}px`,
+  transform: `rotate(${props.rotation}deg)`,
+}))
 
 function onRotate() {
   contextMenu.value?.close()
-  rotate(defenseElement.value, contextMenu.value.$el)
+  rotate(defenseElement.value, contextMenu.value.$el, emit)
 }
 
 onMounted(() => {
+  if (!props.editMode) {
+    return
+  }
+
   draggableDefenseElement.value = new Draggabilly(contextMenu.value.$el, {
     containment: '.map'
   });
 
+  draggableDefenseElement.value.setPosition(props.position.x, props.position.y)
+
   draggableDefenseElement.value.on('dragEnd', () => {
-    console.log(draggableDefenseElement.value.position);
+    emit('update:position', draggableDefenseElement.value.position)
   });
 
   draggableDefenseElement.value.on('staticClick', () => {

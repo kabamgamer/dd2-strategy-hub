@@ -105,6 +105,7 @@ const searchResultInputElements = ref<HTMLInputElement[]>([]);
 function onOptionSelect(option: any): void {
   emit('update:modelValue', option);
   emit('change', option);
+  searchCriteria.value = '';
 }
 
 function labelWithBaldCriteria(label: string): string {

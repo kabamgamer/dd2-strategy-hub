@@ -24,6 +24,7 @@
               <h5 class="text-center">Mods</h5>
               <div class="defense-info__mods_mod-slot defense-utils__util bg-dark-subtle" v-for="(mod, index) in userMods" :key="index">
                 <div class="defense-info__shards_shard-name defense-utils__util-name" v-if="mod?.name">{{ mod.name }}</div>
+                <div class="defense-info__shards_shard-name defense-utils__util-name" v-else-if="editMode"><ModSelection @change="(mod) => {userData.relic.mods[index] = mod.id; loadMods()}" /></div>
                 <div class="text-muted" v-else>Empty mod slot</div>
               </div>
             </div>
@@ -33,6 +34,7 @@
               <div class="defense-info__shards_shard defense-utils__util bg-dark-subtle d-flex align-items-center" v-for="(shard, index) in userShards" :key="index">
                 <div class="defense-info__shards_shard-icon"><img :src="shard?.icon" :alt="shard?.name"></div>
                 <div class="defense-info__shards_shard-name defense-utils__util-name" v-if="shard?.name">{{ shard.name }}</div>
+                <div class="defense-info__shards_shard-name defense-utils__util-name" v-else-if="editMode"><ShardSelection @change="(shard) => {userData.shards[index] = shard.id; loadShards()}" /></div>
                 <div class="text-muted" v-else>Empty shard slot</div>
               </div>
             </div>
@@ -53,12 +55,18 @@ import { useDefenseStore } from "@/stores/DefenseInfo"
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
 import type { DefenseRootInterface, UserDefenseInterface, ModInterface, ShardInterface } from "@/interaces";
+import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue";
+import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue";
 
 const { getDefenseRoot } = useDefenseStore()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
 
 const props = defineProps({
+  editMode: {
+    type: Boolean,
+    default: false,
+  },
   defense: {
     type: Object as PropType<UserDefenseInterface>,
     required: true,
@@ -85,25 +93,31 @@ async function loadDefenseData(): Promise<void> {
 }
 
 async function loadMods(): Promise<void> {
+  const resolvedUserMods = []
   for (const modId of userData.relic.mods) {
-    userMods.value.push(await getModById(modId))
+    resolvedUserMods.push(await getModById(modId))
   }
 
-  for (let i = userMods.value.length; i < 3; i++) {
-    userMods.value.push(null)
+  for (let i = resolvedUserMods.length; i < 3; i++) {
+    resolvedUserMods.push(null)
   }
+
+  userMods.value = resolvedUserMods
 
   return Promise.resolve()
 }
 
 async function loadShards(): Promise<void> {
+  const resolvedUserShards = []
   for (const shardId of userData.shards) {
-    userShards.value.push(await getShardById(shardId))
+    resolvedUserShards.push(await getShardById(shardId))
   }
 
-  for (let i = userShards.value.length; i < 3; i++) {
-    userShards.value.push(null)
+  for (let i = resolvedUserShards.length; i < 3; i++) {
+    resolvedUserShards.push(null)
   }
+
+  userShards.value = resolvedUserShards
 
   return Promise.resolve()
 }

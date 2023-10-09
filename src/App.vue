@@ -12,6 +12,9 @@
           <li class="nav-item">
             <router-link class="nav-link" :active-class="'active'" :to="{name: 'calculator.defense'}">Defense DPS calculator</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :active-class="'active'" :to="{name: 'community-maps'}" :class="{active: $route.name === 'community-maps.detail'}">Community maps</router-link>
+          </li>
         </ul>
 
         <ul class="navbar-nav mb-2 mb-lg-0">

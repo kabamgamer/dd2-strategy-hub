@@ -2,6 +2,7 @@
 
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
 
+* Dark mode is now the default theme
 * Implemented router to allow multiple pages
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.3.1...HEAD)

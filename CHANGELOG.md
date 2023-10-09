@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
+
+* Implemented router to allow multiple pages
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.3.1...HEAD)
+
+
+
 ## [v1.3.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.1) (2023-09-15)
 
 * Added table with detailed information regarding subsequent bounces of nether archers

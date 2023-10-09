@@ -16,7 +16,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
 
     const dataMigration = new DataMigrations
 
-    const colorMode = ref<string>(localStorage.getItem('colorMode') ?? 'light')
+    const colorMode = ref<string>(localStorage.getItem('colorMode') ?? 'dark')
     const lastVisitedVersion = ref<string>(localStorage.getItem('lastVisitedVersion') ?? 'v0.0.0')
     const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())

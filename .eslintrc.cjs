@@ -33,6 +33,7 @@ module.exports = {
                 "Defense",
                 "Pet",
                 "Shards",
+                "Home",
             ]
         }],
     }

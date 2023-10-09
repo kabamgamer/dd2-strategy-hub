@@ -4,7 +4,16 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+      <div class="collapse navbar-collapse justify-content-between" id="navbarText">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <router-link class="nav-link" :active-class="'active'" :to="{name: 'home'}">Home</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :active-class="'active'" :to="{name: 'calculator.defense'}">Defense DPS calculator</router-link>
+          </li>
+        </ul>
+
         <ul class="navbar-nav mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="btn btn-color-mode" :class="{ 'btn-outline-secondary': colorMode === 'dark', 'btn-outline-dark': colorMode === 'light'}" @click.prevent="toggleColorMode">
@@ -21,30 +30,8 @@
     </div>
   </nav>
 
-  <main class="container">
-    <Section section-title="Ancient power resets">
-      <AncientPowerResets />
-    </Section>
-
-    <Section section-title="Reroll tracker">
-      <div class="row">
-        <div class="col-md-6">
-          <RerollTracker />
-        </div>
-      </div>
-    </Section>
-
-    <Section section-title="Ancient Power points">
-      <AncientPowerPoints />
-    </Section>
-
-    <Section section-title="Defense DPS calculator">
-      <DefenseDpsCalculator />
-    </Section>
-
-    <Section section-title="Defense setups">
-      <DefenseSetups />
-    </Section>
+  <main>
+    <router-view />
   </main>
 
   <footer class="footer mt-auto py-3" :class="'bg-' + colorMode">
@@ -74,12 +61,6 @@ import IconMoon from "@/components/icons/IconMoon.vue";
 import IconSun from "@/components/icons/IconSun.vue";
 import ImportExport from "@/components/utilities/ImportExport.vue";
 import Modal from "@/components/layout/BootstrapModal.vue";
-import Section from "@/components/layout/Section.vue";
-import AncientPowerResets from "@/components/sections/AncientPowerResets.vue";
-import AncientPowerPoints from "@/components/sections/AncientPowerPoints.vue";
-import RerollTracker from "@/components/sections/RerollTracker.vue";
-import DefenseDpsCalculator from "@/components/sections/DefenseDpsCalculator.vue";
-import DefenseSetups from "@/components/sections/DefenseSetups.vue";
 import IconGithub from "@/components/icons/IconGithub.vue";
 import ChangelogModal from "@/components/utilities/ChangelogModal.vue";
 

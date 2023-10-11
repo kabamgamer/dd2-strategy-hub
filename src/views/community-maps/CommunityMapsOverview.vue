@@ -1,27 +1,58 @@
 <template>
   <div class="container">
     <div class="action_toolbar d-flex justify-content-end">
-      <a role="button" class="btn btn-primary" href="/community-maps/new">Share your own</a>
+      <button class="btn btn-primary" @click="$router.push({name: 'community-maps.detail', params: {id: 'new'}})">Share your layout</button>
     </div>
-    <Section section-title="Filter maps">
-      filter...
+    <Section>
+      <CommunityMapFilters @filter="onFilter" />
     </Section>
 
-    <Section section-title="Results">
-      <div class="row">
-        <div class="col-md-3" v-for="i in 8" :key="i">
-          <router-link :to="{name: 'community-maps.detail', params: {id: i}}">Map {{ i }}</router-link>
-        </div>
-      </div>
+    <Section section-title="Results" class="position-relative">
+      <ResourcePagination fetch-url="/test" wrapper-classes="row" :page-size="12" :filter-results="resolveMaps" :additional-request-parameters="additionalRequestParameters">
+        <template v-slot:item="{ item }">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <router-link :to="{name: 'community-maps.detail', params: {id: item.id}}">
+              <CommunityMapPreview :map="item" class="mb-4" />
+            </router-link>
+          </div>
+        </template>
+
+        <template #noResults>
+          <div class="col">
+            No results found for current criteria
+          </div>
+        </template>
+      </ResourcePagination>
     </Section>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue"
+
 import Section from "@/components/layout/Section.vue";
 
+import { useMapStore } from "@/stores/Map";
+import ResourcePagination from "@/components/layout/ResourcePagination.vue";
+import CommunityMapPreview from "@/components/utilities/CommunityMaps/CommunityMapPreview.vue";
+import CommunityMapFilters from "@/components/utilities/CommunityMaps/CommunityMapFilters.vue";
+
+const { getMapById } = useMapStore();
+
+const additionalRequestParameters = ref({});
+
+function onFilter(filters): void {
+  additionalRequestParameters.value.filter = filters;
+}
+
+async function resolveMaps(result: any): Promise<any> {
+  const filteredItems = []
+  for (const item of result.items) {
+    item.map = await getMapById(item.map);
+    filteredItems.push(item)
+  }
+  result.items = filteredItems;
+
+  return Promise.resolve(result)
+}
 </script>
-
-<style scoped>
-
-</style>

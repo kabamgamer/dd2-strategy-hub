@@ -21,7 +21,7 @@ const props = defineProps({
   },
 });
 
-const selectedMap = ref('');
+const selectedMap = ref();
 const availableMaps = ref<{[region: string]: MapData[]}>({});
 
 getAllMapsCategorizedByRegion().then((maps: {[region: string]: MapData[]}): void => {

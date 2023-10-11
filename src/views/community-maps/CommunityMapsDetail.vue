@@ -260,6 +260,7 @@ async function loadMapConfigurations(): Promise<void> {
     map: "dragonfall_town_gates_of_dragonfall",
     gameMode: "Survival",
     difficulty: "Wave 151+",
+    description: "This is one big ass description",
     tags: ["AFKable", "Base heroes"],
     userVote: "up",
     votes: {up: 13, down: 3},
@@ -282,6 +283,19 @@ async function loadMapConfigurations(): Promise<void> {
         shards: ["auto_repair_system", "juggernaut", "automation"]
       }
     },
+    comments: [{
+      author: {id: 2, name: "User 1"},
+      comment: "This is a test comment",
+      createdAt: new Date(),
+    }, {
+      author: {id: 3, name: "User 2"},
+      comment: "This is a test comment",
+      createdAt: new Date(),
+    }, {
+      author: {id: 4, name: "User 3"},
+      comment: "This is a test comment",
+      createdAt: new Date(),
+    }],
     mapLayout: [{
       incrementId: 1,
       defenseIncrementId: 1,

@@ -1,6 +1,6 @@
 <template>
   <div class="map-defense">
-    <div class="defense" ref="defenseElement" v-if="!editMode" :style="defensePositionCss">
+    <div class="defense" ref="defenseElement" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
       <img :src="'/assets/maps/defenses/' + icon" alt="Defense icon">
     </div>
 
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, defineProps, defineEmits } from "vue";
+import { ref, computed, onMounted, defineProps, defineEmits, watch } from "vue";
 // @ts-ignore
 import Draggabilly from "draggabilly/draggabilly.js";
 
@@ -50,7 +50,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['delete', 'update:position', 'update:rotation']);
+const emit = defineEmits(['delete', 'selectDefense', 'update:position', 'update:rotation']);
 
 const { rotate } = useRotateElement(emit, 'update:rotation')
 const defenseElement = ref<HTMLElement | null>(null)
@@ -61,6 +61,10 @@ const defensePositionCss = computed(() => ({
   left: `${props.position.x}px`,
   transform: `rotate(${props.rotation}deg)`,
 }))
+
+function onDefenseClick() {
+  emit('selectDefense')
+}
 
 function onRotate() {
   contextMenu.value?.close()
@@ -130,6 +134,10 @@ onMounted(() => {
 }
 .context-menu-item.delete {
   color: var(--bs-red);
+}
+
+.map-defense.hide {
+  opacity: .3;
 }
 </style>
 

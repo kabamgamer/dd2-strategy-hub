@@ -1,5 +1,5 @@
 <template>
-  <div class="card h-100">
+  <div class="card" :class="{'h-100': maxHeight}">
     <div class="card-header">{{ cardTitle }}</div>
     <div class="card-body">
       <slot></slot>
@@ -12,6 +12,10 @@ import { defineProps } from 'vue'
 
 defineProps({
   cardTitle: String,
-  component: Object
+  component: Object,
+  maxHeight: {
+    type: Boolean,
+    default: true,
+  },
 })
 </script>

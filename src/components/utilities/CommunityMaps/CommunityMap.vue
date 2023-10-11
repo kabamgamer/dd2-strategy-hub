@@ -1,6 +1,6 @@
 <template>
   <div class="map">
-    <img :src="'/assets/maps/' + map" alt="Gates of Dragonfall">
+    <img :src="'/assets/maps/' + map.image" :alt="map.name">
 
     <slot name="defenses">
     </slot>
@@ -9,20 +9,29 @@
 
 <script setup lang="ts">
 import { defineProps } from "vue";
+import MapData from "@/data/MapData";
 
 defineProps({
   map: {
-    type: String,
+    type: MapData,
     required: true
   }
 });
 </script>
 
 <style scoped>
+.map {
+  position: relative;
+}
+
+.map img {
+  object-fit: contain;
+  object-position: top;
+}
+
+.map,
 .map img {
   width: 1080px;
   height: auto;
-  object-fit: contain;
-  object-position: top;
 }
 </style>

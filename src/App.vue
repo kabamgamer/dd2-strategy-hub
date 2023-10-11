@@ -37,7 +37,7 @@
     <router-view />
   </main>
 
-  <footer class="footer mt-auto py-3" :class="'bg-' + colorMode">
+  <footer class="footer mt-auto py-3 fixed-bottom" :class="'bg-' + colorMode">
     <div class="container text-center">
       <span class="text-muted">
         Build: <ChangelogModal /> | &copy; {{ (new Date).getFullYear() }} DD2 Strategy Hub |
@@ -113,10 +113,27 @@ nav {
   margin-right: 10px;
 }
 
+body {
+  padding-bottom: 60px;
+}
 body[data-bs-theme="dark"] .icon-github {
   color: #fff;
 }
 body[data-bs-theme="light"] .icon-github {
   color: #000;
+}
+
+footer {
+  height: 60px;
+}
+</style>
+
+<style src="@vueform/multiselect/themes/default.css"></style>
+<style>
+.multiselect,
+.multiselect .multiselect-dropdown {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
 }
 </style>

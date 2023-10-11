@@ -24,7 +24,7 @@
               <h5 class="text-center">Mods</h5>
               <div class="defense-info__mods_mod-slot defense-utils__util bg-dark-subtle" v-for="(mod, index) in userMods" :key="index">
                 <div class="defense-info__shards_shard-name defense-utils__util-name" v-if="mod?.name">{{ mod.name }}</div>
-                <div class="defense-info__shards_shard-name defense-utils__util-name" v-else-if="editMode"><ModSelection @change="(mod) => {userData.relic.mods[index] = mod.id; loadMods()}" /></div>
+                <div class="defense-info__shards_shard-name w-100" v-else-if="editMode"><ModSelection @change="(mod) => {userData.relic.mods[index] = mod.id; loadMods()}" /></div>
                 <div class="text-muted" v-else>Empty mod slot</div>
               </div>
             </div>
@@ -32,9 +32,9 @@
             <div class="defense-info__shards defense-utils">
               <h5 class="text-center">Shards</h5>
               <div class="defense-info__shards_shard defense-utils__util bg-dark-subtle d-flex align-items-center" v-for="(shard, index) in userShards" :key="index">
-                <div class="defense-info__shards_shard-icon"><img :src="shard?.icon" :alt="shard?.name"></div>
+                <div class="defense-info__shards_shard-icon" v-if="shard?.icon"><img :src="shard?.icon" :alt="shard?.name"></div>
                 <div class="defense-info__shards_shard-name defense-utils__util-name" v-if="shard?.name">{{ shard.name }}</div>
-                <div class="defense-info__shards_shard-name defense-utils__util-name" v-else-if="editMode"><ShardSelection @change="(shard) => {userData.shards[index] = shard.id; loadShards()}" /></div>
+                <div class="defense-info__shards_shard-name w-100" v-else-if="editMode"><ShardSelection @change="(shard) => {userData.shards[index] = shard.id; loadShards()}" /></div>
                 <div class="text-muted" v-else>Empty shard slot</div>
               </div>
             </div>

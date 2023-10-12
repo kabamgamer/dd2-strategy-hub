@@ -11,7 +11,7 @@
                           v-for="defensePosition in mapConfigurations.mapLayout"
                           :key="defensePosition.incrementId"
                           :editMode="editMode"
-                          :icon="mapConfigurations.defenses[defensePosition.defenseIncrementId].mapIcon"
+                          :icon="getDefenseMapIcon(defensePosition.defenseIncrementId, defensePosition)"
                           :position="defensePosition.position"
                           :rotation="defensePosition.rotationInDegrees"
                           @selectDefense="openDefenseAccordion(defensePosition.defenseIncrementId)"
@@ -26,11 +26,10 @@
         <div class="col-md-3">
           <div class="map_actions d-flex justify-content-end">
             <div class="actions" v-if="!editMode">
-              <button class="btn m-1 btn-primary" @click.prevent="editMode = true; communityMapKey++">Edit</button>
+              <button class="btn m-1 btn-primary" v-if="can('map.update', [mapConfigurations])" @click.prevent="editMode = true; communityMapKey++">Edit</button>
             </div>
             <div class="actions" v-else>
               <button class="btn m-1 btn-warning" @click.prevent="mapMetaConfigurationModal?.show()">Edit tags</button>
-              <button class="btn m-1 btn-danger" @click.prevent="editMode = false; communityMapKey++">Cancel</button>
               <button class="btn m-1 btn-success" @click.prevent="onSave">Save</button>
             </div>
           </div>
@@ -97,8 +96,8 @@
           <div class="form-group mt-3">
             <label for="map">Game Mode</label>
             <select class="form-select" v-model="mapConfigurations.gameMode" @change="mapConfigurations.difficulty = null">
-              <option value="Adventures">Adventures</option>
-              <option value="Expeditions">Expeditions</option>
+              <option value="Adventure">Adventure</option>
+              <option value="Expedition">Expedition</option>
               <option value="Survival">Survival</option>
               <option value="Mastery">Mastery</option>
               <option value="Incursion">Incursion</option>
@@ -129,7 +128,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Collapse } from "bootstrap";
 import { storeToRefs } from "pinia";
 
@@ -144,8 +143,11 @@ import { DefenseRootInterface } from "@/interaces";
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 import MapData from "@/data/MapData";
 
+import useCommunityMapsApi from "@/api/CommunityMapsApi";
 import { useMapStore } from "@/stores/Map";
 import { useDefenseStore } from "@/stores/DefenseInfo";
+import { useAcl } from "@/composables/Acl";
+
 import IconCaretUp from "@/components/icons/IconCaretUp.vue";
 import IconCaretDown from "@/components/icons/IconCaretDown.vue";
 import BootstrapModal from "@/components/layout/BootstrapModal.vue";
@@ -154,10 +156,14 @@ import Input from "@/components/layout/form/Input.vue";
 import IconEye from "@/components/icons/IconEye.vue";
 import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 
+const { getCommunityMapById, createCommunityMap, updateCommunityMap } = useCommunityMapsApi();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
 
+const { can } = useAcl();
+
 const route = useRoute()
+const router = useRouter()
 const editMode = ref<boolean>(route.params.id === "new")
 const communityMapKey = ref<number>(0)
 const totalDu = ref<number>(0)
@@ -216,15 +222,34 @@ function onMapSelect(selectedMap) {
   mapConfigurations.value.map = selectedMap.id
 }
 
-function onSave() {
-  editMode.value = false
-  communityMapKey.value++
+async function onSave() {
+  if (route.params.id === 'new') {
+    createCommunityMap(mapConfigurations.value)
+        .then((response) => {
+          router.push({ name: 'community-maps.detail', params: { id: response.id } })
+          editMode.value = false
+          communityMapKey.value++
+          loadMapConfigurations()
+        })
+  } else {
+    updateCommunityMap(mapConfigurations.value)
+        .then(() => {
+          editMode.value = false
+          communityMapKey.value++
+          loadMapConfigurations()
+        })
+  }
+}
+
+function getDefenseMapIcon(defenseIncrementId) {
+  const defense = mapConfigurations.value.defenses.find((defense) => defense.incrementId === defenseIncrementId)
+  return defense.mapIcon
 }
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {
-  mapConfigurations.value.defenses = mapConfigurations.value.defenses || {}
-  const nextDefenseIncrementId = Math.max(...Object.values(mapConfigurations.value.defenses).map((defense) => defense.incrementId), 0) + 1;
-  mapConfigurations.value.defenses[nextDefenseIncrementId] = {
+  mapConfigurations.value.defenses = mapConfigurations.value.defenses || []
+  const nextDefenseIncrementId = Math.max(...mapConfigurations.value.defenses.map((defense) => defense.incrementId), 0) + 1;
+  mapConfigurations.value.defenses.push({
     incrementId: nextDefenseIncrementId,
     id: defenseData.id,
     label: defenseData.name,
@@ -233,7 +258,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
       mods: []
     },
     shards: []
-  }
+  })
 }
 
 function openDefenseAccordion(defenseIncrementId: string): void {
@@ -242,112 +267,19 @@ function openDefenseAccordion(defenseIncrementId: string): void {
   new Collapse(defenseAccordionElement, {parent, toggle: false}).show();
 }
 
-async function loadMapConfigurations(): Promise<void> {
-  if (route.params.id === 'new') {
-    loading.value = false
-    mapConfigurations.value = {
-      author: {id: 1, name: 'Kabamgamer'},
-      votes: {up: 0, down: 0},
-    }
-    mapMetaConfigurationModal.value?.show()
-    return Promise.resolve()
+function initNewMapConfigurations(): void {
+  loading.value = false
+  mapConfigurations.value = {
+    author: {id: 1, name: 'Kabamgamer'},
+    votes: {up: 0, down: 0},
   }
+  mapMetaConfigurationModal.value?.show()
+}
 
+async function loadMapConfigurations(): Promise<void> {
   loading.value = true
 
-  mapConfigurations.value = {
-    title: "Beat gates with squire only",
-    map: "dragonfall_town_gates_of_dragonfall",
-    gameMode: "Survival",
-    difficulty: "Wave 151+",
-    description: "This is one big ass description",
-    tags: ["AFKable", "Base heroes"],
-    userVote: "up",
-    votes: {up: 13, down: 3},
-    author: {id: 1, name: "Kabamgamer"},
-    defenses: {
-      1: {
-        incrementId: 1,
-        id: "Ballista",
-        label: "Ballista",
-        mapIcon: "squire_ballista.png",
-        relic: {"mods": ["defense_rate_servo", "defense_range_servo", "anti_melee_servo"]},
-        shards: ["destruction", "mass_destruction", "vampiric_empowerment"]
-      },
-      2: {
-        incrementId: 2,
-        id: "SpikeBlockade",
-        label: "Spike Blockade",
-        mapIcon: "squire_spike_blockade.png",
-        relic: {"mods": ["hardened_servo", "accumulator_servo", "fortitude_servo"]},
-        shards: ["auto_repair_system", "juggernaut", "automation"]
-      }
-    },
-    comments: [{
-      author: {id: 2, name: "User 1"},
-      comment: "This is a test comment",
-      createdAt: new Date(),
-    }, {
-      author: {id: 3, name: "User 2"},
-      comment: "This is a test comment",
-      createdAt: new Date(),
-    }, {
-      author: {id: 4, name: "User 3"},
-      comment: "This is a test comment",
-      createdAt: new Date(),
-    }],
-    mapLayout: [{
-      incrementId: 1,
-      defenseIncrementId: 1,
-      rotationInDegrees: 0,
-      position: {x: 479, y: 658}
-    }, {
-      incrementId: 3,
-      defenseIncrementId: 1,
-      rotationInDegrees: 337.786,
-      position: {x: 520, y: 665}
-    }, {
-      incrementId: 4,
-      defenseIncrementId: 2,
-      rotationInDegrees: 0,
-      position: {x: 499, y: 620}
-    }, {
-      incrementId: 5,
-      defenseIncrementId: 2,
-      rotationInDegrees: 20.13630342824814,
-      position: {x: 715, y: 645}
-    }, {
-      incrementId: 6,
-      defenseIncrementId: 2,
-      rotationInDegrees: 0,
-      position: {x: 582, y: 625}
-    }, {
-      incrementId: 7,
-      defenseIncrementId: 1,
-      rotationInDegrees: 21.95245249194039,
-      position: {x: 677, y: 675}
-    }, {
-      incrementId: 8,
-      defenseIncrementId: 1,
-      rotationInDegrees: 0,
-      position: {x: 714, y: 689}
-    }, {
-      incrementId: 9,
-      defenseIncrementId: 1,
-      rotationInDegrees: 13.134022306396304,
-      position: {x: 695, y: 682}
-    }, {
-      incrementId: 10,
-      defenseIncrementId: 1,
-      rotationInDegrees: 0,
-      position: {x: 596, y: 664}
-    }, {
-      incrementId: 11, 
-      defenseIncrementId: 1, 
-      rotationInDegrees: 0, 
-      position: {x: 572, y: 664}
-    }]
-  };
+  mapConfigurations.value = await getCommunityMapById(route.params.id)
   if (mapConfigurations.value.map) {
     map.value = await getMapById(mapConfigurations.value.map)
   }
@@ -361,17 +293,22 @@ watch(mapConfigurations, async () => {
   }
 
   const resolvedDefensesDu = {};
-  for (const defense of Object.values(mapConfigurations.value.defenses)) {
+  for (const defense of mapConfigurations.value.defenses) {
     resolvedDefensesDu[defense.incrementId] = (await getDefenseRoot(defense.id)).defenseUnits;
   }
 
+  mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout || []
   totalDu.value = mapConfigurations.value.mapLayout.reduce((total, defensePosition) => {
     return total + resolvedDefensesDu[defensePosition.defenseIncrementId];
   }, 0);
 }, {deep: true});
 
 onMounted(() => {
-  loadMapConfigurations()
+  if (route.params.id === 'new') {
+    initNewMapConfigurations()
+  } else {
+    loadMapConfigurations()
+  }
 })
 </script>
 

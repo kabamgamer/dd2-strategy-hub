@@ -28,6 +28,9 @@
           <li class="nav-item">
             <ImportExport />
           </li>
+          <li class="nav-item">
+            <AuthLoginModal ref="authLoginModal" with-cta />
+          </li>
         </ul>
       </div>
     </div>
@@ -66,15 +69,18 @@ import ImportExport from "@/components/utilities/ImportExport.vue";
 import Modal from "@/components/layout/BootstrapModal.vue";
 import IconGithub from "@/components/icons/IconGithub.vue";
 import ChangelogModal from "@/components/utilities/ChangelogModal.vue";
+import AuthLoginModal from "@/components/auth/AuthLoginModal.vue";
 
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useUserDataStore } from "@/stores/UserData";
 import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
+import { useAcl } from "@/composables/Acl";
 
 const { colorMode } = storeToRefs(useUserDataStore());
 const errorModal = ref<typeof Modal|null>(null);
+const authLoginModal = ref<typeof AuthLoginModal|null>(null);
 const errorMessage = ref<string>("");
 
 (window as { onDataError?: (err: Error) => void })["onDataError"] = (e: Error): void => {
@@ -100,6 +106,8 @@ function reloadPage(): void {
 }
 
 onMounted(() => {
+  useAcl(authLoginModal.value);
+
   document.body.dataset.bsTheme = colorMode.value;
 });
 </script>

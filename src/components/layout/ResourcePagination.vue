@@ -2,8 +2,8 @@
   <LoadingSpinner v-if="loading" />
 
   <div class="pagination" :class="wrapperClasses" v-else>
-    <template v-if="result?.items?.length">
-      <slot name="item" v-for="item in result.items" :item="item" :key="item.id"></slot>
+    <template v-if="result?.data?.length">
+      <slot name="item" v-for="item in result.data" :item="item" :key="item.id"></slot>
     </template>
     <slot name="noResults" v-else>No results found</slot>
   </div>
@@ -14,6 +14,9 @@ import { ref, onMounted, defineProps, PropType, watch } from "vue"
 
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 
+import useApi from "@/api/Api";
+
+const { getFromEndpoint } = useApi();
 const loading = ref(true);
 const result = ref();
 
@@ -21,7 +24,7 @@ const props = defineProps({
   wrapperClasses: {
     required: false,
   },
-  fetchUrl: {
+  fetchEndpoint: {
     type: String,
     required: true,
   },
@@ -29,7 +32,7 @@ const props = defineProps({
     type: Number,
     default: 20,
   },
-  filterResults: {
+  adaptItem: {
     type: Function as PropType<(result: any) => Promise<any>>,
     required: false,
   },
@@ -42,26 +45,27 @@ const props = defineProps({
 async function fetchResult() {
   loading.value = true;
 
-  const url: string = props.fetchUrl as string;
+  const endpoint: string = props.fetchEndpoint as string;
 
-  result.value = {items: []};
-  for (let i = 0; i < props.pageSize; i++) {
-    result.value.items.push({
-      id: i,
-      title: "Beat gates with squire only",
-      map: "dragonfall_town_gates_of_dragonfall",
-      gameMode: "Survival",
-      difficulty: "Wave 151+",
-      tags: ["AFKable", "Base heroes"],
-      votes: {up: 13, down: 3},
-      author: {id: 1, name: "Kabamgamer"},
-      createdAt: new Date(),
-    });
-  }
+  result.value = await getFromEndpoint(endpoint);
 
-  if (props.filterResults) {
-    result.value = await props.filterResults(result.value);
+  const adaptedData = []
+  for (let item of result.value.data) {
+    if (item.createdAt) {
+      item.createdAt = new Date(item.createdAt);
+    }
+
+    if (item.updatedAt) {
+      item.createdAt = new Date(item.createdAt);
+    }
+
+    if (props.adaptItem) {
+      item = await props.adaptItem(item);
+    }
+
+    adaptedData.push(item);
   }
+  result.value.data = adaptedData;
 
   loading.value = false;
 }

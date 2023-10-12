@@ -8,11 +8,11 @@
     </Section>
 
     <Section section-title="Results" class="position-relative">
-      <ResourcePagination fetch-url="/test" wrapper-classes="row" :page-size="12" :filter-results="resolveMaps" :additional-request-parameters="additionalRequestParameters">
+      <ResourcePagination fetch-endpoint="/maps" wrapper-classes="row" :page-size="12" :adapt-item="resolveMap" :additional-request-parameters="additionalRequestParameters">
         <template v-slot:item="{ item }">
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
             <router-link :to="{name: 'community-maps.detail', params: {id: item.id}}">
-              <CommunityMapPreview :map="item" class="mb-4" />
+              <CommunityMapPreview :map="item" />
             </router-link>
           </div>
         </template>
@@ -45,14 +45,9 @@ function onFilter(filters): void {
   additionalRequestParameters.value.filter = filters;
 }
 
-async function resolveMaps(result: any): Promise<any> {
-  const filteredItems = []
-  for (const item of result.items) {
-    item.map = await getMapById(item.map);
-    filteredItems.push(item)
-  }
-  result.items = filteredItems;
+async function resolveMap(item: any): Promise<any> {
+  item.map = await getMapById(item.map);
 
-  return Promise.resolve(result)
+  return Promise.resolve(item)
 }
 </script>

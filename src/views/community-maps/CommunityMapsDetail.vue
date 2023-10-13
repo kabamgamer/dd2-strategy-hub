@@ -226,10 +226,11 @@ async function onSave() {
   if (route.params.id === 'new') {
     createCommunityMap(mapConfigurations.value)
         .then((response) => {
-          router.push({ name: 'community-maps.detail', params: { id: response.id } })
-          editMode.value = false
-          communityMapKey.value++
-          loadMapConfigurations()
+          router.push({ name: 'community-maps.detail', params: { id: response.id } }).then(() => {
+            editMode.value = false
+            communityMapKey.value++
+            loadMapConfigurations()
+          })
         })
   } else {
     updateCommunityMap(mapConfigurations.value)

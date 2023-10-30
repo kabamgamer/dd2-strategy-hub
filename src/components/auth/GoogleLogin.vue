@@ -6,11 +6,9 @@
 import { defineEmits } from "vue"
 import { googleSdkLoaded } from "vue3-google-login"
 import useAuthorisationApi from "@/api/AuthorisationApi"
-import { useUserStore } from "@/stores/User"
 import IconColouredGoogle from "@/components/icons/IconColouredGoogle.vue";
 
 const { googleLogin } = useAuthorisationApi()
-const { loginUser } = useUserStore()
 const emit = defineEmits(['loginSuccess'])
 
 function login() {
@@ -20,8 +18,7 @@ function login() {
       scope: 'email profile openid',
       callback: (response) => {
         googleLogin(response).then((response) => {
-          loginUser(response.user, response.access_token);
-          emit('loginSuccess')
+          emit('loginSuccess', response)
         })
       }
     }).requestCode()

@@ -68,7 +68,7 @@ function onDefenseClick() {
 
 function onRotate() {
   contextMenu.value?.close()
-  rotate(defenseElement.value, contextMenu.value.$el, emit)
+  rotate(defenseElement.value)
 }
 
 onMounted(() => {

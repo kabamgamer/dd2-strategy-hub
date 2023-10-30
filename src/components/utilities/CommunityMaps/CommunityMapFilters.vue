@@ -12,8 +12,8 @@
         <div class="form-group">
           <label for="map">Game Mode</label>
           <select class="form-select" v-model="filters.gameMode" @change="filters.difficulty = null">
-            <option value="Adventures">Adventures</option>
-            <option value="Expeditions">Expeditions</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Expedition">Expedition</option>
             <option value="Survival">Survival</option>
             <option value="Mastery">Mastery</option>
             <option value="Incursion">Incursion</option>
@@ -40,6 +40,22 @@
         />
       </div>
     </div>
+
+    <div class="active-filters">
+      <div class="active-filters__filter badge bg-secondary me-2" v-if="Object.values(activeFilters).length > 1">
+        Remove all filters <IconCross @click="filters = {}" />
+      </div>
+      <template class="active-filters__filter badge bg-secondary me-2" v-for="(value, key) in activeFilters" :key="key">
+        <template v-if="Array.isArray(value)">
+          <div class="active-filters__filter badge bg-secondary me-2" v-for="(subValue, index) in value" :key="subValue">
+            {{ key }}: {{ subValue }} <IconCross @click="filters[key].length > 1 ? filters[key].splice(index, 1) : filters[key] = null" />
+          </div>
+        </template>
+        <div class="active-filters__filter badge bg-secondary me-2" v-else>
+          {{ key }}: {{ value }} <IconCross @click="filters[key] = null" />
+        </div>
+      </template>
+    </div>
   </Card>
 </template>
 
@@ -50,11 +66,14 @@ import Multiselect from '@vueform/multiselect'
 import Card from "@/components/layout/Card.vue";
 import MapSelection from "@/components/utilities/CommunityMaps/MapSelection.vue";
 import MapData from "@/data/MapData";
+import IconCross from "@/components/icons/IconCross.vue";
 
 const emit = defineEmits(["filter"]);
 
 const selectedMap = ref()
 const filters = ref({})
+
+const activeFilters = computed(() => Object.fromEntries(Object.entries(filters.value).filter(([key, value]) => value !== null && value !== '')))
 
 const gameModeDifficulties = computed(() => {
   switch (filters.value.gameMode) {

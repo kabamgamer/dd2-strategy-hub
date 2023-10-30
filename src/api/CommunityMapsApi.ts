@@ -11,9 +11,13 @@ export default function useCommunityMapsApi() {
         return await postAtEndpoint('/maps', map)
     }
 
+    async function voteCommunityMap(mapId: string, vote: string): Promise<any> {
+        return await postAtEndpoint(`/maps/${mapId}/vote`, {vote})
+    }
+
     async function updateCommunityMap(map: any): Promise<any> {
         return await patchAtEndpoint(`/maps/${map.id}`, map)
     }
 
-    return { getCommunityMapById, createCommunityMap, updateCommunityMap }
+    return { getCommunityMapById, createCommunityMap, updateCommunityMap, voteCommunityMap }
 }

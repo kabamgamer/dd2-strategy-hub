@@ -2,16 +2,19 @@ import { storeToRefs } from "pinia"
 import { useUserStore } from "@/stores/User"
 
 export default function useApi() {
-    async function getFromEndpoint(endpoint: string): Promise<any> {
-        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
+    async function getFromEndpoint(endpoint: string, customOptions: object = {}): Promise<any> {
+        const options = {
             method: "GET",
-            headers: getHeaders()
-        })
+            headers: getHeaders(),
+            ...customOptions
+        };
+
+        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
 
         return await response.json()
     }
 
-    async function postAtEndpoint(endpoint: string, body?: object): Promise<any> {
+    async function postAtEndpoint(endpoint: string, body?: object, promptLoginOnUnauthorized: boolean = true): Promise<any> {
         const options = {
             method: "POST",
             headers: getHeaders(),
@@ -19,7 +22,17 @@ export default function useApi() {
 
         if (body) options['body'] = JSON.stringify(body)
 
-        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
+        let response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
+
+        if (response.status === 401 && promptLoginOnUnauthorized) {
+            await useUserStore().promptUserLogin()
+
+            return postAtEndpoint(endpoint, body, false)
+        }
+
+        if (response.status === 204) {
+            return response
+        }
 
         return await response.json()
     }

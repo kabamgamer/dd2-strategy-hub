@@ -29,18 +29,21 @@ export function useAcl(authLoginModalObject?: any): any {
         return ACCESS_CONTROL_LIST[ability](user.value, ...aclArguments);
     }
 
-    function promptLogin(): void {
-        authLoginModal?.show();
-    }
-
-    function promptLoginIfCant(ability: string, aclArguments: any[]): boolean {
+    async function canOrPromptLogin(ability: string, aclArguments: any[] = []): Promise<void> {
         if (!can(ability, aclArguments)) {
-            promptLogin();
-            return false;
+            await promptLogin();
+            if (can(ability, aclArguments)) {
+                return Promise.resolve();
+            }
+            return Promise.reject();
         }
 
-        return true
+        return Promise.resolve()
     }
 
-    return { can, promptLogin, promptLoginIfCant };
+    async function promptLogin(): Promise<void> {
+        return useUserStore().promptUserLogin();
+    }
+
+    return { can, promptLogin, canOrPromptLogin };
 }

@@ -1,10 +1,10 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid community-map-container">
     <LoadingSpinner v-if="loading" />
 
     <Section :section-title="mapConfigurations?.title" v-else>
       <div class="row" v-if="map">
-        <div class="col-md-9">
+        <div class="col-md-9 map_wrapper">
           <CommunityMap :map="map" :key="communityMapKey">
             <template #defenses>
               <MapDefense :class="{hide: hideDefense[defensePosition.defenseIncrementId]}"
@@ -30,12 +30,12 @@
             </div>
             <div class="actions" v-else>
               <button class="btn m-1 btn-warning" @click.prevent="mapMetaConfigurationModal?.show()">Edit tags</button>
-              <button class="btn m-1 btn-success" @click.prevent="onSave">Save</button>
+              <button class="btn m-1 btn-success" :class="{disabled: !validatedMap}" :disabled="!validatedMap" @click.prevent="onSave">Save</button>
             </div>
           </div>
           <Card class="mb-3" :cardTitle="map.name" :maxHeight="false">
             <strong>Map:</strong> {{ map.name }} <br />
-            <strong>Author:</strong> {{ mapConfigurations.author?.name }} <br />
+            <strong>Author:</strong> <router-link :to="{name: 'community-maps', query: {author: mapConfigurations.author?.id}}">{{ mapConfigurations.author?.name }}</router-link> <br />
             <strong>Game mode:</strong> {{ mapConfigurations.gameMode }} <br />
             <strong>Difficulty:</strong> {{ mapConfigurations.difficulty }} <br />
             <strong>Tags:</strong> <span v-for="tag in mapConfigurations.tags" class="tag badge bg-success">{{ tag }}</span> <br />
@@ -81,7 +81,7 @@
       </div>
     </Section>
 
-    <BootstrapModal ref="mapMetaConfigurationModal" title="Map settings">
+    <BootstrapModal ref="mapMetaConfigurationModal" title="Map settings" :can-manually-close="false">
       <template #body>
         <LoadingSpinner v-if="loading" />
 
@@ -122,6 +122,11 @@
           </div>
         </div>
       </template>
+
+      <template #footer>
+        <button class="btn btn-danger" @click.prevent="mapMetaConfigurationModal.hide(); router.back()">Cancel</button>
+        <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="mapMetaConfigurationModal.hide()">Save</button>
+      </template>
     </BootstrapModal>
   </div>
 </template>
@@ -130,7 +135,6 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import { Collapse } from "bootstrap";
-import { storeToRefs } from "pinia";
 
 import Multiselect from '@vueform/multiselect'
 import Section from "@/components/layout/Section.vue";
@@ -156,7 +160,7 @@ import Input from "@/components/layout/form/Input.vue";
 import IconEye from "@/components/icons/IconEye.vue";
 import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 
-const { getCommunityMapById, createCommunityMap, updateCommunityMap } = useCommunityMapsApi();
+const { getCommunityMapById, createCommunityMap, updateCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
 
@@ -172,6 +176,12 @@ const map = ref<MapData>()
 const mapMetaConfigurationModal = ref<BootstrapModal>()
 const mapConfigurations = ref({})
 const hideDefense = ref({})
+const validatedMeta = computed(() => {
+  return mapConfigurations.value.title && mapConfigurations.value.map && mapConfigurations.value.gameMode && mapConfigurations.value.difficulty
+})
+const validatedMap = computed(() => {
+  return mapConfigurations.value.mapLayout && mapConfigurations.value.mapLayout.length > 0
+})
 const gameModeDifficulties = computed(() => {
   switch (mapConfigurations.value.gameMode) {
     case "Adventures":
@@ -197,18 +207,18 @@ function addDefensePosition(defenseIncrementId) {
 }
 
 function vote(userVote: string): void {
-  if (mapConfigurations.value.userVote === userVote) {
-    mapConfigurations.value.votes[mapConfigurations.value.userVote] -= 1
-    mapConfigurations.value.userVote = null
-  }
+  if (mapConfigurations.value.userVote === userVote) return;
 
-  if (mapConfigurations.value.userVote !== null) {
-    mapConfigurations.value.votes[mapConfigurations.value.userVote] -= 1
-  }
+  voteCommunityMap(mapConfigurations.value.id, userVote)
+      .then(() => {
+        if (mapConfigurations.value.userVote !== null) {
+          mapConfigurations.value.votes[mapConfigurations.value.userVote] -= 1
+        }
 
-  mapConfigurations.value.votes[userVote] += 1
+        mapConfigurations.value.votes[userVote] += 1
 
-  mapConfigurations.value.userVote = userVote
+        mapConfigurations.value.userVote = userVote
+      })
 }
 
 function deleteDefensePosition(incrementId) {
@@ -339,5 +349,18 @@ onMounted(() => {
 }
 .vote.active svg {
   color: gold
+}
+
+.map_wrapper {
+  overflow-x: overlay;
+}
+
+@media (min-width: 1580px) {
+  .map_wrapper {
+    overflow-x: hidden;
+  }
+  .community-map-container {
+    max-width: 1500px;
+  }
 }
 </style>

@@ -77,7 +77,6 @@ import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import { useAcl } from "@/composables/Acl";
-import UserProfileModal from "@/components/auth/UserProfileModal.vue";
 
 const { colorMode } = storeToRefs(useUserDataStore());
 const errorModal = ref<typeof Modal|null>(null);
@@ -138,6 +137,7 @@ footer {
 </style>
 
 <style src="@vueform/multiselect/themes/default.css"></style>
+<style src="@vueup/vue-quill/dist/vue-quill.snow.css"></style>
 <style>
 .multiselect,
 .multiselect .multiselect-dropdown {

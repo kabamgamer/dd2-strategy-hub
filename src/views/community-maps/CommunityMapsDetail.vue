@@ -79,6 +79,10 @@
           </Card>
         </div>
       </div>
+
+      <Card cardTitle="Description" :maxHeight="false" class="mt-5">
+        <div class="description" v-html="mapConfigurations.description"></div>
+      </Card>
     </Section>
 
     <BootstrapModal ref="mapMetaConfigurationModal" title="Map settings" :can-manually-close="false">
@@ -120,6 +124,11 @@
                 :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite']"
             />
           </div>
+
+          <div class="form-group mt-3">
+            <label for="map">Description</label>
+            <QuillEditor toolbar="minimal" v-model:content="mapConfigurations.description" contentType="html" />
+          </div>
         </div>
       </template>
 
@@ -136,6 +145,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import { Collapse } from "bootstrap";
 
+import { QuillEditor } from '@vueup/vue-quill'
 import Multiselect from '@vueform/multiselect'
 import Section from "@/components/layout/Section.vue";
 import CommunityMap from "@/components/utilities/CommunityMaps/CommunityMap.vue";

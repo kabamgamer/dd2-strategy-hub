@@ -22,7 +22,7 @@ export default function useApi() {
 
         if (body) options['body'] = JSON.stringify(body)
 
-        let response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
+        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
 
         if (response.status === 401 && promptLoginOnUnauthorized) {
             await useUserStore().promptUserLogin()

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@vueform/multiselect": "^2.6.3",
+    "@vueup/vue-quill": "^1.2.0",
     "bootstrap": "^5.3.0",
     "draggabilly": "^3.0.0",
     "fontawesome": "^5.6.3",

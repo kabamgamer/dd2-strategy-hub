@@ -3,7 +3,7 @@ export interface OutputModifierMutatorsInterface {
         fromSelf?: boolean;
         types?: string[];
         noStack?: string[];
-    },
+    };
 }
 
 export default class OutputModifier {

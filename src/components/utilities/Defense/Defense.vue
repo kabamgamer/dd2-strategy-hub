@@ -229,7 +229,7 @@ async function loadSetupShards(): Promise<void> {
 
   isLoadingDefenseSetupShards.value = true
   userSetupDefensesShards.value = {}
-  for (const setupDefense: UserDataStoreDefenseInterface of props.setupDefenses) {
+  for (const setupDefense of props.setupDefenses) {
     userSetupDefensesShards.value[setupDefense.incrementId] = [];
     for (const shardId of setupDefense.userData.shards) {
       userSetupDefensesShards.value[setupDefense.incrementId].push(await getShardById(shardId))

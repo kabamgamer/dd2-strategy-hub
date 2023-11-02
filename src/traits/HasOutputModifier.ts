@@ -24,7 +24,7 @@ export default class HasOutputModifier {
     }
 
     private getMutators(valuesAndMutators: string[]): OutputModifierMutatorsInterface|undefined {
-        let mutators: OutputModifierMutatorsInterface = {};
+        const mutators: OutputModifierMutatorsInterface|any = {};
 
         valuesAndMutators.forEach((mutator: string) => {
             const mutatorParts: string[] = mutator.split(':');

@@ -11,7 +11,7 @@ import HasAscensionPoints from "@/traits/HasAscensionPoints";
 import ModType from "@/enums/ModType";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import { getDefaultSetupModifiers } from "@/stores/UserData";
-import DefenseShardData from "@/data/DefenseShardData";
+import type DefenseShardData from "@/data/DefenseShardData";
 
 export function useDefenseCalculations(): any {
     let defense: DefenseRootInterface
@@ -21,7 +21,7 @@ export function useDefenseCalculations(): any {
     let defenseLevel: number
     let ancientResetPoints: UserAncientResetPoints
     let setupDefenses: UserDataStoreDefenseInterface[]
-    let userSetupDefensesShards: { [defenseIncrementId: number]: DefenseShardData[] }
+    let userSetupDefensesShards: { [defenseIncrementId: number]: DefenseShardData[]|any[] }
     let setupDefenseOptions: { [defensesIncrementId: number]: UserSetupDefenseInterface }
     let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}
     let setupModifiers: DefenseSetupModifiersInterface
@@ -449,7 +449,7 @@ export function useDefenseCalculations(): any {
     }
 
     function getDefenseSetupBoosts(): number {
-        let boostedPower = Object.values(defenseBoosts).reduce((total: number, defenseBoost: CalculatedDefenseStatsInterface) => total + defenseBoost.defensePower/10, 0)
+        const boostedPower = Object.values(defenseBoosts).reduce((total: number, defenseBoost: CalculatedDefenseStatsInterface) => total + defenseBoost.defensePower/10, 0)
 
         // ToDo: Apply pylon shards with fromSelf mutator (eg. Frosty Power)
 
@@ -596,13 +596,13 @@ export function useDefenseCalculations(): any {
     }
 
     function pylonsModifier(stat: string): number {
-        let pylons = {};
+        const pylons: { [shardId: string]: ShardInterface } = {};
         for (const defenseIncrementId in userSetupDefensesShards) {
-            if (defenseIncrementId === userDefenseData.incrementId) {
-                return
+            if (defenseIncrementId as unknown as number === userDefenseData.incrementId) {
+                continue;
             }
 
-            for (const shard: ShardInterface of userSetupDefensesShards[defenseIncrementId]) {
+            for (const shard of userSetupDefensesShards[defenseIncrementId]) {
                 if (!shard[stat]?.mutators.pylon) {
                     continue;
                 }
@@ -619,24 +619,18 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        for (const shardId: string in pylons) {
-            let deleteShard = false;
-            const pylonShard: ShardInterface = pylons[shardId];
+        for (const shardId in pylons) {
+            const pylonShard: ShardInterface|any = pylons[shardId];
             for (const noStack of pylonShard[stat]?.mutators.pylon.noStack ?? []) {
                 if (pylons[noStack]) {
                     delete pylons[shardId]
-                    deleteShard = true;
                     break
                 }
-            }
-
-            if (!deleteShard) {
-                pylons[shardId] = pylonShard[stat]?.percentage
             }
         }
 
         let defensePowerPylonsPercentage: number = 0;
-        defensePowerPylonsPercentage += Object.values(pylons).reduce((a: number, b: number) => a + b, 0)
+        defensePowerPylonsPercentage += Object.values(pylons).reduce((accumulator: number, currentValue: any) => accumulator + currentValue[stat].percentage, 0)
 
         return defensePowerPylonsPercentage
     }

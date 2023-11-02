@@ -16,6 +16,8 @@ export const useDefenseStore: () => any = (): object => {
         const allDefensesFlat: DefenseRootInterface[] = []
 
         function initialized(): Promise<void> {
+            if (loaded.value) return Promise.resolve();
+
             return new Promise((resolve: () => void): void => {
                 const interval = setInterval((): void => {
                     if (loaded.value) {

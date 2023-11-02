@@ -14,6 +14,8 @@ export const useModStore: () => any = (): object => {
         const loaded = ref<boolean>(false)
 
         function initialized(): Promise<void> {
+            if (loaded.value) return Promise.resolve();
+
             return new Promise((resolve: () => void) => {
                 const interval = setInterval((): void => {
                     if (loaded.value) {

@@ -193,6 +193,8 @@ const defenseLevel = ref<number>(1)
 const hasDiverseMods = ref<boolean>(false)
 const userDefenseMods = ref<DefenseModData[]>([])
 const userDefenseShards = ref<DefenseShardData[]>([])
+const userSetupDefensesShards = ref<{ [defenseIncrementId: number]: DefenseShardData[] }>({})
+const isLoadingDefenseSetupShards = ref<boolean>(false)
 const attackRatePercentage = computed(() => Math.round((attackRate.value - (defense.defenseData?.baseAttackRate ?? 0)) / ((defense.defenseData?.maxAttackRate ?? 0) - (defense.defenseData?.baseAttackRate ?? 0)) * 100))
 
 function recalculate(): void {
@@ -210,12 +212,31 @@ function recalculate(): void {
 
   // Await the loading of mods and shards before calculating
   const interval: any = setInterval((): void => {
-    if (userDefenseMods.value.length === defense.userData.relic.mods.length && userDefenseShards.value.length === defense.userData.shards.length) {
+    if (
+        userDefenseMods.value.length === defense.userData.relic.mods.length
+        && userDefenseShards.value.length === defense.userData.shards.length
+        && (!props.setupDefenses || !isLoadingDefenseSetupShards.value)
+    ) {
       clearInterval(interval)
-      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
+      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, userSetupDefensesShards.value, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
       emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value)
     }
   }, 100)
+}
+
+async function loadSetupShards(): Promise<void> {
+  if (!props.setupDefenses) return
+
+  isLoadingDefenseSetupShards.value = true
+  userSetupDefensesShards.value = {}
+  for (const setupDefense: UserDataStoreDefenseInterface of props.setupDefenses) {
+    userSetupDefensesShards.value[setupDefense.incrementId] = [];
+    for (const shardId of setupDefense.userData.shards) {
+      userSetupDefensesShards.value[setupDefense.incrementId].push(await getShardById(shardId))
+    }
+  }
+
+  isLoadingDefenseSetupShards.value = false
 }
 
 const unwatchUserData = watch(defense.userData, recalculate, { deep: true })
@@ -251,6 +272,8 @@ watch(() => props.setupDefenseOptions, recalculate, { deep: true })
 watch(() => props.setupDefenses, (newValue, oldValue) => {
   if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
 
+  loadSetupShards()
+
   recalculate()
 }, { deep: true })
 
@@ -280,6 +303,8 @@ onMounted((): void => {
 
     defense.userData.isCollapsed = false
   })
+
+  loadSetupShards()
 
   // Await the loading of defenseData before initializing calculations
   const interval: any = setInterval((): void => {

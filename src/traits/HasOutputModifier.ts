@@ -1,3 +1,4 @@
+import type { OutputModifierMutatorsInterface } from "@/classes/OutputModifier";
 import OutputModifier from "@/classes/OutputModifier";
 
 export default class HasOutputModifier {
@@ -7,12 +8,48 @@ export default class HasOutputModifier {
             return undefined
         }
 
-        const modifierValue: string = value.replace('+', '');
-        if (modifierValue.includes('%')) {
-            return new OutputModifier(parseFloat(modifierValue.replace('%', '')))
+        const valuesAndMutators: string[] = value.split('|');
+        const modifierValue: string = valuesAndMutators.splice(0,1)[0].replace('+', '');
+
+        let mutators: OutputModifierMutatorsInterface|undefined;
+        if (valuesAndMutators.length > 0) {
+            mutators = this.getMutators(valuesAndMutators)
         }
 
-        return new OutputModifier(undefined, parseFloat(modifierValue))
+        if (modifierValue.includes('%')) {
+            return new OutputModifier(parseFloat(modifierValue.replace('%', '')), undefined, mutators)
+        }
+
+        return new OutputModifier(undefined, parseFloat(modifierValue), mutators)
     }
+
+    private getMutators(valuesAndMutators: string[]): OutputModifierMutatorsInterface|undefined {
+        let mutators: OutputModifierMutatorsInterface = {};
+
+        valuesAndMutators.forEach((mutator: string) => {
+            const mutatorParts: string[] = mutator.split(':');
+            const mutatorName: string = mutatorParts[0];
+            const mutatorValue: string|undefined = mutatorParts[1];
+
+            mutators[mutatorName] = {}
+            if (mutatorValue === undefined) {
+                return
+            }
+
+            // Check if the mutator value contains arguments in between []
+            if (!mutatorValue.includes('[') || !mutatorValue.includes(']')) {
+                mutators[mutatorName][mutatorValue] = true
+                return
+            }
+
+            const mutatorValueParts: string[] = mutatorValue.split('[');
+            const mutatorValueName: string = mutatorValueParts[0];
+            const mutatorValueArguments: string = mutatorValueParts[1].replace(']', '');
+            mutators[mutatorName][mutatorValueName] = mutatorValueArguments.split(',')
+        })
+
+        return mutators
+    }
+
 
 }

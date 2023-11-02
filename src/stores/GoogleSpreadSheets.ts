@@ -39,7 +39,7 @@ export const useGoogleSpreadsheetDataStore: () => any = (): object => {
 
             loading.value = true
 
-            const url: string = 'https://script.google.com/macros/s/AKfycbwc1hpIPSN_J1L-IZ7U6z6SYmn03n-85G79IUO-cCtYFnYvrD8Dz00fqPcBa0YJCMRCuQ/exec';
+            const url: string = import.meta.env.VITE_DATABASE_DATA_ENDPOINT as string || '';
 
             fetch(url)
                 .then(res => res.json())

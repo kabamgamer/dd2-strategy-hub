@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.3.2](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.1) (2023-11-02)
+
+* Added all missing shards and mods
+* Fixed a minor performance issue in calculating setups
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.3.0...v1.3.1)
+
+
+
 ## [v1.3.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.1) (2023-09-15)
 
 * Added table with detailed information regarding subsequent bounces of nether archers

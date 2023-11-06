@@ -49,7 +49,7 @@ getAllShardsCategorizedByTier().then((shards: {[tier: string]: ShardInterface[]}
   availableShards.value = shards;
 })
 
-watch(props.modelValue, (newValue: any): void => {
+watch(() => props.modelValue, (newValue: any): void => {
   selectedShard.value = newValue.name;
 }, { deep: true });
 

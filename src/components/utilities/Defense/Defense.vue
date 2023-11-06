@@ -185,7 +185,7 @@ const props = defineProps({
   setupModifiers: Object as PropType<DefenseSetupModifiersInterface|undefined>,
 });
 
-let defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
+const defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
 
 const id = ref<string>()
 const accordionCollapse = ref()
@@ -219,7 +219,7 @@ function recalculate(): void {
     ) {
       clearInterval(interval)
       calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, userSetupDefensesShards.value, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
-      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value)
+      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value, userDefenseShards.value, props.defenseBoosts ? Object.keys(props.defenseBoosts) : [])
     }
   }, 100)
 }
@@ -239,7 +239,7 @@ async function loadSetupShards(): Promise<void> {
   isLoadingDefenseSetupShards.value = false
 }
 
-const unwatchUserData = watch(defense.userData, recalculate, { deep: true })
+let unwatchUserData = watch(defense.userData, recalculate, { deep: true })
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {
   defense.defenseData = defenseData
@@ -256,7 +256,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
   } as UserDefenseInterface;
 
   unwatchUserData()
-  watch(defense.userData, recalculate, { deep: true })
+  unwatchUserData = watch(() => defense.userData, recalculate, { deep: true })
 }
 
 watch(userDefenseMods, debounce(() => {
@@ -266,15 +266,19 @@ hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as Defens
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
 watch(ancientPowerPoints, recalculate, { deep: true })
-watch(() => props.defenseBoosts, recalculate, { deep: true })
 watch(() => props.setupModifiers, recalculate, { deep: true })
 watch(() => props.setupDefenseOptions, recalculate, { deep: true })
+watch(() => props.defenseBoosts, (newValue, oldValue) => {
+  if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+
+  setTimeout(recalculate, 400)
+}, { deep: true })
 watch(() => props.setupDefenses, (newValue, oldValue) => {
   if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
 
   loadSetupShards()
 
-  recalculate()
+  setTimeout(recalculate, 400)
 }, { deep: true })
 
 onMounted((): void => {
@@ -311,6 +315,8 @@ onMounted((): void => {
     if (defense.defenseData) {
       clearInterval(interval)
       recalculate()
+
+      setTimeout(recalculate, 400)
     }
   }, 100)
 })

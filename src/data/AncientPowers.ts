@@ -39,7 +39,7 @@ export class AncientLifeSteal {
     name: string = "Life Steal"
     icon: string = "https://wiki.dungeondefenders2.com/images/6/6c/Ancient_Life_Steal.png"
     upgradeLevel: number = 0
-    static upgrades: number[] = [.01, .02, .03, .04, .05, .06, .07, .08, .09, .1]
+    static upgrades: number[] = [.005, .01, .015, .02, .025, .03, .035, .04, .045, .05]
 }
 
 export class AncientFortification {
@@ -47,7 +47,7 @@ export class AncientFortification {
     name: string = "Fortification"
     icon: string = "https://wiki.dungeondefenders2.com/images/8/81/Ancient_Fortification.png"
     upgradeLevel: number = 0
-    static upgrades: number[] = [.04, .06, .08, .09, .1, .12, .14, .16, .18, .20]
+    static upgrades: number[] = [.02, .04, .06, .08, .1, .12, .14, .16, .18, .20]
 }
 
 export class AncientDestruction {
@@ -55,7 +55,7 @@ export class AncientDestruction {
     name: string = "Destruction"
     icon: string = "https://wiki.dungeondefenders2.com/images/7/75/Ancient_Destruction.png"
     upgradeLevel: number = 0
-    static upgrades: number[] = [.04, .06, .08, .09, .1, .12, .14, .16, .18, .20]
+    static upgrades: number[] = [.02, .04, .06, .08, .1, .12, .14, .16, .18, .20]
 }
 
 export class AncientStrikes {

@@ -41,8 +41,8 @@
             :setupDefenseOptions="defenseSetup.defenses"
             :defenseBoosts="defenseBoosts"
             :setupModifiers="defenseSetup.modifiers"
-            @total-dps-calculated="(totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number) => {
-              onDefenseDpsCalculated(defense, totalDps, defensePower, defenseHealth, criticalDamage, criticalChance)
+            @total-dps-calculated="(totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number, defenseShards: DefenseShardData[]) => {
+              onDefenseDpsCalculated(defense, totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, defenseShards)
             }"
         >
           <template #defense-details>
@@ -102,6 +102,7 @@ import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData"
 import { useShortUrl } from "@/composables/ShortUrl"
 import { storeToRefs } from "pinia"
 import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/interaces";
+import type DefenseShardData from "@/data/DefenseShardData";
 
 import Defense from "@/components/utilities/Defense/Defense.vue";
 import DefenseSetupModifiers from "@/components/utilities/Setup/DefenseSetupModifiers.vue";
@@ -146,7 +147,7 @@ const totalDps = computed((): number => {
   return totalDps
 })
 
-function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number): void {
+function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number, defenseShards: DefenseShardData[]): void {
   const calculatedStats: CalculatedDefenseStatsInterface = {
     totalDps: totalDps,
     critChance: criticalChance,
@@ -155,16 +156,34 @@ function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps
     defensePower: defensePower,
   }
 
-  if (defense.defenseData?.id === 'BoostAura' || defense.defenseData?.id === 'BuffBeam') {
-    calculatedStats.totalDps = 0
+  const resolvedDefenseBoosts = defenseBoosts.value
+  resolvedDefenseBoosts[defense.incrementId] = {
+    totalDps: 0,
+    critChance: 0,
+    critDamage: 0,
+    defenseHealth: 0,
+    defensePower: 0,
+  }
 
-    const currentCalculatedStats = defensesStats.value[defense.incrementId]
-    if (!currentCalculatedStats || JSON.stringify(currentCalculatedStats) !== JSON.stringify(calculatedStats)) {
-      defenseBoosts.value[defense.incrementId] = calculatedStats
+  if (defense.defenseData?.id === 'BoostAura' || defense.defenseData?.id === 'BuffBeam') {
+    resolvedDefenseBoosts[defense.incrementId].defensePower = calculatedStats.defensePower / 10
+    resolvedDefenseBoosts[defense.incrementId].critDamage = calculatedStats.critDamage / 4
+  }
+
+  for (const shard of defenseShards) {
+    if (shard.defensePower?.mutators.pylon?.fromSelf) {
+      resolvedDefenseBoosts[defense.incrementId].defensePower += calculatedStats.defensePower * (shard.defensePower.percentage ?? 0) / 100
     }
   }
 
-  defensesStats.value[defense.incrementId] = calculatedStats
+  for (const defenseIncrementId in resolvedDefenseBoosts) {
+    const defenseBoosts = resolvedDefenseBoosts[defenseIncrementId]
+    if (Object.values(defenseBoosts).reduce((accumulator, boost) => accumulator + boost, 0) === 0) {
+      delete resolvedDefenseBoosts[defenseIncrementId]
+    }
+  }
+
+  defenseBoosts.value = resolvedDefenseBoosts
 }
 
 function addDefense(): void {

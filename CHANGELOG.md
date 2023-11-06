@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.3.2](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.2) (2023-11-06)
+
+* Changed levels for Ancient Destruction and Ancient Fortification accordingly to the latest patch 
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.3.1...v1.3.2)
+
+
+
 ## [v1.3.2](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.1) (2023-11-02)
 
 * Added all missing shards and mods

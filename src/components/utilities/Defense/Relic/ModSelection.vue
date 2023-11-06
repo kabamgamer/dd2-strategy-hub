@@ -38,7 +38,7 @@ getAllMods().then((mods: ModInterface[]): void => {
   allMods.value = mods
 })
 
-watch(props.modelValue as any, (newValue: any): void => {
+watch(() => props.modelValue as any, (newValue: any): void => {
   selectedMod.value = newValue
 }, { deep: true })
 

@@ -114,13 +114,14 @@ export function useDefenseCalculations(): any {
             rangeGambitSubtraction = (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
         }
 
-        totalDefensePower = totalDefensePower * ancientDestructionMultiplier() + ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
+        totalDefensePower += ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
+        totalDefensePower *= ancientDestructionMultiplier()
         if (shouldApplyDefenseBoosts()) {
-            totalDefensePower += getDefenseSetupBoosts()
+            totalDefensePower += getDefensePowerSetupBoosts()
         }
 
         // Add shard modifiers in defense power for Boost Aura and Buff Beam
-        if (isBuffDefense()) {
+        if (isBuffDefense() || defense.id === 'FrostbiteTower') {
             totalDefensePower = defensePowerModifiersAndPylons(totalDefensePower)
         }
 
@@ -131,7 +132,7 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        if (setupModifiers.heroBuffs.talisman && isBuffDefense()) {
+        if (setupModifiers.heroBuffs.talisman && (isBuffDefense() || defense.id === 'FrostbiteTower')) {
             // Add 60% defense power if talisman is active
             totalDefensePower *= 1.60
 
@@ -244,9 +245,7 @@ export function useDefenseCalculations(): any {
 
         criticalDamagePercentage += diverseMods('criticalDamage', 'percentage');
         if (shouldApplyDefenseBoosts()) {
-            Object.values(defenseBoosts).forEach((defenseBoost: CalculatedDefenseStatsInterface) => {
-                criticalDamagePercentage += defenseBoost.critDamage*100/4
-            })
+            criticalDamagePercentage += getDefenseCriticalDamageSetupBoosts()
         }
 
         if (userDefenseData.relic.godlyStat?.type === 'critical_damage') {
@@ -257,7 +256,7 @@ export function useDefenseCalculations(): any {
             criticalDamagePercentage += 5 * (setupModifiers.heroBuffs.radiantCriticalPower > 4 ? 4 : setupModifiers.heroBuffs.radiantCriticalPower)
         }
 
-        if (setupModifiers.heroBuffs.talisman && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam') {
+        if (setupModifiers.heroBuffs.talisman && !isBuffDefense()) {
             criticalDamagePercentage += 20
 
             if (setupModifiers.heroBuffs.talismanChiBurst) {
@@ -448,16 +447,28 @@ export function useDefenseCalculations(): any {
         return baseDefensePower * (1 + pylonsModifier('defensePower') / 100)
     }
 
-    function getDefenseSetupBoosts(): number {
-        const boostedPower = Object.values(defenseBoosts).reduce((total: number, defenseBoost: CalculatedDefenseStatsInterface) => total + defenseBoost.defensePower/10, 0)
+    function getDefensePowerSetupBoosts(): number {
+        let boostedPower: number = 0;
 
-        // ToDo: Apply pylon shards with fromSelf mutator (eg. Frosty Power)
+        console.log(defenseBoosts);
+
+        for (const defenseBoostIncrementId in defenseBoosts) {
+            if (parseInt(defenseBoostIncrementId) === userDefenseData.incrementId) {
+                continue
+            }
+
+            boostedPower += defenseBoosts[defenseBoostIncrementId].defensePower
+        }
 
         return boostedPower
     }
 
+    function getDefenseCriticalDamageSetupBoosts(): number {
+        return Object.values(defenseBoosts).reduce((total: number, defenseBoost: CalculatedDefenseStatsInterface) => total + defenseBoost.critDamage*100, 0)
+    }
+
     function shouldApplyDefenseBoosts(): boolean {
-        return Object.keys(defenseBoosts).length > 0 && defense.id !== 'BoostAura' && defense.id !== 'BuffBeam'
+        return Object.keys(defenseBoosts).length > 0 && !isBuffDefense()
     }
 
     function isBuffDefense(): boolean {
@@ -521,7 +532,7 @@ export function useDefenseCalculations(): any {
         if (defense.id === 'BuffBeam') {
             vampiricEmpowermentBaseStat = userDefenseData.relic.defenseHealth
         } else {
-            vampiricEmpowermentBaseStat = ancientFortificationMultiplier() * userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth + ascensionDefenseHealth()
+            vampiricEmpowermentBaseStat = (userDefenseData.pet.defenseHealth + defense.baseDefenseHealth + userDefenseData.relic.defenseHealth) * ancientFortificationMultiplier() + ascensionDefenseHealth()
         }
 
         const baseVampiricDefensePower = vampiricEmpowermentBaseStat * vampiricEmpowermentHealthPercentage
@@ -529,9 +540,7 @@ export function useDefenseCalculations(): any {
             return baseVampiricDefensePower
         }
 
-        if (defense.id !== 'BuffBeam') {
-            vampiricEmpowermentBaseStat -= ascensionDefenseHealth()
-        }
+        vampiricEmpowermentBaseStat += ascensionDefenseHealth()
 
         const currentHealthScalar: number = defense.hpScalar[defenseLevel-1]
         const tier1HealthScalar: number = defense.hpScalar[0]
@@ -596,7 +605,19 @@ export function useDefenseCalculations(): any {
     }
 
     function pylonsModifier(stat: string): number {
-        const pylons: { [shardId: string]: ShardInterface } = {};
+        let pylons = getPylonShardsForStat(stat)
+
+        pylons = filterUnstackablePylons(stat, pylons)
+
+        let defensePowerPylonsPercentage: number = 0;
+        defensePowerPylonsPercentage += Object.values(pylons).reduce((accumulator: number, currentValue: any) => accumulator + currentValue.shard[stat].percentage, 0)
+
+        return defensePowerPylonsPercentage
+    }
+
+    function getPylonShardsForStat(stat: string, fromSelf: boolean = false): { [shardId: string]: { defenseIncrementId: string, shard: ShardInterface } } {
+        const pylons: { [shardId: string]: { defenseIncrementId: string, shard: ShardInterface } } = {};
+
         for (const defenseIncrementId in userSetupDefensesShards) {
             if (defenseIncrementId as unknown as number === userDefenseData.incrementId) {
                 continue;
@@ -607,7 +628,7 @@ export function useDefenseCalculations(): any {
                     continue;
                 }
 
-                if (shard[stat]?.mutators.pylon.fromSelf) {
+                if (fromSelf ? !shard[stat]?.mutators.pylon.fromSelf : shard[stat]?.mutators.pylon.fromSelf) {
                     continue;
                 }
 
@@ -615,12 +636,16 @@ export function useDefenseCalculations(): any {
                     continue;
                 }
 
-                pylons[shard.id] = shard
+                pylons[shard.id] = {defenseIncrementId, shard}
             }
         }
 
+        return pylons;
+    }
+
+    function filterUnstackablePylons(stat: string, pylons: { [shardId: string]: { defenseIncrementId: string, shard: ShardInterface } }): { [shardId: string]: { defenseIncrementId: string, shard: ShardInterface } } {
         for (const shardId in pylons) {
-            const pylonShard: ShardInterface|any = pylons[shardId];
+            const pylonShard: ShardInterface|any = pylons[shardId].shard;
             for (const noStack of pylonShard[stat]?.mutators.pylon.noStack ?? []) {
                 if (pylons[noStack]) {
                     delete pylons[shardId]
@@ -629,10 +654,7 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        let defensePowerPylonsPercentage: number = 0;
-        defensePowerPylonsPercentage += Object.values(pylons).reduce((accumulator: number, currentValue: any) => accumulator + currentValue[stat].percentage, 0)
-
-        return defensePowerPylonsPercentage
+        return pylons;
     }
 
     function ancientDestructionMultiplier(): number {

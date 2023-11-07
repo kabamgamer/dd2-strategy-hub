@@ -25,7 +25,7 @@ getAllDefensesCategorizedByHero().then((defenses: {[hero: string]: DefenseRootIn
   allDefenses.value = defenses
 })
 
-watch(props.modelValue as any, (newValue: any): void => {
+watch(() => props.modelValue as any, (newValue: any): void => {
   if (!newValue) return
   selectedDefense.value = newValue
 }, { deep: true })

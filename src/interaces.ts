@@ -75,6 +75,7 @@ export interface DefenseRootInterface {
     attackScalar: number[];
     hpScalar: number[];
     hero: string;
+    type: string;
     defenseUnits: number;
     isUnique: boolean;
 }

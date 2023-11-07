@@ -185,7 +185,7 @@ const props = defineProps({
   setupModifiers: Object as PropType<DefenseSetupModifiersInterface|undefined>,
 });
 
-let defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
+const defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
 
 const id = ref<string>()
 const accordionCollapse = ref()
@@ -193,6 +193,8 @@ const defenseLevel = ref<number>(1)
 const hasDiverseMods = ref<boolean>(false)
 const userDefenseMods = ref<DefenseModData[]>([])
 const userDefenseShards = ref<DefenseShardData[]>([])
+const userSetupDefensesShards = ref<{ [defenseIncrementId: number]: DefenseShardData[] }>({})
+const isLoadingDefenseSetupShards = ref<boolean>(false)
 const attackRatePercentage = computed(() => Math.round((attackRate.value - (defense.defenseData?.baseAttackRate ?? 0)) / ((defense.defenseData?.maxAttackRate ?? 0) - (defense.defenseData?.baseAttackRate ?? 0)) * 100))
 
 function recalculate(): void {
@@ -210,15 +212,34 @@ function recalculate(): void {
 
   // Await the loading of mods and shards before calculating
   const interval: any = setInterval((): void => {
-    if (userDefenseMods.value.length === defense.userData.relic.mods.length && userDefenseShards.value.length === defense.userData.shards.length) {
+    if (
+        userDefenseMods.value.length === defense.userData.relic.mods.length
+        && userDefenseShards.value.length === defense.userData.shards.length
+        && (!props.setupDefenses || !isLoadingDefenseSetupShards.value)
+    ) {
       clearInterval(interval)
-      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
-      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value)
+      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, userSetupDefensesShards.value, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
+      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value, userDefenseShards.value, props.defenseBoosts ? Object.keys(props.defenseBoosts) : [])
     }
   }, 100)
 }
 
-const unwatchUserData = watch(defense.userData, recalculate, { deep: true })
+async function loadSetupShards(): Promise<void> {
+  if (!props.setupDefenses) return
+
+  isLoadingDefenseSetupShards.value = true
+  userSetupDefensesShards.value = {}
+  for (const setupDefense of props.setupDefenses) {
+    userSetupDefensesShards.value[setupDefense.incrementId] = [];
+    for (const shardId of setupDefense.userData.shards) {
+      userSetupDefensesShards.value[setupDefense.incrementId].push(await getShardById(shardId))
+    }
+  }
+
+  isLoadingDefenseSetupShards.value = false
+}
+
+let unwatchUserData = watch(defense.userData, recalculate, { deep: true })
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {
   defense.defenseData = defenseData
@@ -235,7 +256,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
   } as UserDefenseInterface;
 
   unwatchUserData()
-  watch(defense.userData, recalculate, { deep: true })
+  unwatchUserData = watch(() => defense.userData, recalculate, { deep: true })
 }
 
 watch(userDefenseMods, debounce(() => {
@@ -245,13 +266,19 @@ hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as Defens
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
 watch(ancientPowerPoints, recalculate, { deep: true })
-watch(() => props.defenseBoosts, recalculate, { deep: true })
 watch(() => props.setupModifiers, recalculate, { deep: true })
 watch(() => props.setupDefenseOptions, recalculate, { deep: true })
+watch(() => props.defenseBoosts, (newValue, oldValue) => {
+  if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+
+  setTimeout(recalculate, 400)
+}, { deep: true })
 watch(() => props.setupDefenses, (newValue, oldValue) => {
   if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
 
-  recalculate()
+  loadSetupShards()
+
+  setTimeout(recalculate, 400)
 }, { deep: true })
 
 onMounted((): void => {
@@ -281,11 +308,15 @@ onMounted((): void => {
     defense.userData.isCollapsed = false
   })
 
+  loadSetupShards()
+
   // Await the loading of defenseData before initializing calculations
   const interval: any = setInterval((): void => {
     if (defense.defenseData) {
       clearInterval(interval)
       recalculate()
+
+      setTimeout(recalculate, 400)
     }
   }, 100)
 })

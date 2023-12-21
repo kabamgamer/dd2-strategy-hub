@@ -160,6 +160,7 @@ import MapData from "@/data/MapData";
 import useCommunityMapsApi from "@/api/CommunityMapsApi";
 import { useMapStore } from "@/stores/Map";
 import { useDefenseStore } from "@/stores/DefenseInfo";
+import { useUserStore } from "@/stores/User";
 import { useAcl } from "@/composables/Acl";
 
 import IconCaretUp from "@/components/icons/IconCaretUp.vue";
@@ -173,6 +174,7 @@ import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 const { getCommunityMapById, createCommunityMap, updateCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
+const { user } = useUserStore();
 
 const { can } = useAcl();
 
@@ -291,7 +293,7 @@ function openDefenseAccordion(defenseIncrementId: string): void {
 function initNewMapConfigurations(): void {
   loading.value = false
   mapConfigurations.value = {
-    author: {id: 1, name: 'Kabamgamer'},
+    author: {id: user?.id, name: user?.name},
     votes: {up: 0, down: 0},
   }
   mapMetaConfigurationModal.value?.show()

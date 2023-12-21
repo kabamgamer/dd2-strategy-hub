@@ -59,7 +59,7 @@
             <h2>Add defense</h2>
             <DefenseSelection v-if="editMode" @change="onDefenseSelection" />
             <hr />
-            <div class="accordion accordion-flush" id="mapDefenseConfigurations">
+            <div class="accordion accordion-flush defenses-accordion" id="mapDefenseConfigurations">
               <div class="accordion-item" v-for="defense in mapConfigurations.defenses">
                 <h2 class="accordion-header d-flex align-items-center" :id="'flush-heading' + defense.incrementId">
                   <div class="add-defense" @click="addDefensePosition(defense.incrementId)" v-if="editMode">+</div>
@@ -336,6 +336,11 @@ onMounted(() => {
 <style scoped>
 .accordion-header .add-defense {
   cursor: pointer;
+}
+
+.defenses-accordion {
+  max-height: 424px;
+  overflow: scroll;
 }
 
 .hide-defense {

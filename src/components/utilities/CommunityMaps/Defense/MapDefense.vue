@@ -1,12 +1,12 @@
 <template>
   <div class="map-defense">
-    <div class="defense" ref="defenseElement" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
+    <div class="defense" ref="defenseElement" :class="{ large: isLargeIcon }" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
       <img :src="'/assets/maps/defenses/' + icon" alt="Defense icon">
     </div>
 
     <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
-        <div class="defense" ref="defenseElement" :style="{transform: `rotate(${rotation}deg)`}">
+        <div class="defense" ref="defenseElement" :class="{ large: isLargeIcon }" :style="{transform: `rotate(${rotation}deg)`}">
           <img :src="'/assets/maps/defenses/' + icon" alt="Defense icon">
         </div>
       </template>
@@ -61,6 +61,9 @@ const defensePositionCss = computed(() => ({
   left: `${props.position.x}px`,
   transform: `rotate(${props.rotation}deg)`,
 }))
+const isLargeIcon = computed(() => [
+    'countess_elder_dragon.png',
+].includes(props.icon as string))
 
 function onDefenseClick() {
   emit('selectDefense')
@@ -105,6 +108,13 @@ onMounted(() => {
 .defense img {
   width: 40px;
   height: 40px;
+  object-fit: contain;
+}
+.defense.large,
+.defense.large img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
 }
 
 .defense {

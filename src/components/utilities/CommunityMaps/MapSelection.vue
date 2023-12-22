@@ -28,9 +28,9 @@ getAllMapsCategorizedByRegion().then((maps: {[region: string]: MapData[]}): void
   availableMaps.value = maps;
 })
 
-watch(props.modelValue, (newValue: any): void => {
-  selectedMap.value = newValue.name;
-}, { deep: true });
+watch(() => props.modelValue, (newValue: any): void => {
+  selectedMap.value = newValue;
+});
 
 watch(selectedMap, (newValue: any): void => {
   emit('update:modelValue', newValue);

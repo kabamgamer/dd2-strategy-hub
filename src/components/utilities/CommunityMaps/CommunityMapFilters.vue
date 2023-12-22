@@ -43,7 +43,7 @@
 
     <div class="active-filters">
       <div class="active-filters__filter badge bg-secondary me-2" v-if="Object.values(activeFilters).length > 1">
-        Remove all filters <IconCross @click="filters = {}" />
+        Remove all filters <IconCross @click="removeAllFilters" />
       </div>
       <template class="active-filters__filter badge bg-secondary me-2" v-for="(value, key) in activeFilters" :key="key">
         <template v-if="Array.isArray(value)">
@@ -52,7 +52,7 @@
           </div>
         </template>
         <div class="active-filters__filter badge bg-secondary me-2" v-else>
-          {{ key }}: {{ value }} <IconCross @click="filters[key] = null" />
+          {{ key }}: {{ value }} <IconCross @click="removeFilter(key)" />
         </div>
       </template>
     </div>
@@ -86,8 +86,23 @@ const gameModeDifficulties = computed(() => {
   }
 })
 
-function onMapSelect(map: MapData) {
+function onMapSelect(map?: MapData) {
+  if (!map) return filters.value.map = null;
+
   filters.value.map = map.id;
+}
+
+function removeAllFilters() {
+  selectedMap.value = null;
+  filters.value = {}
+}
+
+function removeFilter(filterKey: string|number) {
+  if (filterKey === 'map') {
+    selectedMap.value = null;
+  }
+
+  filters.value[filterKey] = null;
 }
 
 watch(filters, () => {

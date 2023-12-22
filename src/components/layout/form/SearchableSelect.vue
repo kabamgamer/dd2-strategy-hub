@@ -1,6 +1,7 @@
 <template>
   <div class="searchable">
-    <input ref="searchInputElement" type="text" class="form-select" :placeholder="placeholder" v-model="searchCriteria" @keydown="onKeyDown" @focusout="activeIndex = 0">
+    <input ref="searchInputElement" type="text" class="form-control" :class="{'form-select': !modelValue}" :placeholder="placeholder" v-model="searchCriteria" @keydown="onKeyDown" @focusout="activeIndex = 0">
+
     <div v-if="!grouped" class="select-options">
       <span
           class="select-options__option"
@@ -29,11 +30,13 @@
         ></span>
       </div>
     </div>
+
+    <span class="clear-icon" v-if="modelValue" @click="clearInput">&#10005;</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits } from 'vue'
+import { ref, computed, defineProps, defineEmits, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {},
@@ -102,10 +105,21 @@ const searchCriteria = ref<string>('');
 const searchInputElement = ref<HTMLInputElement>();
 const searchResultInputElements = ref<HTMLInputElement[]>([]);
 
+function clearInput(focusInputAfterClear: boolean = true): void {
+  searchCriteria.value = '';
+
+  if (focusInputAfterClear) {
+    searchInputElement.value?.focus()
+  }
+
+  emit('update:modelValue', null);
+  emit('change', null);
+}
+
 function onOptionSelect(option: any): void {
   emit('update:modelValue', option);
   emit('change', option);
-  searchCriteria.value = '';
+  searchCriteria.value = option[props.labelAttr];
 }
 
 function labelWithBaldCriteria(label: string): string {
@@ -176,11 +190,24 @@ function onKeyDown(event: KeyboardEvent): void {
       activeIndex.value = 0
   }
 }
+
+watch(() => props.modelValue, (newValue: any): void => {
+  if (!newValue) return clearInput(false);
+  searchCriteria.value = newValue[props.labelAttr];
+});
 </script>
 
 <style scoped>
 .searchable {
   position: relative;
+}
+
+.clear-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .searchable .select-options {

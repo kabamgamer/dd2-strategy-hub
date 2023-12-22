@@ -2,17 +2,12 @@ import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/User";
 import type { User } from "@/stores/User";
 
-let authLoginModal: any;
-
-export function useAcl(authLoginModalObject?: any): any {
-    if (authLoginModalObject) {
-        authLoginModal = authLoginModalObject;
-    }
+export function useAcl(): any {
 
     // Return true if only login is required, conditional logic can be added here
     const ACCESS_CONTROL_LIST: {[access: string]: any} = {
         'map.create': (): boolean => true,
-        'map.update': (user: User, communityMap): boolean => user.id === communityMap.author.id,
+        'map.update': (user: User, communityMap: any): boolean => user.id === communityMap.author.id,
     }
 
     function can(ability: string, aclArguments: any[]): boolean {

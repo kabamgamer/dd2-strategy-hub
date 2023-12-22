@@ -30,7 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, defineProps, PropType, watch } from "vue"
+import { ref, computed, onMounted, defineProps, watch } from "vue"
+import type { PropType } from "vue"
 
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 
@@ -105,7 +106,7 @@ function changePage(pageNumber: number|string): void {
   fetchResult();
 }
 
-async function fetchResult() {
+async function fetchResult(): Promise<void> {
   loading.value = true;
 
   if (fetchController.value instanceof AbortController) {
@@ -156,12 +157,16 @@ function formatQueryParams(params: any): string {
         if (params[key][subKey] === "" || params[key][subKey] === null || params[key][subKey] === undefined) {
           continue;
         }
-        queryResult += `&${key}[${subKey}]=${params[key][subKey]}`;
+        // URL encode value
+        const value = encodeURIComponent(params[key][subKey])
+        queryResult += `&${key}[${subKey}]=${value}`;
       }
     } else if (params[key] === "" || params[key] === null || params[key] === undefined) {
       continue;
     } else {
-      queryResult += `&${key}=${params[key]}`;
+      // URL encode value
+      const value = encodeURIComponent(params[key])
+      queryResult += `&${key}=${value}`;
     }
   }
 

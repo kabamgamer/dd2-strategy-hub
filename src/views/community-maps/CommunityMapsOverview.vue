@@ -82,7 +82,7 @@ function onCreateNewMap(): void {
   })
 }
 
-function onFilter(filters): void {
+function onFilter(filters: {[key: string]: any}): void {
   const tags = filters.tags;
   if (tags) {
     delete filters.tags;

@@ -7,8 +7,8 @@
       <IconUser />
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-      <li><a class="dropdown-item" href="#" @click.prevent="userProfileModal.openModal()">Profile</a></li>
-      <li><router-link class="dropdown-item" :to="{name: 'community-maps', query: {author: user.id}, state: {author: user.id}}">Your maps</router-link></li>
+      <li><a class="dropdown-item" href="#" @click.prevent="userProfileModal?.openModal()">Profile</a></li>
+      <li><router-link class="dropdown-item" :to="{name: 'community-maps', query: {author: user?.id}, state: {author: user?.id}}">Your maps</router-link></li>
       <li><a class="dropdown-item" href="#" @click.prevent="logout">Logout</a></li>
     </ul>
   </div>
@@ -29,7 +29,7 @@ import { ref, defineProps, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/User";
 
-import useAuthorisationApi from "@/api/AuthorisationApi.ts";
+import useAuthorisationApi from "@/api/AuthorisationApi.js";
 
 import GoogleLogin from "@/components/auth/GoogleLogin.vue";
 import UserProfileModal from "@/components/auth/UserProfileModal.vue";
@@ -46,7 +46,7 @@ const { loginUser } = userStore;
 const authLoginModal = ref<typeof BootstrapModal|null>(null);
 const userProfileModal = ref<typeof UserProfileModal|null>(null);
 
-function onLoginSuccess(response): void {
+function onLoginSuccess(response: any): void {
   loginUser(response.user, response.access_token);
   closeModal()
 
@@ -71,6 +71,10 @@ function logout(): void {
 }
 
 onMounted(() => {
+  if (!authLoginModal.value) {
+    return
+  }
+
   userStore.parseAuthModal(authLoginModal.value)
 });
 

@@ -450,8 +450,6 @@ export function useDefenseCalculations(): any {
     function getDefensePowerSetupBoosts(): number {
         let boostedPower: number = 0;
 
-        console.log(defenseBoosts);
-
         for (const defenseBoostIncrementId in defenseBoosts) {
             if (parseInt(defenseBoostIncrementId) === userDefenseData.incrementId) {
                 continue

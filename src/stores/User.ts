@@ -1,6 +1,6 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
-import BootstrapModal from "@/components/layout/BootstrapModal.vue";
+import type BootstrapModal from "@/components/layout/BootstrapModal.vue";
 
 export interface User {
     id: string,
@@ -12,27 +12,28 @@ export interface User {
 
 export const useUserStore = defineStore('userStore', () => {
     const user = ref<User | null>(initUser())
-    const authModal = ref<BootstrapModal>()
+    const authModal = ref<typeof BootstrapModal>()
     const userLoginPromtPromiseActions = ref<any>()
 
     const accessToken = computed<string|undefined>(() => user.value?.accessToken)
 
     /** @internal */
-    function parseAuthModal(parsedAuthModal?: BootstrapModal): void {
+    function parseAuthModal(parsedAuthModal?: typeof BootstrapModal): void {
         authModal.value = parsedAuthModal
     }
 
     function initUser(): User|null {
-        if (!localStorage.getItem('user')) {
+        const localStorageUser = localStorage.getItem('user');
+        if (!localStorageUser) {
             return null
         }
 
-        return JSON.parse(localStorage.getItem('user')) as User
+        return JSON.parse(localStorageUser) as User
     }
 
     function promptUserLogin(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const rejectPromise = () => {
+            const rejectPromise = (): void => {
                 reject()
                 authModal.value?._off('hidden.bs.modal', rejectPromise)
             };
@@ -58,8 +59,8 @@ export const useUserStore = defineStore('userStore', () => {
         user.value = null
     }
 
-    function onUserUpdate(userData): void {
-        user.value.name = userData.name
+    function onUserUpdate(userData: {id: string, name: string}): void {
+        (user.value as User).name = userData.name
     }
 
     // Persist data

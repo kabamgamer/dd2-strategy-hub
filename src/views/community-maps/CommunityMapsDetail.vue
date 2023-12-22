@@ -11,7 +11,7 @@
                           v-for="defensePosition in mapConfigurations.mapLayout"
                           :key="defensePosition.incrementId"
                           :editMode="editMode"
-                          :icon="getDefenseMapIcon(defensePosition.defenseIncrementId, defensePosition)"
+                          :icon="getDefenseMapIcon(defensePosition.defenseIncrementId)"
                           :position="defensePosition.position"
                           :rotation="defensePosition.rotationInDegrees"
                           @selectDefense="openDefenseAccordion(defensePosition.defenseIncrementId)"
@@ -38,7 +38,7 @@
             <strong>Author:</strong> <router-link :to="{name: 'community-maps', query: {author: mapConfigurations.author?.id}}">{{ mapConfigurations.author?.name }}</router-link> <br />
             <strong>Game mode:</strong> {{ mapConfigurations.gameMode }} <br />
             <strong>Difficulty:</strong> {{ mapConfigurations.difficulty }} <br />
-            <strong>Tags:</strong> <span v-for="tag in mapConfigurations.tags" class="tag badge bg-success">{{ tag }}</span> <br />
+            <strong>Tags:</strong> <span v-for="tag in mapConfigurations.tags" :key="tag" class="tag badge bg-success">{{ tag }}</span> <br />
             <strong>DU:</strong> {{ totalDu }}/{{ map.duLimit }} <br />
             <div class="votes d-flex align-items-center">
               <strong>Votes:</strong>
@@ -57,10 +57,10 @@
 
           <Card cardTitle="Defenses" :maxHeight="false">
             <h2>Add defense</h2>
-            <DefenseSelection v-if="editMode" @change="onDefenseSelection" />
+            <DefenseSelection v-if="editMode" clear-on-select @change="onDefenseSelection" />
             <hr />
             <div class="accordion accordion-flush defenses-accordion" id="mapDefenseConfigurations">
-              <div class="accordion-item" v-for="defense in mapConfigurations.defenses">
+              <div class="accordion-item" :key="defense.incrementId" v-for="defense in mapConfigurations.defenses">
                 <h2 class="accordion-header d-flex align-items-center" :id="'flush-heading' + defense.incrementId">
                   <div class="add-defense" @click="addDefensePosition(defense.incrementId)" v-if="editMode">+</div>
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#flush-collapse' + defense.incrementId">
@@ -111,7 +111,7 @@
           <div class="form-group mt-3">
             <label for="map">Difficulty</label>
             <select class="form-select" v-model="mapConfigurations.difficulty" :disabled="!mapConfigurations.gameMode">
-              <option v-for="difficulty in gameModeDifficulties" :value="difficulty">{{ difficulty }}</option>
+              <option v-for="difficulty in gameModeDifficulties" :key="difficulty" :value="difficulty">{{ difficulty }}</option>
             </select>
           </div>
 
@@ -133,8 +133,8 @@
       </template>
 
       <template #footer>
-        <button class="btn btn-danger" @click.prevent="mapMetaConfigurationModal.hide(); router.back()">Cancel</button>
-        <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="mapMetaConfigurationModal.hide()">Save</button>
+        <button class="btn btn-danger" @click.prevent="mapMetaConfigurationModal?.hide(); router.back()">Cancel</button>
+        <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="mapMetaConfigurationModal?.hide()">Save</button>
       </template>
     </BootstrapModal>
   </div>
@@ -153,9 +153,9 @@ import Card from "@/components/layout/Card.vue";
 import MapDefense from "@/components/utilities/CommunityMaps/Defense/MapDefense.vue";
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
-import { DefenseRootInterface } from "@/interaces";
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
-import MapData from "@/data/MapData";
+import type { DefenseRootInterface, MapConfigInterface, MapDefenseInterface, MapDefensePlacementInterface } from "@/interaces";
+import type MapData from "@/data/MapData";
 
 import useCommunityMapsApi from "@/api/CommunityMapsApi";
 import { useMapStore } from "@/stores/Map";
@@ -185,9 +185,9 @@ const communityMapKey = ref<number>(0)
 const totalDu = ref<number>(0)
 const loading = ref(true)
 const map = ref<MapData>()
-const mapMetaConfigurationModal = ref<BootstrapModal>()
-const mapConfigurations = ref({})
-const hideDefense = ref({})
+const mapMetaConfigurationModal = ref<typeof BootstrapModal>()
+const mapConfigurations = ref<MapConfigInterface>({} as MapConfigInterface)
+const hideDefense = ref<{[defenseIncrementId: number]: boolean}>({})
 const validatedMeta = computed(() => {
   return mapConfigurations.value.title && mapConfigurations.value.map && mapConfigurations.value.gameMode && mapConfigurations.value.difficulty
 })
@@ -205,7 +205,7 @@ const gameModeDifficulties = computed(() => {
   }
 })
 
-function addDefensePosition(defenseIncrementId) {
+function addDefensePosition(defenseIncrementId: number): void {
   mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout || []
   mapConfigurations.value.mapLayout.push({
     incrementId: Math.max(...mapConfigurations.value.mapLayout.map((defense) => defense.incrementId), 0) + 1,
@@ -224,30 +224,32 @@ function vote(userVote: string): void {
   voteCommunityMap(mapConfigurations.value.id, userVote)
       .then(() => {
         if (mapConfigurations.value.userVote !== null) {
+          // @ts-ignore
           mapConfigurations.value.votes[mapConfigurations.value.userVote] -= 1
         }
 
+        // @ts-ignore
         mapConfigurations.value.votes[userVote] += 1
 
         mapConfigurations.value.userVote = userVote
       })
 }
 
-function deleteDefensePosition(incrementId) {
+function deleteDefensePosition(incrementId: number): void {
   mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout.filter((defensePosition) => {
     return defensePosition.incrementId !== incrementId;
   })
 }
 
-function onMapSelect(selectedMap) {
+function onMapSelect(selectedMap: MapData): void {
   map.value = selectedMap
   mapConfigurations.value.map = selectedMap.id
 }
 
-async function onSave() {
+async function onSave(): Promise<void> {
   if (route.params.id === 'new') {
     createCommunityMap(mapConfigurations.value)
-        .then((response) => {
+        .then((response: any) => {
           router.push({ name: 'community-maps.detail', params: { id: response.id } }).then(() => {
             editMode.value = false
             communityMapKey.value++
@@ -264,8 +266,8 @@ async function onSave() {
   }
 }
 
-function getDefenseMapIcon(defenseIncrementId) {
-  const defense = mapConfigurations.value.defenses.find((defense) => defense.incrementId === defenseIncrementId)
+function getDefenseMapIcon(defenseIncrementId: number): string {
+  const defense: MapDefenseInterface = mapConfigurations.value.defenses.find((defense) => defense.incrementId === defenseIncrementId) as MapDefenseInterface
   return defense.mapIcon
 }
 
@@ -284,10 +286,10 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
   })
 }
 
-function openDefenseAccordion(defenseIncrementId: string): void {
-  const parent = document.getElementById('mapDefenseConfigurations')
+function openDefenseAccordion(defenseIncrementId: number): void {
+  const parent = document.getElementById('mapDefenseConfigurations') as Element
   const defenseAccordionElement = document.getElementById('flush-collapse' + defenseIncrementId)
-  new Collapse(defenseAccordionElement, {parent, toggle: false}).show();
+  new Collapse(defenseAccordionElement as Element, {parent, toggle: false}).show();
 }
 
 function initNewMapConfigurations(): void {
@@ -295,7 +297,7 @@ function initNewMapConfigurations(): void {
   mapConfigurations.value = {
     author: {id: user?.id, name: user?.name},
     votes: {up: 0, down: 0},
-  }
+  } as unknown as MapConfigInterface
   mapMetaConfigurationModal.value?.show()
 }
 
@@ -315,15 +317,15 @@ watch(mapConfigurations, async () => {
     return;
   }
 
-  const resolvedDefensesDu = {};
+  const resolvedDefensesDu: {[defenseIncrementId: number]: number} = {};
   for (const defense of mapConfigurations.value.defenses) {
     resolvedDefensesDu[defense.incrementId] = (await getDefenseRoot(defense.id)).defenseUnits;
   }
 
   mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout || []
-  totalDu.value = mapConfigurations.value.mapLayout.reduce((total, defensePosition) => {
+  totalDu.value = mapConfigurations.value.mapLayout.reduce((total: number, defensePosition: MapDefensePlacementInterface) => {
     return total + resolvedDefensesDu[defensePosition.defenseIncrementId];
-  }, 0);
+  }, 0) as number;
 }, {deep: true});
 
 onMounted(() => {

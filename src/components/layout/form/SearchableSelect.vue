@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <span class="clear-icon" v-if="modelValue" @click="clearInput">&#10005;</span>
+    <span class="clear-icon" v-if="modelValue" @click="clearInput()">&#10005;</span>
   </div>
 </template>
 
@@ -52,6 +52,7 @@ const props = defineProps({
     type: String,
     default: 'label',
   },
+  clearOnSelect: Boolean,
   grouped: Boolean,
 });
 
@@ -119,7 +120,12 @@ function clearInput(focusInputAfterClear: boolean = true): void {
 function onOptionSelect(option: any): void {
   emit('update:modelValue', option);
   emit('change', option);
-  searchCriteria.value = option[props.labelAttr];
+
+  if (props.clearOnSelect) {
+    searchCriteria.value = '';
+  } else {
+    searchCriteria.value = option[props.labelAttr];
+  }
 }
 
 function labelWithBaldCriteria(label: string): string {
@@ -192,7 +198,7 @@ function onKeyDown(event: KeyboardEvent): void {
 }
 
 watch(() => props.modelValue, (newValue: any): void => {
-  if (!newValue) return clearInput(false);
+  if (!newValue || props.clearOnSelect) return clearInput(props.clearOnSelect);
   searchCriteria.value = newValue[props.labelAttr];
 });
 </script>

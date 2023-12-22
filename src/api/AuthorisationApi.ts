@@ -2,12 +2,12 @@ import useApi from "@/api/Api"
 
 const { postAtEndpoint, patchAtEndpoint } = useApi()
 
-export default function useAuthorisationApi() {
-    async function updateProfile(user): Promise<any> {
+export default function useAuthorisationApi(): any {
+    async function updateProfile(user: any): Promise<any> {
         return await patchAtEndpoint('/user', user)
     }
 
-    async function googleLogin(response): Promise<any> {
+    async function googleLogin(response: any): Promise<any> {
         return await postAtEndpoint('/login/google', response)
     }
 

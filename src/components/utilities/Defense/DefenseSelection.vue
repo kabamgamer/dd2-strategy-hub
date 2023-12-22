@@ -1,5 +1,5 @@
 <template>
-  <SearchableSelect v-model="selectedDefense" :options="allDefenses" grouped label-attr="name" />
+  <SearchableSelect v-model="selectedDefense" :clear-on-select="clearOnSelect" :options="allDefenses" grouped label-attr="name" />
 </template>
 
 <script setup lang="ts">
@@ -14,6 +14,7 @@ const { getAllDefensesCategorizedByHero } = useDefenseStore();
 
 const props = defineProps({
   modelValue: Object as PropType<DefenseRootInterface|null>,
+  clearOnSelect: Boolean,
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])

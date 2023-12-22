@@ -25,7 +25,7 @@
         <div class="form-group">
           <label for="map">Difficulty</label>
           <select class="form-select" v-model="filters.difficulty" :disabled="!filters.gameMode">
-            <option v-for="difficulty in gameModeDifficulties" :value="difficulty">{{ difficulty }}</option>
+            <option v-for="difficulty in gameModeDifficulties" :key="difficulty" :value="difficulty">{{ difficulty }}</option>
           </select>
         </div>
       </div>
@@ -45,7 +45,7 @@
       <div class="active-filters__filter badge bg-secondary me-2" v-if="Object.values(activeFilters).length > 1">
         Remove all filters <IconCross @click="removeAllFilters" />
       </div>
-      <template class="active-filters__filter badge bg-secondary me-2" v-for="(value, key) in activeFilters" :key="key">
+      <template v-for="(value, key) in activeFilters" :key="key">
         <template v-if="Array.isArray(value)">
           <div class="active-filters__filter badge bg-secondary me-2" v-for="(subValue, index) in value" :key="subValue">
             {{ key }}: {{ subValue }} <IconCross @click="filters[key].length > 1 ? filters[key].splice(index, 1) : filters[key] = null" />
@@ -65,14 +65,15 @@ import { ref, defineEmits, watch, computed } from "vue";
 import Multiselect from '@vueform/multiselect'
 import Card from "@/components/layout/Card.vue";
 import MapSelection from "@/components/utilities/CommunityMaps/MapSelection.vue";
-import MapData from "@/data/MapData";
 import IconCross from "@/components/icons/IconCross.vue";
+import type MapData from "@/data/MapData";
 
 const emit = defineEmits(["filter"]);
 
 const selectedMap = ref()
-const filters = ref({})
+const filters = ref<{[key: string]: any}>({})
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const activeFilters = computed(() => Object.fromEntries(Object.entries(filters.value).filter(([key, value]) => value !== null && value !== '')))
 
 const gameModeDifficulties = computed(() => {
@@ -86,18 +87,21 @@ const gameModeDifficulties = computed(() => {
   }
 })
 
-function onMapSelect(map?: MapData) {
-  if (!map) return filters.value.map = null;
+function onMapSelect(map?: MapData): void {
+  if (!map) {
+    filters.value.map = null
+    return
+  }
 
-  filters.value.map = map.id;
+  filters.value.map = map.id
 }
 
-function removeAllFilters() {
+function removeAllFilters(): void {
   selectedMap.value = null;
   filters.value = {}
 }
 
-function removeFilter(filterKey: string|number) {
+function removeFilter(filterKey: string|number): void {
   if (filterKey === 'map') {
     selectedMap.value = null;
   }
@@ -105,7 +109,7 @@ function removeFilter(filterKey: string|number) {
   filters.value[filterKey] = null;
 }
 
-watch(filters, () => {
+watch(filters, (): void => {
   emit("filter", filters.value);
 }, { deep: true })
 </script>

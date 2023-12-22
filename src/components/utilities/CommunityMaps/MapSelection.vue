@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue";
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 
 import SearchableSelect from "@/components/layout/form/SearchableSelect.vue";
 

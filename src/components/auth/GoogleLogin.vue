@@ -11,13 +11,13 @@ import IconColouredGoogle from "@/components/icons/IconColouredGoogle.vue";
 const { googleLogin } = useAuthorisationApi()
 const emit = defineEmits(['loginSuccess'])
 
-function login() {
+function login(): void {
   googleSdkLoaded((google) => {
     google.accounts.oauth2.initCodeClient({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       scope: 'email profile openid',
       callback: (response) => {
-        googleLogin(response).then((response) => {
+        googleLogin(response).then((response: any) => {
           emit('loginSuccess', response)
         })
       }

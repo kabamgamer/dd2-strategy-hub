@@ -9,35 +9,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits, onMounted, computed } from "vue";
-
-const emit = defineEmits(["open", "close"]);
+import { ref, onMounted, computed } from "vue";
 
 const menu = ref<HTMLElement>();
 const open = ref(false);
 const isMiniCircle = computed(() => menu.value?.querySelectorAll("a").length === 2);
 
-function onChange() {
-  if (open.value) {
-    emit("open");
-  } else {
-    emit("close");
-  }
-}
-
-function openMenu() {
+function openMenu(): void {
   open.value = true
 }
 
-function closeMenu() {
+function closeMenu(): void {
   open.value = false
 }
 
 onMounted(() => {
   const items = menu.value?.querySelectorAll("a");
-  for(let i = 0, l = items.length; i < l; i++) {
-    items[i].style.left = ((items.length === 2 ? 30 : 0) + (50 - 35*Math.cos(-0.5 * Math.PI - 2*(1/l)*i*Math.PI))).toFixed(4) + "%";
-    items[i].style.top = (50 + 35*Math.sin(-0.5 * Math.PI - 2*(1/l)*i*Math.PI)).toFixed(4) + "%";
+  if (items) {
+    for(let i = 0, l = items.length; i < l; i++) {
+      items[i].style.left = ((items.length === 2 ? 30 : 0) + (50 - 35*Math.cos(-0.5 * Math.PI - 2*(1/l)*i*Math.PI))).toFixed(4) + "%";
+      items[i].style.top = (50 + 35*Math.sin(-0.5 * Math.PI - 2*(1/l)*i*Math.PI)).toFixed(4) + "%";
+    }
   }
 })
 

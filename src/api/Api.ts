@@ -1,7 +1,7 @@
 import { storeToRefs } from "pinia"
 import { useUserStore } from "@/stores/User"
 
-export default function useApi() {
+export default function useApi(): any {
     async function getFromEndpoint(endpoint: string, customOptions: object = {}): Promise<any> {
         const options = {
             method: "GET",
@@ -15,14 +15,14 @@ export default function useApi() {
     }
 
     async function postAtEndpoint(endpoint: string, body?: object, promptLoginOnUnauthorized: boolean = true): Promise<any> {
-        const options = {
+        const options: {method: string, headers: { [key: string]: string }, body?: string} = {
             method: "POST",
             headers: getHeaders(),
         }
 
         if (body) options['body'] = JSON.stringify(body)
 
-        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
+        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options as RequestInit)
 
         if (response.status === 401 && promptLoginOnUnauthorized) {
             await useUserStore().promptUserLogin()
@@ -38,14 +38,14 @@ export default function useApi() {
     }
 
     async function patchAtEndpoint(endpoint: string, body?: object): Promise<any> {
-        const options = {
+        const options: {method: string, headers: { [key: string]: string }, body?: string} = {
             method: "PATCH",
             headers: getHeaders(),
         }
 
         if (body) options['body'] = JSON.stringify(body)
 
-        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
+        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options as RequestInit)
 
         return await response.json()
     }

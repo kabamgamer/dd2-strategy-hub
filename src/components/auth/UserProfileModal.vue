@@ -33,12 +33,12 @@ const userProfile = ref({
   name: user.value?.name,
 });
 
-function openModal() {
+function openModal(): void {
   userProfileModal.value?.show()
 }
 
 function onSave(): void {
-  updateProfile(userProfile.value).then((response) => {
+  updateProfile(userProfile.value).then((response: {id: string, name: string}) => {
     userProfileModal.value?.hide();
 
     onUserUpdate(response);

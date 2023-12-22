@@ -76,7 +76,6 @@ import { useUserDataStore } from "@/stores/UserData";
 import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
-import { useAcl } from "@/composables/Acl";
 
 const { colorMode } = storeToRefs(useUserDataStore());
 const errorModal = ref<typeof Modal|null>(null);
@@ -106,8 +105,6 @@ function reloadPage(): void {
 }
 
 onMounted(() => {
-  useAcl(authLoginModal.value);
-
   document.body.dataset.bsTheme = colorMode.value;
 });
 </script>

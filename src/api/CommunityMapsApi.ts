@@ -2,8 +2,8 @@ import useApi from "@/api/Api"
 
 const { getFromEndpoint, postAtEndpoint, patchAtEndpoint } = useApi()
 
-export default function useCommunityMapsApi() {
-    async function getCommunityMapById(id): Promise<any> {
+export default function useCommunityMapsApi(): any {
+    async function getCommunityMapById(id: string): Promise<any> {
         return (await getFromEndpoint(`/maps/${id}`)).data
     }
 

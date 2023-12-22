@@ -54,7 +54,13 @@ import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 import { useDefenseStore } from "@/stores/DefenseInfo"
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
-import type { DefenseRootInterface, UserDefenseInterface, ModInterface, ShardInterface } from "@/interaces";
+import type {
+  DefenseRootInterface,
+  UserDefenseInterface,
+  ModInterface,
+  ShardInterface,
+  MapDefenseInterface
+} from "@/interaces";
 import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue";
 import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue";
 
@@ -68,7 +74,7 @@ const props = defineProps({
     default: false,
   },
   defense: {
-    type: Object as PropType<UserDefenseInterface>,
+    type: Object as PropType<UserDefenseInterface | MapDefenseInterface>,
     required: true,
   },
 });

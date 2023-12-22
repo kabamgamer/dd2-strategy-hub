@@ -58,11 +58,11 @@ function _hide(): void {
   modalObject?.hide();
 }
 
-function _on(event, callback): void {
+function _on(event: string, callback: any): void {
   modalElement.value?.addEventListener(event, callback)
 }
 
-function _off(event, callback): void {
+function _off(event: string, callback: any): void {
   modalElement.value?.removeEventListener(event, callback)
 }
 defineExpose({ show: _show, hide: _hide, _on, _off });

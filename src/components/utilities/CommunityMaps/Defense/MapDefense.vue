@@ -21,7 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, defineProps, defineEmits, watch } from "vue";
+import { ref, computed, onMounted, defineProps, defineEmits } from "vue";
+import type { PropType } from "vue";
 // @ts-ignore
 import Draggabilly from "draggabilly/draggabilly.js";
 
@@ -45,7 +46,7 @@ const props = defineProps({
     default: 0,
   },
   position: {
-    type: Object,
+    type: Object as PropType<{ x: number, y: number }>,
     required: false,
   },
 });
@@ -54,22 +55,22 @@ const emit = defineEmits(['delete', 'selectDefense', 'update:position', 'update:
 
 const { rotate } = useRotateElement(emit, 'update:rotation')
 const defenseElement = ref<HTMLElement | null>(null)
-const contextMenu = ref<ContextMenu>()
+const contextMenu = ref<typeof ContextMenu>()
 const draggableDefenseElement = ref<Draggabilly>()
 const defensePositionCss = computed(() => ({
-  top: `${props.position.y}px`,
-  left: `${props.position.x}px`,
+  top: `${(props.position as { x: number, y: number }).y}px`,
+  left: `${(props.position as { x: number, y: number }).x}px`,
   transform: `rotate(${props.rotation}deg)`,
 }))
 const isLargeIcon = computed(() => [
     'countess_elder_dragon.png',
 ].includes(props.icon as string))
 
-function onDefenseClick() {
+function onDefenseClick(): void {
   emit('selectDefense')
 }
 
-function onRotate() {
+function onRotate(): void {
   contextMenu.value?.close()
   rotate(defenseElement.value)
 }
@@ -79,11 +80,11 @@ onMounted(() => {
     return
   }
 
-  draggableDefenseElement.value = new Draggabilly(contextMenu.value.$el, {
+  draggableDefenseElement.value = new Draggabilly(contextMenu.value?.$el, {
     containment: '.map'
   });
 
-  draggableDefenseElement.value.setPosition(props.position.x, props.position.y)
+  draggableDefenseElement.value.setPosition((props.position as { x: number, y: number }).x, (props.position as { x: number, y: number }).y)
 
   draggableDefenseElement.value.on('dragEnd', () => {
     emit('update:position', draggableDefenseElement.value.position)

@@ -8,6 +8,17 @@
     </Section>
 
     <Section section-title="Results" class="position-relative">
+      <template #title-row>
+        <div class="resource__sorting d-flex align-items-center" style="gap: 5px">
+          <span>Sort by:</span>
+
+          <select v-model="sorting" @change="onSort" class="form-select form-select-sm" style="width: auto">
+            <option value="votes">Most popular</option>
+            <option value="created_at">Most recent</option>
+          </select>
+        </div>
+      </template>
+
       <ResourcePagination fetch-endpoint="/maps" wrapper-classes="row" :page-size="12" :adapt-item="resolveMap" :additional-request-parameters="additionalRequestParameters">
         <template v-slot:item="{ item }">
           <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
@@ -40,18 +51,21 @@ import CommunityMapPreview from "@/components/utilities/CommunityMaps/CommunityM
 import CommunityMapFilters from "@/components/utilities/CommunityMaps/CommunityMapFilters.vue";
 
 const router = useRouter();
+const sorting = ref('votes');
 const { getMapById } = useMapStore();
 const { canOrPromptLogin } = useAcl();
 
 const additionalRequestParameters = ref({
   filter: getQueryFilters(),
   tags: null,
+  sortBy: sorting.value,
 });
 
 onUpdated(() => {
   additionalRequestParameters.value = {
     filter: {...additionalRequestParameters.value.filter, ...getQueryFilters()},
     tags: additionalRequestParameters.value.tags,
+    sortBy: additionalRequestParameters.value.sortBy,
   };
 });
 
@@ -89,6 +103,10 @@ function onFilter(filters: {[key: string]: any}): void {
     additionalRequestParameters.value.tags = tags.join(',');
   }
   additionalRequestParameters.value.filter = filters;
+}
+
+function onSort(): void {
+  additionalRequestParameters.value.sortBy = sorting.value;
 }
 
 async function resolveMap(item: any): Promise<any> {

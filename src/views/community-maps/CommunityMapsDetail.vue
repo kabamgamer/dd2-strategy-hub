@@ -288,8 +288,11 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
 
 function openDefenseAccordion(defenseIncrementId: number): void {
   const parent = document.getElementById('mapDefenseConfigurations') as Element
-  const defenseAccordionElement = document.getElementById('flush-collapse' + defenseIncrementId)
-  new Collapse(defenseAccordionElement as Element, {parent, toggle: false}).show();
+  const defenseAccordionElement = document.getElementById('flush-collapse' + defenseIncrementId) as Element
+  Collapse.getOrCreateInstance(defenseAccordionElement, {parent, toggle: false}).show();
+  defenseAccordionElement.addEventListener('shown.bs.collapse', () => {
+    defenseAccordionElement.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
+  })
 }
 
 function initNewMapConfigurations(): void {
@@ -343,7 +346,7 @@ onMounted(() => {
 }
 
 .defenses-accordion {
-  max-height: 424px;
+  max-height: 545px;
   overflow: scroll;
 }
 

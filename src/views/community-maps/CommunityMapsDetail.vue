@@ -56,9 +56,11 @@
           </Card>
 
           <Card cardTitle="Defenses" :maxHeight="false">
-            <h2>Add defense</h2>
-            <DefenseSelection v-if="editMode" clear-on-select @change="onDefenseSelection" />
-            <hr />
+            <template v-if="editMode">
+              <h2>Add defense</h2>
+              <DefenseSelection clear-on-select @change="onDefenseSelection" />
+              <hr />
+            </template>
             <div class="accordion accordion-flush defenses-accordion" id="mapDefenseConfigurations">
               <div class="accordion-item" :key="defense.incrementId" v-for="defense in mapConfigurations.defenses">
                 <h2 class="accordion-header d-flex align-items-center" :id="'flush-heading' + defense.incrementId">

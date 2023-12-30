@@ -3,7 +3,7 @@
     <div class="card-body">
       <h5 class="card-title">{{ map.title }}</h5>
       <h6 class="card-subtitle mb-2 text-muted"><IconMap /> {{ map.map.name }}</h6>
-      <img :src="'/assets/maps/' + map.map.image" class="w-100">
+      <img :src="'/media/maps/' + map.map.image" class="w-100">
     </div>
 
     <div class="card-footer text-muted">

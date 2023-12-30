@@ -1,13 +1,13 @@
 <template>
   <div class="map-defense">
     <div class="defense" ref="defenseElement" :class="{ large: isLargeIcon }" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
-      <img :src="'/assets/maps/defenses/' + icon" alt="Defense icon">
+      <img :src="'/media/maps/defenses/' + icon" alt="Defense icon">
     </div>
 
     <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
         <div class="defense" ref="defenseElement" :class="{ large: isLargeIcon }" :style="{transform: `rotate(${rotation}deg)`}">
-          <img :src="'/assets/maps/defenses/' + icon" alt="Defense icon">
+          <img :src="'/media/maps/defenses/' + icon" alt="Defense icon">
         </div>
       </template>
 

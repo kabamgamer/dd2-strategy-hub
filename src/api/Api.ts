@@ -47,6 +47,27 @@ export default function useApi(): any {
 
         const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options as RequestInit)
 
+        if (response.status === 204) {
+            return response
+        }
+
+        return await response.json()
+    }
+
+    async function deleteAtEndpoint(endpoint: string, body?: object): Promise<any> {
+        const options: {method: string, headers: { [key: string]: string }, body?: string} = {
+            method: "DELETE",
+            headers: getHeaders(),
+        }
+
+        if (body) options['body'] = JSON.stringify(body)
+
+        const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options as RequestInit)
+
+        if (response.status === 204) {
+            return response
+        }
+
         return await response.json()
     }
 
@@ -63,5 +84,5 @@ export default function useApi(): any {
         return headers
     }
 
-    return { getFromEndpoint, postAtEndpoint, patchAtEndpoint }
+    return { getFromEndpoint, postAtEndpoint, patchAtEndpoint, deleteAtEndpoint }
 }

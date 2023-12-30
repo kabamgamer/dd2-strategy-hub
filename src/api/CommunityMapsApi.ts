@@ -1,6 +1,6 @@
 import useApi from "@/api/Api"
 
-const { getFromEndpoint, postAtEndpoint, patchAtEndpoint } = useApi()
+const { getFromEndpoint, postAtEndpoint, patchAtEndpoint, deleteAtEndpoint } = useApi()
 
 export default function useCommunityMapsApi(): any {
     async function getCommunityMapById(id: string): Promise<any> {
@@ -19,5 +19,9 @@ export default function useCommunityMapsApi(): any {
         return await patchAtEndpoint(`/maps/${map.id}`, map)
     }
 
-    return { getCommunityMapById, createCommunityMap, updateCommunityMap, voteCommunityMap }
+    async function deleteCommunityMap(mapId: string): Promise<any> {
+        return await deleteAtEndpoint(`/maps/${mapId}`)
+    }
+
+    return { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap }
 }

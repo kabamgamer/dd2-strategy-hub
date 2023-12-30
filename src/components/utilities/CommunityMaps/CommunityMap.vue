@@ -1,6 +1,6 @@
 <template>
   <div class="map">
-    <img :src="'/assets/maps/' + map.image" :alt="map.name">
+    <img :src="'/media/maps/' + map.image" :alt="map.name">
 
     <slot name="defenses">
     </slot>

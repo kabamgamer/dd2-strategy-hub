@@ -26,7 +26,10 @@
         <div class="col-md-3">
           <div class="map_actions d-flex justify-content-end">
             <div class="actions" v-if="!editMode">
-              <button class="btn m-1 btn-primary" v-if="can('map.update', [mapConfigurations])" @click.prevent="editMode = true; communityMapKey++">Edit</button>
+              <template v-if="can('map.update', [mapConfigurations])">
+                <button class="btn m-1 btn-danger" @click.prevent="mapDeletePromptModal?.show()">Delete map</button>
+                <button class="btn m-1 btn-primary" @click.prevent="editMode = true; communityMapKey++">Edit</button>
+              </template>
             </div>
             <div class="actions" v-else>
               <button class="btn m-1 btn-warning" @click.prevent="mapMetaConfigurationModal?.show()">Edit tags</button>
@@ -87,7 +90,7 @@
       </Card>
     </Section>
 
-    <BootstrapModal ref="mapMetaConfigurationModal" title="Map settings" :can-manually-close="false">
+    <BootstrapModal v-if="editMode" ref="mapMetaConfigurationModal" title="Map settings" :can-manually-close="false">
       <template #body>
         <LoadingSpinner v-if="loading" />
 
@@ -139,6 +142,16 @@
         <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="mapMetaConfigurationModal?.hide()">Save</button>
       </template>
     </BootstrapModal>
+    <BootstrapModal v-if="mapConfigurations.id && can('map.update', [mapConfigurations])" ref="mapDeletePromptModal" title="Delete map">
+      <template #body>
+        <p>Are you sure you want to delete this map?</p>
+        <i>This action cannot be undone</i>
+      </template>
+
+      <template #footer>
+        <button class="btn btn-danger" @click.prevent="onDelete">Delete</button>
+      </template>
+    </BootstrapModal>
   </div>
 </template>
 
@@ -173,7 +186,7 @@ import Input from "@/components/layout/form/Input.vue";
 import IconEye from "@/components/icons/IconEye.vue";
 import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 
-const { getCommunityMapById, createCommunityMap, updateCommunityMap, voteCommunityMap } = useCommunityMapsApi();
+const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
 const { user } = useUserStore();
@@ -188,6 +201,7 @@ const totalDu = ref<number>(0)
 const loading = ref(true)
 const map = ref<MapData>()
 const mapMetaConfigurationModal = ref<typeof BootstrapModal>()
+const mapDeletePromptModal = ref<typeof BootstrapModal>()
 const mapConfigurations = ref<MapConfigInterface>({} as MapConfigInterface)
 const hideDefense = ref<{[defenseIncrementId: number]: boolean}>({})
 const validatedMeta = computed(() => {
@@ -304,6 +318,17 @@ function initNewMapConfigurations(): void {
     votes: {up: 0, down: 0},
   } as unknown as MapConfigInterface
   mapMetaConfigurationModal.value?.show()
+}
+
+function onDelete(): void {
+  deleteCommunityMap(mapConfigurations.value.id)
+      .then(() => {
+        mapDeletePromptModal.value?.hide()
+        router.push({name: 'community-maps'})
+      })
+      .catch((e: Error) => {
+        console.error(e)
+      })
 }
 
 async function loadMapConfigurations(): Promise<void> {

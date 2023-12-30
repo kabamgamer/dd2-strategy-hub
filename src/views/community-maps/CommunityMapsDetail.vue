@@ -126,7 +126,7 @@
                 v-model="mapConfigurations.tags"
                 mode="tags"
                 :close-on-select="false"
-                :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite']"
+                :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite', 'Turtle build', 'Spawn kill']"
             />
           </div>
 

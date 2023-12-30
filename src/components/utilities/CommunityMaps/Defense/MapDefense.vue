@@ -1,12 +1,12 @@
 <template>
   <div class="map-defense">
-    <div class="defense" ref="defenseElement" :class="{ large: isLargeIcon }" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
+    <div class="defense" ref="defenseElement" :class="{ xs: isXSmallIcon, s: isSmallIcon, l: isLargeIcon, xl: isXLargeIcon }" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
       <img :src="'/media/maps/defenses/' + icon" alt="Defense icon">
     </div>
 
     <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
-        <div class="defense" ref="defenseElement" :class="{ large: isLargeIcon }" :style="{transform: `rotate(${rotation}deg)`}">
+        <div class="defense" ref="defenseElement" :class="{ xs: isXSmallIcon, s: isSmallIcon, l: isLargeIcon, xl: isXLargeIcon  }" :style="{transform: `rotate(${rotation}deg)`}">
           <img :src="'/media/maps/defenses/' + icon" alt="Defense icon">
         </div>
       </template>
@@ -62,8 +62,23 @@ const defensePositionCss = computed(() => ({
   left: `${(props.position as { x: number, y: number }).x}px`,
   transform: `rotate(${props.rotation}deg)`,
 }))
+
+const isXSmallIcon = computed(() => [
+  'ev2_proton_beam.png',
+  'ev2_reflect_beam.png',
+  'ev2_buff_beam.png',
+  'ev2_weapon_manufacturer.png',
+].includes(props.icon as string))
+const isSmallIcon = computed(() => [
+  'squire_cannonball.png',
+  'monk_lightning_strikes_aura.png',
+  'initiate_frost_strikes_aura.png',
+].includes(props.icon as string))
 const isLargeIcon = computed(() => [
-    'countess_elder_dragon.png',
+  'initiate_firework_cannon.png',
+].includes(props.icon as string))
+const isXLargeIcon = computed(() => [
+  'countess_elder_dragon.png',
 ].includes(props.icon as string))
 
 function onDefenseClick(): void {
@@ -107,15 +122,33 @@ onMounted(() => {
 <style scoped>
 .defense,
 .defense img {
-  width: 35px;
-  height: 35px;
-  object-fit: contain;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
 }
-.defense.large,
-.defense.large img {
+.defense.xs,
+.defense.xs img {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+}
+.defense.s,
+.defense.s img {
+  width: 25px;
+  height: 25px;
+  line-height: 20px;
+}
+.defense.l,
+.defense.l img {
+  width: 40px;
+  height: 40px;
+  line-height: 60px;
+}
+.defense.xl,
+.defense.xl img {
   width: 60px;
   height: 60px;
-  object-fit: contain;
+  line-height: 60px;
 }
 
 .defense {
@@ -127,9 +160,11 @@ onMounted(() => {
   text-align: center;
   color: #444;
   display: block;
-  height: 40px;
-  width: 40px;
   line-height: 40px;
+}
+
+.defense img {
+  object-fit: contain;
 }
 
 .context-menu-item {

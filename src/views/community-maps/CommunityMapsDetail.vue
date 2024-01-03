@@ -136,7 +136,7 @@
                 v-model="mapConfigurations.tags"
                 mode="tags"
                 :close-on-select="false"
-                :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite', 'Turtle build', 'Spawn kill']"
+                :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite', 'Turtle build', 'Spawn kill', 'No Hypershards', 'No lvl10 mods']"
             />
           </div>
 
@@ -400,7 +400,7 @@ onMounted(() => {
 
 .defenses-accordion {
   max-height: 545px;
-  overflow: scroll;
+  overflow-y: auto;
 }
 
 .hide-defense {

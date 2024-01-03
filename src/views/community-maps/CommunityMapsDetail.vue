@@ -90,7 +90,7 @@
       </Card>
     </Section>
 
-    <BootstrapModal v-if="editMode" ref="mapMetaConfigurationModal" title="Map settings" :can-manually-close="false">
+    <BootstrapModal v-if="editMode" ref="mapMetaConfigurationModal" title="Map settings" :can-manually-close="false" prevent-move>
       <template #body>
         <LoadingSpinner v-if="loading" />
 
@@ -142,7 +142,7 @@
         <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="mapMetaConfigurationModal?.hide()">Save</button>
       </template>
     </BootstrapModal>
-    <BootstrapModal v-if="mapConfigurations.id && can('map.update', [mapConfigurations])" ref="mapDeletePromptModal" title="Delete map">
+    <BootstrapModal v-if="mapConfigurations.id && can('map.update', [mapConfigurations])" ref="mapDeletePromptModal" title="Delete map" prevent-move>
       <template #body>
         <p>Are you sure you want to delete this map?</p>
         <i>This action cannot be undone</i>

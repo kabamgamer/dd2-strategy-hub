@@ -26,9 +26,10 @@
 import { onMounted, ref, defineEmits } from "vue";
 import { Modal } from "bootstrap";
 
-defineProps({
+const props = defineProps({
   title: String,
   isLarge: Boolean,
+  preventMove: Boolean,
   canManuallyClose: {
     type: Boolean,
     default: true,
@@ -46,7 +47,9 @@ onMounted((): void => {
   })
 
   // Make sure modal is always last item in body
-  document.body.appendChild(modalElement.value)
+  if (!props.preventMove) {
+    document.body.appendChild(modalElement.value)
+  }
   modalObject = new Modal(modalElement.value)
 });
 

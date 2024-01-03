@@ -148,7 +148,7 @@
       </template>
 
       <template #footer>
-        <button class="btn btn-danger" @click.prevent="mapMetaConfigurationModal?.hide(); router.back()">Cancel</button>
+        <button class="btn btn-danger" v-if="route.params.id === 'new'" @click.prevent="mapMetaConfigurationModal?.hide(); router.push({name: 'community-maps'})">Cancel</button>
         <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="mapMetaConfigurationModal?.hide()">Save</button>
       </template>
     </BootstrapModal>

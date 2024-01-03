@@ -16,6 +16,7 @@
       <template #menu-items>
         <a href="#" class="context-menu-item delete" @click.prevent="emit('delete')"><IconCross /></a>
         <a href="#" class="context-menu-item rotate" @click.prevent="onRotate"><IconRotate /></a>
+        <a href="#" class="context-menu-item rotate" @click.prevent="emit('duplicate')"><IconDuplicate /></a>
       </template>
     </ContextMenu>
   </div>
@@ -35,6 +36,7 @@ import useCdn from "@/composables/Cdn";
 import IconCross from "@/components/icons/IconCross.vue";
 import IconRotate from "@/components/icons/IconRotate.vue";
 import IconDefense from "@/components/icons/IconDefense.vue";
+import IconDuplicate from "@/components/icons/IconDuplicate.vue";
 
 const props = defineProps({
   showDefenseIcon: {
@@ -63,7 +65,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['delete', 'selectDefense', 'update:position', 'update:rotation']);
+const emit = defineEmits(['delete', 'duplicate', 'selectDefense', 'update:position', 'update:rotation']);
 
 const { rotate } = useRotateElement(emit, 'update:rotation')
 const { cdn } = useCdn()
@@ -140,7 +142,7 @@ onMounted(() => {
   background: white;
   color: var(--bs-primary);
   font-size: small;
-  line-height: 30px;
+  line-height: 25px;
   height: 30px;
   width: 30px;
   margin-left: -15px;
@@ -217,8 +219,8 @@ onMounted(() => {
   .defense {
     cursor: pointer;
     position: absolute;
-    top: calc(50% - 20px);
-    left: calc(50% - 20px);
+    top: 0;
+    left: 0;
     text-decoration: none;
     text-align: center;
     color: #444;

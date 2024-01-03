@@ -18,6 +18,7 @@
                           :legendColor="getLegendColor(defensePosition.defenseIncrementId)"
                           @selectDefense="openDefenseAccordion(defensePosition.defenseIncrementId)"
                           @delete="deleteDefensePosition(defensePosition.incrementId)"
+                          @duplicate="duplicateDefensePosition(defensePosition)"
                           @update:position="(position) => defensePosition.position = position"
                           @update:rotation="(rotation) => defensePosition.rotationInDegrees = rotation"
               />
@@ -263,6 +264,17 @@ function vote(userVote: string): void {
 
         mapConfigurations.value.userVote = userVote
       })
+}
+
+function duplicateDefensePosition(defensePosition: MapDefensePlacementInterface): void {mapConfigurations.value.mapLayout.push({
+    incrementId: Math.max(...mapConfigurations.value.mapLayout.map((defense) => defense.incrementId), 0) + 1,
+    defenseIncrementId: defensePosition.defenseIncrementId,
+    rotationInDegrees: defensePosition.rotationInDegrees,
+    position: {
+      x: defensePosition.position.x + 10,
+      y: defensePosition.position.y + 10,
+    }
+  })
 }
 
 function deleteDefensePosition(incrementId: number): void {

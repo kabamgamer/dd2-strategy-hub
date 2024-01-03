@@ -13,7 +13,7 @@ import { ref, onMounted, computed } from "vue";
 
 const menu = ref<HTMLElement>();
 const open = ref(false);
-const isMiniCircle = computed(() => menu.value?.querySelectorAll("a").length === 2);
+const isMiniCircle = computed(() => (menu.value?.querySelectorAll("a").length ?? 0) <= 3);
 
 function openMenu(): void {
   open.value = true
@@ -61,7 +61,7 @@ defineExpose({ open: openMenu, close: closeMenu });
 
 .circular-menu .circle.open {
   opacity: 1;
-  transform: scale(1) translate(-35%, -35%);
+  transform: scale(1) translate(-40%, -35%);
 }
 
 .circular-menu .circle a {

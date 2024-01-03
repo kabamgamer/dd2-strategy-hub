@@ -10,10 +10,12 @@
               <MapDefense :class="{hide: hideDefense[defensePosition.defenseIncrementId]}"
                           v-for="defensePosition in mapConfigurations.mapLayout"
                           :key="defensePosition.incrementId"
+                          :showDefenseIcon="showDefenseIcons"
                           :editMode="editMode"
                           :icon="getDefenseMapIcon(defensePosition.defenseIncrementId)"
                           :position="defensePosition.position"
                           :rotation="defensePosition.rotationInDegrees"
+                          :legendColor="getLegendColor(defensePosition.defenseIncrementId)"
                           @selectDefense="openDefenseAccordion(defensePosition.defenseIncrementId)"
                           @delete="deleteDefensePosition(defensePosition.incrementId)"
                           @update:position="(position) => defensePosition.position = position"
@@ -58,7 +60,13 @@
             </div>
           </Card>
 
-          <Card cardTitle="Defenses" :maxHeight="false">
+          <Card :maxHeight="false">
+            <template #header>
+              <div class="d-flex justify-content-between align-items-center">
+                <span>Defenses</span>
+                <span><SwitchField v-model="showDefenseIcons" rounded /></span>
+              </div>
+            </template>
             <template v-if="editMode">
               <h2>Add defense</h2>
               <DefenseSelection clear-on-select @change="onDefenseSelection" />
@@ -69,6 +77,8 @@
                 <h2 class="accordion-header d-flex align-items-center" :id="'flush-heading' + defense.incrementId">
                   <div class="add-defense" @click="addDefensePosition(defense.incrementId)" v-if="editMode">+</div>
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#flush-collapse' + defense.incrementId">
+                    <!-- little square with legend color -->
+                    <span v-if="!showDefenseIcons" class="badge bg-legend me-2" :style="{backgroundColor: getLegendColor(defense.incrementId)}">&nbsp;</span>
                     {{ defense.label }}
                   </button>
                   <div class="hide-defense" @click="hideDefense[defense.incrementId] = !hideDefense[defense.incrementId]">
@@ -177,6 +187,7 @@ import { useMapStore } from "@/stores/Map";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useUserStore } from "@/stores/User";
 import { useAcl } from "@/composables/Acl";
+import { useLegend } from "@/composables/Legend";
 
 import IconCaretUp from "@/components/icons/IconCaretUp.vue";
 import IconCaretDown from "@/components/icons/IconCaretDown.vue";
@@ -185,6 +196,7 @@ import MapSelection from "@/components/utilities/CommunityMaps/MapSelection.vue"
 import Input from "@/components/layout/form/Input.vue";
 import IconEye from "@/components/icons/IconEye.vue";
 import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
+import SwitchField from "@/components/layout/form/SwitchField.vue";
 
 const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { getMapById } = useMapStore();
@@ -192,9 +204,11 @@ const { getDefenseRoot } = useDefenseStore();
 const { user } = useUserStore();
 
 const { can } = useAcl();
+const { getLegendColor } = useLegend();
 
 const route = useRoute()
 const router = useRouter()
+const showDefenseIcons = ref<boolean>(true)
 const editMode = ref<boolean>(route.params.id === "new")
 const communityMapKey = ref<number>(0)
 const totalDu = ref<number>(0)

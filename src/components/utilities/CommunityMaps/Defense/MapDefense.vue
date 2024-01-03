@@ -1,13 +1,15 @@
 <template>
   <div class="map-defense">
-    <div class="defense" ref="defenseElement" :class="{ xs: isXSmallIcon, s: isSmallIcon, l: isLargeIcon, xl: isXLargeIcon }" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
-      <img :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
+    <div class="defense" ref="defenseElement" :class="sizeClass" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
+      <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
+      <IconDefense :style="{color: legendColor}" v-else />
     </div>
 
     <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
-        <div class="defense" ref="defenseElement" :class="{ xs: isXSmallIcon, s: isSmallIcon, l: isLargeIcon, xl: isXLargeIcon  }" :style="{transform: `rotate(${rotation}deg)`}">
-          <img :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
+        <div class="defense" ref="defenseElement" :class="sizeClass" :style="{transform: `rotate(${rotation}deg)`}">
+          <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
+          <IconDefense :style="{color: legendColor}" v-else />
         </div>
       </template>
 
@@ -32,8 +34,17 @@ import { useRotateElement } from "@/composables/RotateElement";
 import useCdn from "@/composables/Cdn";
 import IconCross from "@/components/icons/IconCross.vue";
 import IconRotate from "@/components/icons/IconRotate.vue";
+import IconDefense from "@/components/icons/IconDefense.vue";
 
 const props = defineProps({
+  showDefenseIcon: {
+    type: Boolean,
+    default: true,
+  },
+  legendColor: {
+    type: String,
+    default: '#444',
+  },
   editMode: {
     type: Boolean,
     default: false,
@@ -65,6 +76,9 @@ const defensePositionCss = computed(() => ({
   transform: `rotate(${props.rotation}deg)`,
 }))
 
+const sizeClass = computed(() => {
+  return {"no-icon": !props.showDefenseIcon, xs: isXSmallIcon.value, s: isSmallIcon.value, l: isLargeIcon.value, xl: isXLargeIcon.value}
+})
 const isXSmallIcon = computed(() => [
   'ev2_proton_beam.png',
   'ev2_reflect_beam.png',
@@ -151,6 +165,12 @@ onMounted(() => {
   width: 60px;
   height: 60px;
   line-height: 60px;
+}
+
+.defense.no-icon svg {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
 }
 
 .defense {

@@ -177,6 +177,7 @@ export interface MapConfigInterface {
     gameMode: string;
     difficulty: string|null;
     description: string;
+    thumbnail?: string;
     userVote: string|null;
     author: MapAuthor;
     votes: {

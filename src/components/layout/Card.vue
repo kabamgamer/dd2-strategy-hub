@@ -1,6 +1,6 @@
 <template>
   <div class="card" :class="{'h-100': maxHeight}">
-    <div class="card-header">{{ cardTitle }}</div>
+    <div class="card-header"><slot name="header">{{ cardTitle }}</slot></div>
     <div class="card-body">
       <slot></slot>
     </div>

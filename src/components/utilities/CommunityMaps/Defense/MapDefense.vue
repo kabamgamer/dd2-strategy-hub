@@ -197,6 +197,10 @@ onMounted(() => {
       height: 40px;
       line-height: 60px;
     }
+
+    &.no-icon .defense {
+      margin: 5px 10px;
+    }
   }
 
   &.xl {
@@ -207,9 +211,15 @@ onMounted(() => {
       height: 60px;
       line-height: 60px;
     }
+
+    &.no-icon .defense {
+      margin: 15px;
+    }
   }
 
   &.no-icon {
+    .circular-menu,
+    .defense,
     svg {
       width: 20px;
       height: 20px;

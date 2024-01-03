@@ -135,7 +135,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .defense,
 .defense img {
   width: 30px;
@@ -167,12 +167,6 @@ onMounted(() => {
   line-height: 60px;
 }
 
-.defense.no-icon svg {
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-}
-
 .defense {
   cursor: pointer;
   position: absolute;
@@ -183,10 +177,37 @@ onMounted(() => {
   color: #444;
   display: block;
   line-height: 40px;
-}
 
-.defense img {
-  object-fit: contain;
+  img {
+    object-fit: contain;
+  }
+
+  &.no-icon {
+    margin: 5px;
+
+    &, svg {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+
+    &.xs {
+      margin: 0;
+    }
+
+    &.s {
+      margin: -4px;
+      margin-left: 2px;
+    }
+
+    &.l {
+      margin: 10px;
+    }
+
+    &.xl {
+      margin: 15px;
+    }
+  }
 }
 
 .context-menu-item {
@@ -199,9 +220,10 @@ onMounted(() => {
   margin-left: -15px;
   margin-top: -15px;
   border-radius: 50%;
-}
-.context-menu-item.delete {
-  color: var(--bs-red);
+
+  &.delete {
+    color: var(--bs-red);
+  }
 }
 
 .map-defense.hide {

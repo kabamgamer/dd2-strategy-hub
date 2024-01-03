@@ -1,6 +1,6 @@
 <template>
   <div class="map">
-    <img :src="'/media/maps/' + map.image" :alt="map.name">
+    <img :src="cdn('/media/maps/' + map.image)" :alt="map.name">
 
     <slot name="defenses">
     </slot>
@@ -9,7 +9,12 @@
 
 <script setup lang="ts">
 import { defineProps } from "vue";
+
 import MapData from "@/data/MapData";
+
+import useCdn from "@/composables/Cdn";
+
+const { cdn } = useCdn();
 
 defineProps({
   map: {

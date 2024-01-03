@@ -1,13 +1,13 @@
 <template>
   <div class="map-defense">
     <div class="defense" ref="defenseElement" :class="{ xs: isXSmallIcon, s: isSmallIcon, l: isLargeIcon, xl: isXLargeIcon }" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
-      <img :src="'/media/maps/defenses/' + icon" alt="Defense icon">
+      <img :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
     </div>
 
     <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
         <div class="defense" ref="defenseElement" :class="{ xs: isXSmallIcon, s: isSmallIcon, l: isLargeIcon, xl: isXLargeIcon  }" :style="{transform: `rotate(${rotation}deg)`}">
-          <img :src="'/media/maps/defenses/' + icon" alt="Defense icon">
+          <img :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
         </div>
       </template>
 
@@ -29,6 +29,7 @@ import Draggabilly from "draggabilly/draggabilly.js";
 import ContextMenu from "@/components/utilities/CommunityMaps/Defense/ContextMenu.vue";
 
 import { useRotateElement } from "@/composables/RotateElement";
+import useCdn from "@/composables/Cdn";
 import IconCross from "@/components/icons/IconCross.vue";
 import IconRotate from "@/components/icons/IconRotate.vue";
 
@@ -54,6 +55,7 @@ const props = defineProps({
 const emit = defineEmits(['delete', 'selectDefense', 'update:position', 'update:rotation']);
 
 const { rotate } = useRotateElement(emit, 'update:rotation')
+const { cdn } = useCdn()
 const defenseElement = ref<HTMLElement | null>(null)
 const contextMenu = ref<typeof ContextMenu>()
 const draggableDefenseElement = ref<Draggabilly>()

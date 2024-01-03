@@ -3,7 +3,7 @@
     <div class="card-body">
       <h5 class="card-title">{{ map.title }}</h5>
       <h6 class="card-subtitle mb-2 text-muted"><IconMap /> {{ map.map.name }}</h6>
-      <img :src="'/media/maps/' + map.map.image" class="w-100">
+      <img :src="cdn('/media/maps/' + map.map.image)" class="w-100">
     </div>
 
     <div class="card-footer text-muted">
@@ -54,6 +54,10 @@ import IconTag from "@/components/icons/IconTag.vue"
 import IconMap from "@/components/icons/IconMap.vue"
 import IconGamepad from "@/components/icons/IconGamepad.vue"
 import IconFire from "@/components/icons/IconFire.vue"
+
+import useCdn from "@/composables/Cdn";
+
+const { cdn } = useCdn();
 
 defineProps({
   map: {

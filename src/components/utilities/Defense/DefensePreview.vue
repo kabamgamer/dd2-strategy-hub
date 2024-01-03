@@ -23,8 +23,16 @@
             <div class="defense-info__mods defense-utils mb-3">
               <h5 class="text-center">Mods</h5>
               <div class="defense-info__mods_mod-slot defense-utils__util bg-dark-subtle" v-for="(mod, index) in userMods" :key="index">
-                <div class="defense-info__shards_shard-name defense-utils__util-name" v-if="mod?.name">{{ mod.name }}</div>
-                <div class="defense-info__shards_shard-name w-100" v-else-if="editMode"><ModSelection @change="(mod) => {userData.relic.mods[index] = mod.id; loadMods()}" /></div>
+                <div class="defense-info__shards_shard-name defense-utils__util-name d-flex justify-content-between" v-if="mod?.name">
+                  <span>{{ mod.name }}</span>
+
+                  <Cross class="cross" v-if="editMode" @click="onDeleteMod(index)" />
+                </div>
+                <div class="defense-info__shards_shard-name w-100" v-else-if="editMode">
+                  <ModSelection @change="(mod) => {userData.relic.mods[index] = mod.id; loadMods()}"
+                                :defense-compatibility="defense.id"
+                  />
+                </div>
                 <div class="text-muted" v-else>Empty mod slot</div>
               </div>
             </div>
@@ -33,12 +41,26 @@
               <h5 class="text-center">Shards</h5>
               <div class="defense-info__shards_shard defense-utils__util bg-dark-subtle d-flex align-items-center" v-for="(shard, index) in userShards" :key="index">
                 <div class="defense-info__shards_shard-icon" v-if="shard?.icon"><img :src="shard?.icon" :alt="shard?.name"></div>
-                <div class="defense-info__shards_shard-name defense-utils__util-name" v-if="shard?.name">{{ shard.name }}</div>
-                <div class="defense-info__shards_shard-name w-100" v-else-if="editMode"><ShardSelection @change="(shard) => {userData.shards[index] = shard.id; loadShards()}" /></div>
+                <div class="defense-info__shards_shard-name defense-utils__util-name d-flex justify-content-between" v-if="shard?.name">
+                  <span>{{ shard.name }}</span>
+
+                  <Cross class="cross" v-if="editMode" @click="onDeleteShard(index)" />
+                </div>
+                <div class="defense-info__shards_shard-name w-100" v-else-if="editMode">
+                  <ShardSelection @change="(shard) => {userData.shards[index] = shard.id; loadShards()}"
+                                  :defense-compatibility="defense.id"
+                  />
+                </div>
                 <div class="text-muted" v-else>Empty shard slot</div>
               </div>
             </div>
           </div>
+
+          <button v-if="editMode"
+                  class="btn btn-danger w-100"
+                  @click.prevent="$emit('delete')">
+            Delete
+          </button>
         </slot>
       </div>
     </div>
@@ -63,6 +85,7 @@ import type {
 } from "@/interaces";
 import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue";
 import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue";
+import Cross from "@/components/icons/IconCross.vue";
 
 const { getDefenseRoot } = useDefenseStore()
 const { getModById } = useModStore()
@@ -91,6 +114,17 @@ const isLoading = ref<boolean>(true)
 Promise.all([loadDefenseData(), loadMods(), loadShards()]).then((): void => {
   isLoading.value = false
 })
+
+function onDeleteMod(index: number): void {
+  userData.relic.mods.splice(index, 1)
+  loadMods()
+  userData.shards
+}
+
+function onDeleteShard(index: number): void {
+  userData.shards.splice(index, 1)
+  loadShards()
+}
 
 async function loadDefenseData(): Promise<void> {
   defenseData.value = await getDefenseRoot(userData.id)
@@ -154,6 +188,7 @@ onMounted((): void => {
 }
 .defense-utils__util-name {
   font-weight: bold;
+  width: 100%;
 }
 
 .defense-info__shards_shard-icon img {

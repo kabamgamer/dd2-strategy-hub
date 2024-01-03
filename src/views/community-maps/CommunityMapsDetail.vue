@@ -64,7 +64,7 @@
             <template #header>
               <div class="d-flex justify-content-between align-items-center">
                 <span>Defenses</span>
-                <span><SwitchField v-model="showDefenseIcons" rounded /></span>
+                <span class="text-muted d-flex" style="gap: 5px">Toggle legend <SwitchField v-model="showDefenseIcons" rounded /></span>
               </div>
             </template>
             <template v-if="editMode">
@@ -87,7 +87,7 @@
                   </div>
                 </h2>
                 <div :id="'flush-collapse' + defense.incrementId" class="accordion-collapse collapse" data-bs-parent="#mapDefenseConfigurations">
-                  <DefensePreview :defense="defense" :editMode="editMode" />
+                  <DefensePreview :defense="defense" :editMode="editMode" @delete="onDefenseDelete(defense)" />
                 </div>
               </div>
             </div>
@@ -299,6 +299,18 @@ async function onSave(): Promise<void> {
 function getDefenseMapIcon(defenseIncrementId: number): string {
   const defense: MapDefenseInterface = mapConfigurations.value.defenses.find((defense) => defense.incrementId === defenseIncrementId) as MapDefenseInterface
   return defense.mapIcon
+}
+
+function onDefenseDelete(defenseData: any): void {
+  // Remove all references from the map layout
+  mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout.filter((defensePosition) => {
+    return defensePosition.defenseIncrementId !== defenseData.incrementId;
+  })
+
+  // Remove the defense from the list of defenses
+  mapConfigurations.value.defenses = mapConfigurations.value.defenses.filter((defense) => {
+    return defense.incrementId !== defenseData.incrementId;
+  })
 }
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {

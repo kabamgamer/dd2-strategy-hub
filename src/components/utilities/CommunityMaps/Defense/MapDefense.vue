@@ -1,13 +1,13 @@
 <template>
-  <div class="map-defense">
-    <div class="defense" ref="defenseElement" :class="sizeClass" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
+  <div class="map-defense" :class="sizeClass">
+    <div class="defense" ref="defenseElement" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
       <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
       <IconDefense :style="{color: legendColor}" v-else />
     </div>
 
     <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
-        <div class="defense" ref="defenseElement" :class="sizeClass" :style="{transform: `rotate(${rotation}deg)`}">
+        <div class="defense" ref="defenseElement" :style="{transform: `rotate(${rotation}deg)`}">
           <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
           <IconDefense :style="{color: legendColor}" v-else />
         </div>
@@ -136,80 +136,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.defense,
-.defense img {
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-}
-.defense.xs,
-.defense.xs img {
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-}
-.defense.s,
-.defense.s img {
-  width: 25px;
-  height: 25px;
-  line-height: 20px;
-}
-.defense.l,
-.defense.l img {
-  width: 40px;
-  height: 40px;
-  line-height: 60px;
-}
-.defense.xl,
-.defense.xl img {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-}
-
-.defense {
-  cursor: pointer;
-  position: absolute;
-  top: calc(50% - 20px);
-  left: calc(50% - 20px);
-  text-decoration: none;
-  text-align: center;
-  color: #444;
-  display: block;
-  line-height: 40px;
-
-  img {
-    object-fit: contain;
-  }
-
-  &.no-icon {
-    margin: 5px;
-
-    &, svg {
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-    }
-
-    &.xs {
-      margin: 0;
-    }
-
-    &.s {
-      margin: -4px;
-      margin-left: 2px;
-    }
-
-    &.l {
-      margin: 10px;
-    }
-
-    &.xl {
-      margin: 15px;
-    }
-  }
-}
-
 .context-menu-item {
   background: white;
   color: var(--bs-primary);
@@ -231,9 +157,97 @@ onMounted(() => {
 }
 </style>
 
-<style>
-.map-defense .circular-menu {
-  width: 40px;
-  height: 40px;
+<style lang="scss">
+.map-defense {
+  .defense,
+  .circular-menu,
+  .defense img {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  &.xs {
+    .circular-menu,
+    .defense,
+    .defense img {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+
+  &.s {
+    .circular-menu,
+    .defense,
+    .defense img {
+      width: 25px;
+      height: 25px;
+      line-height: 20px;
+    }
+  }
+
+  &.l {
+    .circular-menu,
+    .defense,
+    .defense img {
+      width: 40px;
+      height: 40px;
+      line-height: 60px;
+    }
+  }
+
+  &.xl {
+    .circular-menu,
+    .defense,
+    .defense img {
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+    }
+  }
+
+  &.no-icon {
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .defense {
+    cursor: pointer;
+    position: absolute;
+    top: calc(50% - 20px);
+    left: calc(50% - 20px);
+    text-decoration: none;
+    text-align: center;
+    color: #444;
+    display: block;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      background-color: white;
+      opacity: 0; /* Start fully transparent */
+      border-radius: 50%;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover::after {
+      opacity: 0.5; /* On hover, make it semi-transparent */
+    }
+
+    img {
+      object-fit: contain;
+    }
+
+    img, svg {
+      vertical-align: top;
+    }
+  }
 }
 </style>

@@ -1,14 +1,15 @@
 <template>
   <div class="notification-list container">
-    <div v-for="notification in notifications" :key="notification.id" class="notification">
+    <template v-for="notification in notifications" :key="notification.id">
       <BootstrapAlert v-if="notification.type === 'alert'"
                       :type="notification.color"
                       :dismissible="notification.dismissible"
+                      :duration="notification.duration"
                       @dismiss="removeNotification(notification)"
       >
         <span v-html="notification.message" />
       </BootstrapAlert>
-    </div>
+    </template>
   </div>
 </template>
 

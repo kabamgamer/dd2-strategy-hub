@@ -8,19 +8,19 @@ export default function useCommunityMapsApi(): any {
     }
 
     async function createCommunityMap(map: any): Promise<any> {
-        return await postAtEndpoint('/maps', map)
+        return postAtEndpoint('/maps', map)
     }
 
     async function voteCommunityMap(mapId: string, vote: string): Promise<any> {
-        return await postAtEndpoint(`/maps/${mapId}/vote`, {vote})
+        return postAtEndpoint(`/maps/${mapId}/vote`, {vote})
     }
 
     async function updateCommunityMap(map: any): Promise<any> {
-        return await patchAtEndpoint(`/maps/${map.id}`, map)
+        return patchAtEndpoint(`/maps/${map.id}`, map)
     }
 
     async function deleteCommunityMap(mapId: string): Promise<any> {
-        return await deleteAtEndpoint(`/maps/${mapId}`)
+        return deleteAtEndpoint(`/maps/${mapId}`)
     }
 
     return { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap }

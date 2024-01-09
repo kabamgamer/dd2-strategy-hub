@@ -187,6 +187,7 @@ import useCommunityMapsApi from "@/api/CommunityMapsApi";
 import { useMapStore } from "@/stores/Map";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useUserStore } from "@/stores/User";
+import { useNotificationStore } from "@/stores/Notifications";
 import { useAcl } from "@/composables/Acl";
 import { useLegend } from "@/composables/Legend";
 
@@ -203,6 +204,7 @@ const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommu
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
 const { user } = useUserStore();
+const { addNotification, notificationsFromErrors } = useNotificationStore();
 
 const { can } = useAcl();
 const { getLegendColor } = useLegend();
@@ -289,6 +291,21 @@ function onMapSelect(selectedMap: MapData): void {
 }
 
 async function onSave(): Promise<void> {
+  const onError: any = (response: any) => {
+    if (response.errors) {
+      notificationsFromErrors(response.errors)
+    } else {
+      addNotification({
+        id: 'error-map-save',
+        type: 'alert',
+        color: 'danger',
+        message: 'Something went wrong',
+        duration: 3000,
+      })
+      console.error(response)
+    }
+  }
+
   if (route.params.id === 'new') {
     createCommunityMap(mapConfigurations.value)
         .then((response: any) => {
@@ -297,6 +314,7 @@ async function onSave(): Promise<void> {
             communityMapKey.value++
             loadMapConfigurations()
           })
+          .catch(onError)
         })
   } else {
     updateCommunityMap(mapConfigurations.value)
@@ -305,6 +323,7 @@ async function onSave(): Promise<void> {
           communityMapKey.value++
           loadMapConfigurations()
         })
+        .catch(onError)
   }
 }
 

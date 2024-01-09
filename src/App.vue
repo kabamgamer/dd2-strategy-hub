@@ -37,6 +37,8 @@
   </nav>
 
   <main>
+    <NotificationList />
+
     <router-view />
   </main>
 
@@ -69,6 +71,7 @@ import ImportExport from "@/components/utilities/ImportExport.vue";
 import Modal from "@/components/layout/BootstrapModal.vue";
 import IconGithub from "@/components/icons/IconGithub.vue";
 import ChangelogModal from "@/components/utilities/ChangelogModal.vue";
+import NotificationList from "@/components/utilities/NotificationList.vue";
 import AuthLoginModal from "@/components/auth/AuthLoginModal.vue";
 
 import { useDefenseStore } from "@/stores/DefenseInfo";

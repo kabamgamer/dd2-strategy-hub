@@ -11,7 +11,11 @@ export default function useApi(): any {
 
         const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options)
 
-        return await response.json()
+        if (!response.ok) {
+            throw await response.json()
+        }
+
+        return response.json()
     }
 
     async function postAtEndpoint(endpoint: string, body?: object, promptLoginOnUnauthorized: boolean = true): Promise<any> {
@@ -30,11 +34,15 @@ export default function useApi(): any {
             return postAtEndpoint(endpoint, body, false)
         }
 
+        if (!response.ok) {
+            throw await response.json()
+        }
+
         if (response.status === 204) {
             return response
         }
 
-        return await response.json()
+        return response.json()
     }
 
     async function patchAtEndpoint(endpoint: string, body?: object): Promise<any> {
@@ -47,11 +55,15 @@ export default function useApi(): any {
 
         const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options as RequestInit)
 
+        if (!response.ok) {
+            throw await response.json()
+        }
+
         if (response.status === 204) {
             return response
         }
 
-        return await response.json()
+        return response.json()
     }
 
     async function deleteAtEndpoint(endpoint: string, body?: object): Promise<any> {
@@ -64,11 +76,15 @@ export default function useApi(): any {
 
         const response = await fetch(import.meta.env.VITE_API_URL + endpoint, options as RequestInit)
 
+        if (!response.ok) {
+            throw await response.json()
+        }
+
         if (response.status === 204) {
             return response
         }
 
-        return await response.json()
+        return response.json()
     }
 
     function getHeaders(): { [key: string]: string } {

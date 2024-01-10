@@ -3,6 +3,7 @@ import Home from '@/views/Home.vue'
 import DefenseCalculators from '@/views/calculator/DefenseCalculators.vue'
 import CommunityMapsOverview from '@/views/community-maps/CommunityMapsOverview.vue'
 import CommunityMapsDetail from '@/views/community-maps/CommunityMapsDetail.vue'
+import UserDefenses from "@/views/user/UserDefenses.vue";
 
 const routes = [
     {
@@ -24,6 +25,11 @@ const routes = [
         path: '/community-maps/:id',
         name: 'community-maps.detail',
         component: CommunityMapsDetail
+    },
+    {
+        path: '/user/defenses',
+        name: 'user.defenses',
+        component: UserDefenses
     },
 ]
 

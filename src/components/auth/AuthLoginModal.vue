@@ -8,7 +8,8 @@
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
       <li><a class="dropdown-item" href="#" @click.prevent="userProfileModal?.openModal()">Profile</a></li>
-      <li><router-link class="dropdown-item" :to="{name: 'community-maps', query: {author: user?.id}, state: {author: user?.id}}">Your maps</router-link></li>
+      <li><router-link class="dropdown-item" :to="{name: 'community-maps', query: {author: user?.id}, state: {author: user?.id}}">My maps</router-link></li>
+      <li><router-link class="dropdown-item" :to="{name: 'user.defenses'}">My defenses</router-link></li>
       <li><a class="dropdown-item" href="#" @click.prevent="logout">Logout</a></li>
     </ul>
   </div>

@@ -70,7 +70,7 @@
             </template>
             <template v-if="editMode">
               <h2>Add defense</h2>
-              <DefenseSelection clear-on-select @change="onDefenseSelection" />
+              <DefenseSelection clear-on-select @change="onDefenseSelection" :tabs="defenseSelectionTabs" />
               <hr />
             </template>
             <div class="accordion accordion-flush defenses-accordion" id="mapDefenseConfigurations">
@@ -169,6 +169,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from "pinia";
 import { Collapse } from "bootstrap";
 
 import Multiselect from '@vueform/multiselect'
@@ -180,13 +181,16 @@ import MapDefense from "@/components/utilities/CommunityMaps/Defense/MapDefense.
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
+
 import type { DefenseRootInterface, MapConfigInterface, MapDefenseInterface, MapDefensePlacementInterface } from "@/interaces";
+import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type MapData from "@/data/MapData";
 
 import useCommunityMapsApi from "@/api/CommunityMapsApi";
 import { useMapStore } from "@/stores/Map";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useUserStore } from "@/stores/User";
+import { useUserDataStore } from "@/stores/UserData";
 import { useNotificationStore } from "@/stores/Notifications";
 import { useAcl } from "@/composables/Acl";
 import { useLegend } from "@/composables/Legend";
@@ -203,7 +207,8 @@ import SwitchField from "@/components/layout/form/SwitchField.vue";
 const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
-const { user } = useUserStore();
+const { user } = storeToRefs(useUserStore());
+const { defenses } = storeToRefs(useUserDataStore());
 const { addNotification, notificationsFromErrors } = useNotificationStore();
 
 const { can } = useAcl();
@@ -221,12 +226,22 @@ const mapMetaConfigurationModal = ref<typeof BootstrapModal>()
 const mapDeletePromptModal = ref<typeof BootstrapModal>()
 const mapConfigurations = ref<MapConfigInterface>({} as MapConfigInterface)
 const hideDefense = ref<{[defenseIncrementId: number]: boolean}>({})
+const defenseSelectionTabs = computed((): any[] => [{
+  label: 'Presets',
+  options: {
+    'Your defenses': defenses.value,
+    'Protobot recommended (coming soon)': [],
+  },
+}])
+
 const validatedMeta = computed(() => {
   return mapConfigurations.value.title && mapConfigurations.value.map && mapConfigurations.value.gameMode && mapConfigurations.value.difficulty
 })
+
 const validatedMap = computed(() => {
   return mapConfigurations.value.mapLayout && mapConfigurations.value.mapLayout.length > 0
 })
+
 const gameModeDifficulties = computed(() => {
   switch (mapConfigurations.value.gameMode) {
     case "Adventures":
@@ -344,18 +359,29 @@ function onDefenseDelete(defenseData: any): void {
   })
 }
 
-function onDefenseSelection(defenseData: DefenseRootInterface): void {
+function onDefenseSelection(defenseData: DefenseRootInterface|UserDataStoreDefenseInterface): void {
   mapConfigurations.value.defenses = mapConfigurations.value.defenses || []
   const nextDefenseIncrementId = Math.max(...mapConfigurations.value.defenses.map((defense) => defense.incrementId), 0) + 1;
+
+  let defense: DefenseRootInterface = defenseData as DefenseRootInterface;
+  let relicMods: string[] = [];
+  let shards: string[] = [];
+  if ((defenseData as UserDataStoreDefenseInterface).incrementId) {
+    defense = (defenseData as UserDataStoreDefenseInterface).defenseData as DefenseRootInterface;
+    const userData = (defenseData as UserDataStoreDefenseInterface).userData;
+    relicMods = userData.relic.mods;
+    shards = userData.shards;
+  }
+
   mapConfigurations.value.defenses.push({
     incrementId: nextDefenseIncrementId,
-    id: defenseData.id,
-    label: defenseData.name,
-    mapIcon: defenseData.mapIcon,
+    id: defense.id,
+    label: defense.name,
+    mapIcon: defense.mapIcon,
     relic: {
-      mods: []
+      mods: relicMods
     },
-    shards: []
+    shards: shards
   })
 }
 
@@ -371,7 +397,7 @@ function openDefenseAccordion(defenseIncrementId: number): void {
 function initNewMapConfigurations(): void {
   loading.value = false
   mapConfigurations.value = {
-    author: {id: user?.id, name: user?.name},
+    author: {id: user.value?.id, name: user.value?.name},
     votes: {up: 0, down: 0},
   } as unknown as MapConfigInterface
   mapMetaConfigurationModal.value?.show()

@@ -2,8 +2,11 @@
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">{{ map.title }}</h5>
-      <h6 class="card-subtitle mb-2 text-muted"><IconMap /> {{ map.map.name }}</h6>
-      <img :src="cdn(map.thumbnail ?? '/media/maps/' + map.map.image)" class="w-100">
+      <h6 class="card-subtitle mb-2 text-muted"><IconMap /> {{ (map.map as unknown as MapData).name }}</h6>
+      <div class="card-body__thumbnail-wrapper">
+        <img :src="cdn(map.thumbnail ?? '/media/maps/' + (map.map as unknown as MapData).image)" class="w-100">
+        <DefenseList :map="map" />
+      </div>
     </div>
 
     <div class="card-footer text-muted">
@@ -54,21 +57,48 @@ import IconTag from "@/components/icons/IconTag.vue"
 import IconMap from "@/components/icons/IconMap.vue"
 import IconGamepad from "@/components/icons/IconGamepad.vue"
 import IconFire from "@/components/icons/IconFire.vue"
+import DefenseList from "@/components/utilities/CommunityMaps/DefenseList.vue";
 
 import useCdn from "@/composables/Cdn";
+
+import type { PropType } from "vue"
+import type { MapConfigInterface } from "@/interaces";
+import type MapData from "@/data/MapData";
 
 const { cdn } = useCdn();
 
 defineProps({
   map: {
-    type: Object,
+    type: Object as PropType<MapConfigInterface>,
     required: true,
   },
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .card {
   height: 100%;
+}
+
+.card-body__thumbnail-wrapper {
+  position: relative;
+
+  .defense-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--bs-body-bg);
+    opacity: 0;
+    transform: translateY(100%);
+    transition: transform 0.5s, opacity 0.5s;
+  }
+
+  &:hover .defense-list {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

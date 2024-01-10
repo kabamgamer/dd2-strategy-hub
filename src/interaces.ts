@@ -187,4 +187,5 @@ export interface MapConfigInterface {
     tags: string[];
     defenses: MapDefenseInterface[];
     mapLayout: MapDefensePlacementInterface[];
+    createdAt: Date;
 }

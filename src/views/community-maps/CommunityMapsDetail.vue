@@ -171,11 +171,11 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import { Collapse } from "bootstrap";
 
-import { QuillEditor } from '@vueup/vue-quill'
 import Multiselect from '@vueform/multiselect'
 import Section from "@/components/layout/Section.vue";
 import CommunityMap from "@/components/utilities/CommunityMaps/CommunityMap.vue";
 import Card from "@/components/layout/Card.vue";
+import QuillEditor from '@/components/layout/form/QuillEditor.vue'
 import MapDefense from "@/components/utilities/CommunityMaps/Defense/MapDefense.vue";
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
@@ -424,7 +424,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .accordion-header .add-defense {
   cursor: pointer;
 }
@@ -472,6 +472,10 @@ onMounted(() => {
 </style>
 
 <style>
+.description img {
+  max-width: 100%;
+}
+
 .ql-align-center {
   text-align: center;
 }

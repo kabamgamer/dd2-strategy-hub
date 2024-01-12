@@ -203,8 +203,10 @@ import Input from "@/components/layout/form/Input.vue";
 import IconEye from "@/components/icons/IconEye.vue";
 import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 import SwitchField from "@/components/layout/form/SwitchField.vue";
+import { useProtobot } from "@/composables/Protobot";
 
 const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();
+const { protobotDefenses } = useProtobot();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
 const { user } = storeToRefs(useUserStore());
@@ -230,7 +232,7 @@ const defenseSelectionTabs = computed((): any[] => [{
   label: 'Presets',
   options: {
     'Your defenses': defenses.value,
-    'Protobot recommended (coming soon)': [],
+    'Protobot recommended': protobotDefenses.value,
   },
 }])
 

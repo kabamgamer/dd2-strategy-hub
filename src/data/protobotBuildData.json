@@ -1,0 +1,2577 @@
+[
+	{
+		"name": "Cannonball Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Cannonball Tower",
+		"role": "Anti-Roller",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Power Transfer",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Anti-Miniboss",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Goblin",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller or Piercer",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Spike Blockade",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Juggernaut",
+			"Fortification",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Ballista",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Power Bolts"
+		],
+		"mods": [
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Ballista",
+		"role": "Ignite",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Power Bolts",
+			"Oily Harpoon"
+		],
+		"mods": [
+			{
+				"name": "Burning Bolts",
+				"qualibean": "1"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Training Dummy",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Automation",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Training Dummy",
+		"role": "Tank/Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Automation",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Poison",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Flamethrower Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Empowered Flame",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Arcane Barrier",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Juggernaut",
+			"Auto-Repair System",
+			"Arcane Refulgence"
+		],
+		"mods": [
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Frostbite Tower",
+		"role": "Constant Channeling",
+		"tertiary": "",
+		"shards": [
+			"Frosty Power",
+			"Vampiric Empowerment",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Diverse Power",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "9"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Earthshatter Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Earth Toss"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Explosive Trap",
+		"role": "General DPS",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Fire For Effect"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Diverse Critical",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Explosive Trap",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Fire For Effect"
+		],
+		"mods": [
+			{
+				"name": "Tenacity Servo",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Geyser Trap",
+		"role": "Crowd Control",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Freezing Rain",
+			"Defense Rate",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Tenacity Servo",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Geyser Trap",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Explosive Surprise"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Poison Dart Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Broad Head Arrows",
+			"Explosive Poison"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Poison Dart Tower",
+		"role": "Anti-Goblin",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Broad Head Arrows",
+			"Explosive Poison"
+		],
+		"mods": [
+			{
+				"name": "Anti-Goblin",
+				"qualibean": "10"
+			},
+			{
+				"name": "Gobu-Boom",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Blaze Balloon",
+		"role": "General DPS",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Vampiric Empowerment"
+		],
+		"mods": [
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Diverse Critical",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Blaze Balloon",
+		"role": "Anti-Frost",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Vampiric Empowerment",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Anti-Frost",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Goblin/Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Flame Aura",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Encroaching Flames",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Flame Aura",
+		"role": "Anti-Frost",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Encroaching Flames",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Frost",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Flame Aura",
+		"role": "Anti-Air",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Encroaching Flames",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Ranged",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Flame Aura",
+		"role": "Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Deadly Strikes",
+			"Empowering Aura",
+			""
+		],
+		"mods": [
+			{
+				"name": "Anti-Heal",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			},
+			{
+				"name": "",
+				"qualibean": "0"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Boost Aura",
+		"role": "Pure Boost",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Destruction",
+			"Vampiric Empowerment",
+			"Boosted Power"
+		],
+		"mods": [
+			{
+				"name": "Diverse Power",
+				"qualibean": "10"
+			},
+			{
+				"name": "Diverse CD",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Boost Aura",
+		"role": "Support",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Destruction",
+			"Vampiric Empowerment",
+			"Boosted Grasp"
+		],
+		"mods": [
+			{
+				"name": "Diverse Power",
+				"qualibean": "10"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Boost Aura",
+		"role": "Crowd Control",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Vicious Strikes",
+			"Deadly Strikes",
+			"Boosted Grasp"
+		],
+		"mods": [
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Drain Aura",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Sky Guard Tower",
+		"role": "Anti-Air",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Crippling Blow",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Ranged",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Sky Guard Tower",
+		"role": "Petrify",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Destruction",
+			"Defense Rate",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			},
+			{
+				"name": "Poison/Earth",
+				"qualibean": "1"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Lightning Strikes Aura",
+		"role": "Anti-Miniboss",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Destruction",
+			"Defense Rate",
+			"Vampiric Empowerment"
+		],
+		"mods": [
+			{
+				"name": "Anti-Miniboss",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Critical Chance",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Lightning Strikes Aura",
+		"role": "Anti-Orc",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Defense Rate",
+			"Vampiric Empowerment"
+		],
+		"mods": [
+			{
+				"name": "Anti-Orc",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Lightning Strikes Aura",
+		"role": "Anti-Air",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Destructive Pylon",
+			"Defense Rate",
+			"Electric Arcing"
+		],
+		"mods": [
+			{
+				"name": "Anti-Ranged",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Critical Chance",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Orc Blockade",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Fortification",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Orc Blockade",
+		"role": "Tank 2",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Auto-Repair System",
+			"Automation",
+			"Juggernaut"
+		],
+		"mods": [
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Skeletal Ramster",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Skeletal Archer",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Double Tap"
+		],
+		"mods": [
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "The Colossus",
+		"role": "Bruiser",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"All for One",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "The Colossus",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"All for One",
+			"Juggernaut",
+			"Automation"
+		],
+		"mods": [
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Proton Beam",
+		"role": "Support/Petrify",
+		"tertiary": "",
+		"shards": [
+			"Destructive Pylon",
+			"Water Elemental",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Poison/Earth",
+				"qualibean": "1"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Proton Beam",
+		"role": "Support/Electrocute",
+		"tertiary": "",
+		"shards": [
+			"Destructive Pylon",
+			"Water Elemental",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Water/Storm",
+				"qualibean": "1"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Proton Beam",
+		"role": "General DPS",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Power Transfer"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Reflect Beam",
+		"role": "Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Health Pylon",
+			"Destructive Pylon",
+			"Shattering Torpedo"
+		],
+		"mods": [
+			{
+				"name": "Anti Heal",
+				"qualibean": "10"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Reflect Beam",
+		"role": "General DPS",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Shattering Torpedo",
+			"Destruction",
+			"Mass Destruction"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Buff Beam",
+		"role": "Pure Boost",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Boosted Beam",
+			"Destruction",
+			"Vampiric Empowerment"
+		],
+		"mods": [
+			{
+				"name": "Diverse Power",
+				"qualibean": "10"
+			},
+			{
+				"name": "Diverse CD",
+				"qualibean": "10"
+			},
+			{
+				"name": "Crit Damage",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Buff Beam",
+		"role": "Support (a)",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Boosted Beam",
+			"Destruction",
+			"Diffusion"
+		],
+		"mods": [
+			{
+				"name": "Diverse Power",
+				"qualibean": "10"
+			},
+			{
+				"name": "Diverse CD",
+				"qualibean": "10"
+			},
+			{
+				"name": "Crit Damage",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Buff Beam",
+		"role": "Support (b)",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Boosted Beam",
+			"Destruction",
+			"Vampiric Empowerment"
+		],
+		"mods": [
+			{
+				"name": "Diverse Power",
+				"qualibean": "10"
+			},
+			{
+				"name": "Diverse CD",
+				"qualibean": "10"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Weapon Manufacturer",
+		"role": "Electrocute",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Water Elemental",
+			"Defense Rate",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Stunning Revelation",
+				"qualibean": "10"
+			},
+			{
+				"name": "Storm",
+				"qualibean": "1"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Weapon Manufacturer",
+		"role": "Petrify",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Destruction",
+			"Defense Rate",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			},
+			{
+				"name": "Poison/Earth",
+				"qualibean": "1"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Fissure of Embermount",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Chaos or Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Fissure of Embermount",
+		"role": "Anti-Frost",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Destruction",
+			"Defense Rate",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Frost",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee/Goblin",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Fissure of Embermount",
+		"role": "Continuous DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Embermount Flames",
+				"qualibean": "1"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Maw of the Earth Drake",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Fortification",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "9"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Oil Geyser",
+		"role": "Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Defense Rate",
+			"Destructive Pylon",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			},
+			{
+				"name": "Anti Heal",
+				"qualibean": "10"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Volcano",
+		"role": "General DPS",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Destruction",
+			"All for One",
+			"Double Eruption"
+		],
+		"mods": [
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Unique Critical",
+				"qualibean": "10"
+			},
+			{
+				"name": "Critical Chance",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Serpent's Coil",
+		"role": "Bait Tower",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Fortification",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Hardened ",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Fortitude",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Snaking Sands",
+		"role": "Hero Buff",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Sandstorm Warrior",
+			"Defense Rate",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Sand Viper",
+		"role": "DPS/Support (a)",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Bubble Beam"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos or Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Sand Viper",
+		"role": "DPS/Support (b)",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Bubble Beam"
+		],
+		"mods": [
+			{
+				"name": "Poison",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Viper's Fangs",
+		"role": "Tank (a)",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Fortification",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Hardened ",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Viper's Fangs",
+		"role": "Tank (b)",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Fortification",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Hardened ",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "1"
+			},
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Obelisk",
+		"role": "Bait Tower",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Empowering Blasphemy",
+			"Fortification",
+			"Automation"
+		],
+		"mods": [
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "7"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "World Tree",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Juggernaut",
+			"Fortification",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "World Tree",
+		"role": "Support",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Destructive Pylon",
+			"Juggernaut",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "World Tree",
+		"role": "Hero Buff",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Vicious Strikes",
+			"World Tree Mcbufferson",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Moss Hornet's Nest",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Fleeting Nature"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller or Anti-Chaos",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Harpy's Perch",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Giant Harpy Feathers"
+		],
+		"mods": [
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "6"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Slime Pit",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Augmented Explosions"
+		],
+		"mods": [
+			{
+				"name": "Anti-Chaos or Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Slime Pit",
+		"role": "Ignite",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Augmented Explosions"
+		],
+		"mods": [
+			{
+				"name": "Fire",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Angry Nimbus",
+		"role": "General DPS ",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Fleeting Nature"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller or Anti-Chaos",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Water Aura",
+		"role": "Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Empowering Aura",
+			"Defense Rate",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Heal",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Water Aura",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Water Jet"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Water Aura",
+		"role": "Anti-Air",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Deadly Strikes",
+			"Destruction",
+			"Water Jet"
+		],
+		"mods": [
+			{
+				"name": "Anti-Ranged",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Firework Cannon",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Concentrated Pyrotechnics"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Chi Spirit Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Spirit Charge"
+		],
+		"mods": [
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Chi Spirit Tower",
+		"role": "Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Defense Rate",
+			"Spirit Blessing",
+			"Spirit Charge"
+		],
+		"mods": [
+			{
+				"name": "Fire Servo",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Heal",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Frost Strikes Aura",
+		"role": "Anti-Miniboss",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Lingering Frostfire",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Miniboss",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Frost Strikes Aura",
+		"role": "General DPS",
+		"tertiary": "Crit Damage / Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Defense Rate"
+		],
+		"mods": [
+			{
+				"name": "Diverse Critical or Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Lingering Frostfire",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Flameburst Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Gathering Burst"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee or Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Flameburst Tower",
+		"role": "Anti-Frost",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Gathering Burst"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Frost",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Tesla Coil",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Vicious Strikes"
+		],
+		"mods": [
+			{
+				"name": "Ramping Voltage",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range or Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Hailstorm Tower",
+		"role": "Anti-Air\n(Low Enemy Count)",
+		"tertiary": "",
+		"shards": [
+			"Destruction",
+			"Vampiric Empowerment",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Support",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "6"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Crystal Hammer",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Deadly Strikes",
+			"Crystal Fissure"
+		],
+		"mods": [
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Royal Guard Blockade",
+		"role": "Tank",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Fortification",
+			"Juggernaut",
+			"Auto-Repair System"
+		],
+		"mods": [
+			{
+				"name": "Hardened ",
+				"qualibean": "10"
+			},
+			{
+				"name": "Protective Downgrade",
+				"qualibean": "10"
+			},
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Nether Spider Spawner",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Augmented Explosions"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos or Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Nether Archer",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Ghost Arrows",
+			"Destruction",
+			"Mass Destruction"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Nether Archer",
+		"role": "Support/Petrify",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Ghost Arrows",
+			"Ghastly Curse",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Poison/Earth",
+				"qualibean": "1"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Elvish Artillery Cannon",
+		"role": "General DPS",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Overcharge"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Critical Chance",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Flak Cannon",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Powder Shot"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Range",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Oil Catapult",
+		"role": "Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Vampiric Empowerment",
+			"Destruction",
+			"Deadly Strikes"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti Heal",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Dragon's Nest",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Dragon's Haste"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Elder Dragon",
+		"role": "General DPS (a)",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"All for One"
+		],
+		"mods": [
+			{
+				"name": "Critical Chance",
+				"qualibean": "10"
+			},
+			{
+				"name": "Unique Crit Chance",
+				"qualibean": "10"
+			},
+			{
+				"name": "Motherly Instinct",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Elder Dragon",
+		"role": "General DPS (b)",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Power Transfer"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Critical Chance",
+				"qualibean": "10"
+			},
+			{
+				"name": "Motherly Instinct",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Elder Dragon",
+		"role": "General DPS (c)",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"All for One"
+		],
+		"mods": [
+			{
+				"name": "Unique CD",
+				"qualibean": "10"
+			},
+			{
+				"name": "Unique Crit Chance",
+				"qualibean": "10"
+			},
+			{
+				"name": "Motherly Instinct",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "EMP Trap",
+		"role": "General DPS",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Voltage Spike"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Diverse Critical",
+				"qualibean": "10"
+			},
+			{
+				"name": "Controller",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "EMP Trap",
+		"role": "Support",
+		"tertiary": "Defense Range",
+		"shards": [
+			"Defense Rate",
+			"Deadly Strikes",
+			"Electric Paralysis"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "8"
+			},
+			{
+				"name": "Anti Heal",
+				"qualibean": "10"
+			},
+			{
+				"name": "Tenacity",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Sentry Turret",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Sentry Rocket"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Magnetic Knight Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Enhanced Throw"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Magnetic Knight Tower",
+		"role": "Anti-Roller",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Power Transfer",
+			"Destruction",
+			"Enhanced Throw"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Goblin ",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Miniboss",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Rail Gun Tower",
+		"role": "General DPS",
+		"tertiary": "Crit Damage",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Power Transfer"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			},
+			{
+				"name": "Energy Overload",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Melee or Controller",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Spectral Knight",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Spectral Amplification"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Gargoyle Statue",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Napalm Gargoyles"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee",
+				"qualibean": "10"
+			},
+			{
+				"name": "Anti-Chaos or Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Sonic Bat",
+		"role": "General DPS",
+		"tertiary": "Crit Chance",
+		"shards": [
+			"Mass Destruction",
+			"Destruction",
+			"Overpowering Screech"
+		],
+		"mods": [
+			{
+				"name": "Anti-Melee or Controller",
+				"qualibean": "10"
+			},
+			{
+				"name": "Piercer",
+				"qualibean": "10"
+			},
+			{
+				"name": "Defense Rate",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/809201599971983390/984922025925685308/medallion.png"
+	},
+	{
+		"name": "Werewolf Commander",
+		"role": "Tank (a)",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Juggernaut",
+			"Automation",
+			"Rebounding Strike"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "9"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	},
+	{
+		"name": "Werewolf Commander",
+		"role": "Tank (b)",
+		"tertiary": "Defense Resist",
+		"shards": [
+			"Juggernaut",
+			"Automation",
+			"Werewolf General"
+		],
+		"mods": [
+			{
+				"name": "Defense Rate",
+				"qualibean": "9"
+			},
+			{
+				"name": "Hardened",
+				"qualibean": "10"
+			},
+			{
+				"name": "Accumulator",
+				"qualibean": "10"
+			}
+		],
+		"relic": "https://cdn.discordapp.com/attachments/647256353844232202/985071622245457942/TotemIcon.png"
+	}
+]

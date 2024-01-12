@@ -51,6 +51,10 @@ export const useModStore: () => any = (): object => {
 
         async function getModById(id: string): Promise<ModInterface | null> {
             await initialized()
+            switch (id) {
+                case 'tenacity': id = 'tenacity_servo'; break;
+                case 'critical_servo': id = 'critical_chance_servo'; break;
+            }
             return Promise.resolve(allMods.find((mod: ModInterface): boolean => mod.id === id) ?? null)
         }
 

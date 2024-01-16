@@ -6,13 +6,20 @@
       <button class="btn btn-primary" @click="addDefense">Add defense</button>
     </div>
 
+    <div class="text-muted mb-3">
+      Be aware; these defenses are stored in your browser, not in your account.
+      This means that if you currently use multiple devices, you will have to configure your defenses on each device.
+      Also, if you are currently using a private/incognito window, your defenses will be lost when you close the window.
+      This does not affect your map builds in any way.
+    </div>
+
     <div v-if="!defenses.length">It looks empty here. You can start by configuring your first defense.</div>
 
     <div class="accordion">
       <div class="row">
         <div v-for="defense in defenses" :key="defense.incrementId" class="col-sm-6 col-lg-4 col-xl-3 my-3">
           <DefenseSelection v-if="!defense.userData" @change="(defenseData: DefenseRootInterface) => onDefenseSelection(defense, defenseData)" />
-          <DefensePreview v-else :defense="defense.userData" edit-mode />
+          <DefensePreview v-else :defense="defense.userData" @delete="onDefenseDelete(defense.incrementId)" edit-mode />
         </div>
       </div>
     </div>
@@ -51,6 +58,12 @@ function onDefenseSelection(defense: any, defenseData: DefenseRootInterface): vo
     shards: [],
     ascensionPoints: {},
   } as UserDefenseInterface;
+}
+
+function onDefenseDelete(defenseIncrementId: number): void {
+  defenses.value = defenses.value.filter((defense: UserDataStoreDefenseInterface): boolean => {
+    return defense.incrementId !== defenseIncrementId
+  })
 }
 </script>
 

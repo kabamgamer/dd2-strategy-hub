@@ -82,23 +82,29 @@ defineProps({
 
 .card-body__thumbnail-wrapper {
   position: relative;
+  height: calc(100% - 40px);
 
   .defense-list {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 100%;
+    height: 150px;
     overflow: auto;
     background-color: var(--bs-body-bg);
     opacity: 0;
     transform: translateY(100%);
-    transition: transform 0.5s, opacity 0.5s;
+    transition: transform 0.5s, opacity 0.5s, height 0.5s;
   }
 
   &:hover .defense-list {
     opacity: 1;
+    height: 100%;
     transform: translateY(0);
   }
+}
+
+.card-footer {
+  z-index: 50;
 }
 </style>

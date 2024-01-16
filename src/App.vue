@@ -117,6 +117,10 @@ nav {
   z-index: 500;
 }
 
+nav.navbar {
+  z-index: 600;
+}
+
 .btn-color-mode {
   margin-right: 10px;
 }

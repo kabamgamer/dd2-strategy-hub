@@ -13,6 +13,8 @@ export default function useUserMediaApi(): any {
             }
         }
 
+        validateFile(file)
+
         const formData: FormData = new FormData();
         formData.append('file', file);
 
@@ -21,6 +23,7 @@ export default function useUserMediaApi(): any {
             body: formData,
             headers: {
                 'Authorization': 'Bearer ' + accessToken.value,
+                'Accept': 'application/json',
             }
         })
 
@@ -29,6 +32,22 @@ export default function useUserMediaApi(): any {
         }
 
         return response.json()
+    }
+
+    function validateFile(file: File): void {
+        const errors: string[] = []
+
+        if (file.size > 2000000) {
+            errors.push('File size too large. Max size is 2MB.')
+        }
+
+        if (!file.type.startsWith('image/')) {
+            errors.push('File type not supported. Only images are supported.')
+        }
+
+        if (errors.length > 0) {
+            throw { errors }
+        }
     }
 
     return { uploadMedia }

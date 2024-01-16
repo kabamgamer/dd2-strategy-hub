@@ -6,15 +6,18 @@
 import { ref, defineProps, defineEmits } from "vue";
 
 import useUserMediaApi from "@/api/UserMedia";
+import { useNotificationStore } from "@/stores/Notifications";
 
 import { QuillEditor } from "@vueup/vue-quill";
 
 // @ts-ignore
 import ImageUploader from 'quill-image-uploader';
 
+const notificationStore = useNotificationStore();
 const emit = defineEmits(['update:modelValue', 'change', 'userUpload']);
 
 const { uploadMedia } = useUserMediaApi();
+const { notificationsFromErrors } = notificationStore
 
 defineProps({
   modelValue: String,
@@ -40,9 +43,14 @@ function onMediaUpload(file: any): Promise<string> {
           emit('userUpload', result.url);
           resolve(result.url);
         })
-        .catch((error: any) => {
+        .catch((response: any) => {
+          console.error(response);
+
+          if (response.errors) {
+            notificationsFromErrors(response.errors, 'quill-editor')
+          }
+
           reject('Upload failed');
-          console.error(error);
         });
   })
 }

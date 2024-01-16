@@ -37,7 +37,7 @@
   </nav>
 
   <main>
-    <NotificationList />
+    <NotificationList class="container" />
 
     <router-view />
   </main>

@@ -6,6 +6,7 @@ interface Notification {
     type: 'alert'|'notification',
     color: 'primary'|'secondary'|'success'|'danger'|'warning'|'info'|'light'|'dark',
     message: string,
+    location?: string,
     dismissible?: boolean,
     duration?: number,
     timeout?: number,
@@ -24,7 +25,7 @@ export const useNotificationStore = defineStore('notificationStore', () => {
         }
     }
 
-    function notificationsFromErrors(errors: {[field: string]: string}, dismissible: boolean = true): void {
+    function notificationsFromErrors(errors: {[field: string]: string}, location?: string, dismissible: boolean = true): void {
         for (const field in errors) {
             addNotification({
                 id: 'error-' + field,
@@ -32,6 +33,7 @@ export const useNotificationStore = defineStore('notificationStore', () => {
                 color: 'danger',
                 message: errors[field],
                 dismissible,
+                location,
                 duration: 5000,
             })
         }

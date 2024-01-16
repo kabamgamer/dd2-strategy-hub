@@ -143,6 +143,7 @@
 
           <div class="form-group mt-3">
             <label for="map">Description</label>
+            <NotificationList location="quill-editor" />
             <QuillEditor toolbar="minimal" v-model:content="mapConfigurations.description" contentType="html" />
           </div>
         </div>
@@ -181,6 +182,11 @@ import MapDefense from "@/components/utilities/CommunityMaps/Defense/MapDefense.
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
+import NotificationList from "@/components/utilities/NotificationList.vue";
+import SwitchField from "@/components/layout/form/SwitchField.vue";
+import BootstrapModal from "@/components/layout/BootstrapModal.vue";
+import MapSelection from "@/components/utilities/CommunityMaps/MapSelection.vue";
+import Input from "@/components/layout/form/Input.vue";
 
 import type { DefenseRootInterface, MapConfigInterface, MapDefenseInterface, MapDefensePlacementInterface } from "@/interaces";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
@@ -197,12 +203,8 @@ import { useLegend } from "@/composables/Legend";
 
 import IconCaretUp from "@/components/icons/IconCaretUp.vue";
 import IconCaretDown from "@/components/icons/IconCaretDown.vue";
-import BootstrapModal from "@/components/layout/BootstrapModal.vue";
-import MapSelection from "@/components/utilities/CommunityMaps/MapSelection.vue";
-import Input from "@/components/layout/form/Input.vue";
 import IconEye from "@/components/icons/IconEye.vue";
 import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
-import SwitchField from "@/components/layout/form/SwitchField.vue";
 import { useProtobot } from "@/composables/Protobot";
 
 const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();

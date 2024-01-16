@@ -106,16 +106,16 @@
         <LoadingSpinner v-if="loading" />
 
         <div class="settings" v-else>
-          <Input v-model="mapConfigurations.title" id="title" label="Title" />
+          <Input v-model="mapMetaForm.title" id="title" label="Title" />
 
-          <div class="form-group mt-3" v-if="!mapConfigurations.map">
+          <div class="form-group mt-3" v-if="!mapMetaForm.map">
             <label for="map">Map</label>
             <MapSelection @change="onMapSelect" id="map" />
           </div>
 
           <div class="form-group mt-3">
             <label for="map">Game Mode</label>
-            <select class="form-select" v-model="mapConfigurations.gameMode" @change="mapConfigurations.difficulty = null">
+            <select class="form-select" v-model="mapMetaForm.gameMode" @change="mapMetaForm.difficulty = null">
               <option value="Adventure">Adventure</option>
               <option value="Expedition">Expedition</option>
               <option value="Survival">Survival</option>
@@ -126,7 +126,7 @@
 
           <div class="form-group mt-3">
             <label for="map">Difficulty</label>
-            <select class="form-select" v-model="mapConfigurations.difficulty" :disabled="!mapConfigurations.gameMode">
+            <select class="form-select" v-model="mapMetaForm.difficulty" :disabled="!mapMetaForm.gameMode">
               <option v-for="difficulty in gameModeDifficulties" :key="difficulty" :value="difficulty">{{ difficulty }}</option>
             </select>
           </div>
@@ -134,7 +134,7 @@
           <div class="form-group mt-3">
             <label for="map">Tags</label>
             <Multiselect
-                v-model="mapConfigurations.tags"
+                v-model="mapMetaForm.tags"
                 mode="tags"
                 :close-on-select="false"
                 :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite', 'Turtle build', 'Spawn kill', 'No Hypershards', 'No lvl10 mods']"
@@ -144,14 +144,14 @@
           <div class="form-group mt-3">
             <label for="map">Description</label>
             <NotificationList location="quill-editor" />
-            <QuillEditor toolbar="minimal" v-model:content="mapConfigurations.description" contentType="html" />
+            <QuillEditor toolbar="minimal" v-model:content="mapMetaForm.description" contentType="html" />
           </div>
         </div>
       </template>
 
       <template #footer>
-        <button class="btn btn-danger" v-if="route.params.id === 'new'" @click.prevent="mapMetaConfigurationModal?.hide(); router.push({name: 'community-maps'})">Cancel</button>
-        <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="mapMetaConfigurationModal?.hide()">Save</button>
+        <button class="btn btn-danger" @click.prevent="cancelMetaDataEdit">Cancel</button>
+        <button class="btn btn-success" :class="{disabled: !validatedMeta}" :disabled="!validatedMeta" @click.prevent="onSaveMetaData">Save</button>
       </template>
     </BootstrapModal>
     <BootstrapModal v-if="mapConfigurations.id && can('map.update', [mapConfigurations])" ref="mapDeletePromptModal" title="Delete map" prevent-move>
@@ -188,7 +188,12 @@ import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 import MapSelection from "@/components/utilities/CommunityMaps/MapSelection.vue";
 import Input from "@/components/layout/form/Input.vue";
 
-import type { DefenseRootInterface, MapConfigInterface, MapDefenseInterface, MapDefensePlacementInterface } from "@/interaces";
+import type {
+  DefenseRootInterface,
+  MapConfigInterface,
+  MapDefenseInterface,
+  MapDefensePlacementInterface
+} from "@/interaces";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type MapData from "@/data/MapData";
 
@@ -206,6 +211,7 @@ import IconCaretDown from "@/components/icons/IconCaretDown.vue";
 import IconEye from "@/components/icons/IconEye.vue";
 import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 import { useProtobot } from "@/composables/Protobot";
+import useForm from "@/composables/Form";
 
 const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { protobotDefenses } = useProtobot();
@@ -238,8 +244,17 @@ const defenseSelectionTabs = computed((): any[] => [{
   },
 }])
 
+const mapMetaForm = useForm({
+  title: '',
+  map: '',
+  gameMode: '',
+  difficulty: null,
+  description: '',
+  tags: [],
+}, false)
+
 const validatedMeta = computed(() => {
-  return mapConfigurations.value.title && mapConfigurations.value.map && mapConfigurations.value.gameMode && mapConfigurations.value.difficulty
+  return mapMetaForm.title && mapMetaForm.map && mapMetaForm.gameMode && mapMetaForm.difficulty
 })
 
 const validatedMap = computed(() => {
@@ -247,7 +262,7 @@ const validatedMap = computed(() => {
 })
 
 const gameModeDifficulties = computed(() => {
-  switch (mapConfigurations.value.gameMode) {
+  switch (mapMetaForm.gameMode) {
     case "Adventures":
       return ["Medium", "Hard"]
     case "Survival":
@@ -256,6 +271,42 @@ const gameModeDifficulties = computed(() => {
       return ["Chaos 1", "Chaos 2", "Chaos 3", "Chaos 4", "Chaos 5", "Chaos 6", "Chaos 7", "Chaos 8", "Chaos 9", "Chaos 10"]
   }
 })
+
+function cancelMetaDataEdit(): void {
+  if (route.params.id === 'new') {
+    mapMetaConfigurationModal.value?.hide();
+    router.push({name: 'community-maps'});
+    return
+  }
+
+  mapMetaForm.reset();
+  mapMetaConfigurationModal.value?.hide();
+}
+
+function onSaveMetaData(): void {
+  if (!mapConfigurations.value.id) {
+    mapMetaConfigurationModal.value?.hide()
+    return
+  }
+
+  mapMetaForm.patch(`/maps/${mapConfigurations.value.id}`)
+      .then((response: any) => {
+        mapMetaConfigurationModal.value?.hide()
+
+        const data = response?.data
+        if (!data) {
+          return
+        }
+
+        // only update the mapConfiguration values that are also in the form
+        const keysToUpdate = Object.keys(mapMetaForm.data())
+        keysToUpdate.forEach((key: any) => {
+          if (Object.prototype.hasOwnProperty.call(data, key)) {
+            (mapConfigurations.value as any)[key] = data[key];
+          }
+        });
+      })
+}
 
 function addDefensePosition(defenseIncrementId: number): void {
   mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout || []
@@ -306,7 +357,7 @@ function deleteDefensePosition(incrementId: number): void {
 
 function onMapSelect(selectedMap: MapData): void {
   map.value = selectedMap
-  mapConfigurations.value.map = selectedMap.id
+  mapMetaForm.map = selectedMap.id
 }
 
 async function onSave(): Promise<void> {
@@ -326,7 +377,7 @@ async function onSave(): Promise<void> {
   }
 
   if (route.params.id === 'new') {
-    createCommunityMap(mapConfigurations.value)
+    createCommunityMap({ ...mapMetaForm.data(), ...mapConfigurations.value })
         .then((response: any) => {
           router.push({ name: 'community-maps.detail', params: { id: response.id } }).then(() => {
             editMode.value = false
@@ -422,6 +473,7 @@ async function loadMapConfigurations(): Promise<void> {
   loading.value = true
 
   mapConfigurations.value = await getCommunityMapById(route.params.id)
+  mapMetaForm.load(mapConfigurations.value);
   if (mapConfigurations.value.map) {
     map.value = await getMapById(mapConfigurations.value.map)
   }

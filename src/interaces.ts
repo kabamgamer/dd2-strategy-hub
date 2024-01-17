@@ -61,6 +61,7 @@ export interface DefenseRootInterface {
     id: string;
     name: string;
     icon: string;
+    mapIcon: string;
     baseDefensePower: number;
     baseDefenseHealth: number;
     baseAttackRate: number;
@@ -76,6 +77,7 @@ export interface DefenseRootInterface {
     hero: string;
     type: string;
     defenseUnits: number;
+    attackAngle: number;
     isUnique: boolean;
 }
 
@@ -141,4 +143,49 @@ export interface DefenseStatInterface {
     get label(): string;
     get value(): any;
     template?: string;
+}
+
+export interface MapDefenseInterface {
+    id: string;
+    incrementId: number;
+    label: string;
+    shards: string[];
+    relic: {
+        mods: string[];
+    },
+}
+
+export interface MapDefensePlacementInterface {
+    incrementId: number
+    defenseIncrementId: number
+    rotationInDegrees: number
+    position: {
+        x: number,
+        y: number,
+    }
+}
+
+export interface MapAuthor {
+    id: string;
+    name: string;
+}
+
+export interface MapConfigInterface {
+    id?: string;
+    title: string;
+    map: string;
+    gameMode: string;
+    difficulty: string|null;
+    description: string;
+    thumbnail?: string;
+    userVote: string|null;
+    author: MapAuthor;
+    votes: {
+        up: number,
+        down: number,
+    };
+    tags: string[];
+    defenses: MapDefenseInterface[];
+    mapLayout: MapDefensePlacementInterface[];
+    createdAt: Date;
 }

@@ -6,6 +6,7 @@ export interface DefenseDataResponse {
     defense: string;
     hero: string;
     iconUrl: string;
+    mapIcon: string;
     baseDefPwr: number;
     baseDefHealth: number;
     baseAtkRate: number;
@@ -31,12 +32,14 @@ export interface DefenseDataResponse {
     defenseUnits: number;
     type: string;
     isUnique: boolean;
+    attackAngle: number;
 }
 
 export default class DefenseData extends HasAscensionPoints implements DefenseRootInterface {
     id: string;
     name: string;
     icon: string;
+    mapIcon: string;
     baseDefensePower: number;
     baseDefenseHealth: number;
     baseAttackRate: number;
@@ -52,6 +55,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
     hero: string;
     type: string;
     defenseUnits: number;
+    attackAngle: number;
     isUnique: boolean = false;
 
     constructor(data: DefenseDataResponse) {
@@ -73,6 +77,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
         this.id = data.defense.replace(/\s/g, '');
         this.name = data.defense;
         this.icon = data.iconUrl;
+        this.mapIcon = data.mapIcon;
         this.baseDefensePower = data.baseDefPwr;
         this.baseDefenseHealth = data.baseDefHealth;
         this.baseAttackRate = data.baseAtkRate;
@@ -86,6 +91,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
         this.type = data.type.toLowerCase();
         this.defenseUnits = data.defenseUnits;
         this.isUnique = data.isUnique;
+        this.attackAngle = data.attackAngle;
         this.attackScalar = [
             data.t1AtkScalar,
             data.t2AtkScalar,

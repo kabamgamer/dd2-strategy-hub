@@ -135,16 +135,16 @@ const setupDefenses = computed(() => defenses.value.filter((defense) => props.de
 const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && props.defenseSetup.defenses[defense.incrementId] === undefined))
 const totalDu = computed((): number => setupDefenses.value.reduce((accumulator, defense: UserDataStoreDefenseInterface) => accumulator + ((defense.defenseData?.defenseUnits ?? 0) * props.defenseSetup.defenses[defense.incrementId].defenseCount), 0))
 const totalDps = computed((): number => {
-  let totalDps = 0
+  let calculatedTotalDps = 0
 
   for (const defense of setupDefenses.value) {
     const defenseStats = defensesStats.value[defense.incrementId]
     if (defenseStats) {
-      totalDps += defenseStats.totalDps * props.defenseSetup.defenses[defense.incrementId].defenseCount
+      calculatedTotalDps += defenseStats.totalDps * props.defenseSetup.defenses[defense.incrementId].defenseCount
     }
   }
 
-  return totalDps
+  return calculatedTotalDps
 })
 
 function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number, defenseShards: DefenseShardData[]): void {
@@ -184,6 +184,7 @@ function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps
   }
 
   defenseBoosts.value = resolvedDefenseBoosts
+  defensesStats.value[defense.incrementId] = calculatedStats
 }
 
 function addDefense(): void {

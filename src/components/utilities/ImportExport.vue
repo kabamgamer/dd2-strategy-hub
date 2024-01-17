@@ -1,5 +1,5 @@
 <template>
-  <a class="btn btn-primary" @click.prevent="openModal">Import / export</a>
+  <a class="btn btn-secondary" @click.prevent="openModal">Import / export</a>
 
   <Modal title="Import/Export" ref="importExportModal">
     <template #body>
@@ -81,6 +81,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useUserDataStore } from "@/stores/UserData"
 import { storeToRefs } from "pinia"
 
@@ -90,6 +91,7 @@ import type { UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseI
 import Modal from "@/components/layout/BootstrapModal.vue";
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 
+const router = useRouter()
 const userStore = useUserDataStore()
 const { defenses, defenseSetups } = storeToRefs(userStore)
 const { getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups } = userStore
@@ -296,6 +298,8 @@ function importSharedData(): void {
   window.history.pushState({}, document.title, url);
 
   sharedSetupModal.value?.hide();
+
+  router.push({name: 'calculator.defense'});
 }
 
 onMounted(() => {

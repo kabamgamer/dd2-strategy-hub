@@ -100,7 +100,7 @@ export class AncientDefenseCriticalChance {
 
 export class AncientHeroCriticalDamage {
     id: string = "ancient_hero_critical_damage"
-    name: string = "Hero Damage"
+    name: string = "Hero Critical Damage"
     icon: string = "https://wiki.dungeondefenders2.com/images/e/ec/Ancient_Hero_Critical_Damage.png"
     upgradeLevel: number = 0
     static upgrades: number[] = [.04, .06, .08, .09, .1, .12, .14, .16, .18, .20]
@@ -108,7 +108,7 @@ export class AncientHeroCriticalDamage {
 
 export class AncientHeroCriticalChance {
     id: string = "ancient_hero_critical_chance"
-    name: string = "Hero Chance"
+    name: string = "Hero Critical Chance"
     icon: string = "https://wiki.dungeondefenders2.com/images/b/bb/Ancient_Hero_Critical_Chance.png"
     upgradeLevel: number = 0
     static upgrades: number[] = [.01, .02, .03, .04, .05, .06, .07, .08, .09, .1]

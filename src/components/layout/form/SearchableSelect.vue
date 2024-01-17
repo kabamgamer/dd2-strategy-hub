@@ -1,6 +1,7 @@
 <template>
   <div class="searchable">
-    <input ref="searchInputElement" type="text" class="form-select" :placeholder="placeholder" v-model="searchCriteria" @keydown="onKeyDown" @focusout="activeIndex = 0">
+    <input ref="searchInputElement" type="text" class="form-control" :class="{'form-select': !modelValue}" :placeholder="placeholder" v-model="searchCriteria" @keydown="onKeyDown" @focusout="activeIndex = 0">
+
     <div v-if="!grouped" class="select-options">
       <span
           class="select-options__option"
@@ -9,12 +10,18 @@
           :key="index"
           :data-value="option"
           @mousedown="onOptionSelect(option)"
-          v-html="searchCriteria.length > 0 ? labelWithBaldCriteria(option[labelAttr]) : option[labelAttr]"
+          v-html="labelForOption(option)"
           ref="searchResultInputElements"
       ></span>
     </div>
 
     <div v-else class="select-options">
+      <ul v-if="tabbed" class="nav nav-tabs w-100">
+        <li class="nav-item" v-for="(tab, index) in options" :key="tab.label">
+          <a class="nav-link" :class="{ active: index === activeTab }" @mousedown.prevent="onSwitchTabs(index)">{{ tab.label }}</a>
+        </li>
+      </ul>
+
       <div class="select-options__group" v-for="(group, groupTitle) in groupedResult" :key="groupTitle">
         <div class="select-options__group-title">{{ groupTitle.toString() }}</div>
         <span
@@ -24,16 +31,18 @@
             :key="index"
             :data-value="option"
             @mousedown="onOptionSelect(option)"
-            v-html="searchCriteria.length > 0 ? labelWithBaldCriteria(option[labelAttr]) : option[labelAttr]"
+            v-html="labelForOption(option)"
             ref="searchResultInputElements"
         ></span>
       </div>
     </div>
+
+    <span class="clear-icon" v-if="modelValue" @click="clearInput()">&#10005;</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits } from 'vue'
+import { ref, computed, defineProps, defineEmits, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {},
@@ -49,24 +58,34 @@ const props = defineProps({
     type: String,
     default: 'label',
   },
+  clearOnSelect: Boolean,
   grouped: Boolean,
+  tabbed: Boolean,
 });
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
+const activeOptions = computed((): any[] => {
+  if (!props.tabbed) return props.options as any[];
+
+  return props.options[activeTab.value].options;
+})
+
 const criteriaResult = computed((): any[]|{ [index: string]: any[] } => {
-  if (searchCriteria.value === '') return props.options as any[];
+  const options = activeOptions.value;
+
+  if (searchCriteria.value === '') return options as any[];
 
   if (!props.grouped) {
-    return Object.values(props.options.filter((option: any): boolean => {
-      return option[props.labelAttr].toLowerCase().includes(searchCriteria.value.toLowerCase());
+    return Object.values(options.filter((option: any): boolean => {
+      return labelForOption(option, false).toLowerCase().includes(searchCriteria.value.toLowerCase());
     }));
   }
 
   const mappedGroups: { [index: string]: any } = {};
-  for (const index in props.options) {
-    let mappedGroup = (props.options[index] as any[]).filter((option: any): boolean => {
-      return option[props.labelAttr].toLowerCase().includes(searchCriteria.value.toLowerCase());
+  for (const index in options) {
+    let mappedGroup = (options[index] as any[]).filter((option: any): boolean => {
+      return labelForOption(option, false).toLowerCase().includes(searchCriteria.value.toLowerCase());
     });
 
     if (mappedGroup.length === 0) {
@@ -98,16 +117,45 @@ const groupedResult = computed((): { [key: string]: any[] } => {
 });
 
 const activeIndex = ref<number>(0);
+const activeTab = ref<number|string>(0);
 const searchCriteria = ref<string>('');
 const searchInputElement = ref<HTMLInputElement>();
 const searchResultInputElements = ref<HTMLInputElement[]>([]);
 
+function clearInput(focusInputAfterClear: boolean = true): void {
+  searchCriteria.value = '';
+
+  if (focusInputAfterClear) {
+    searchInputElement.value?.focus()
+  }
+
+  emit('update:modelValue', null);
+  emit('change', null);
+}
+
+function onSwitchTabs(tabIndex: string|number): void {
+  activeTab.value = tabIndex;
+  activeIndex.value = 0;
+  searchCriteria.value = '';
+  searchInputElement.value?.focus();
+}
+
 function onOptionSelect(option: any): void {
   emit('update:modelValue', option);
   emit('change', option);
+
+  if (props.clearOnSelect) {
+    searchCriteria.value = '';
+  } else {
+    searchCriteria.value = labelForOption(option, false);
+  }
 }
 
-function labelWithBaldCriteria(label: string): string {
+function labelForOption(option: any, capitalizeMatchedCriteria: boolean = true): string {
+  const label = option[props.labelAttr] || option.userData?.label;
+
+  if (searchCriteria.value.length < 1 || !capitalizeMatchedCriteria) return label;
+
   const index = label.toLowerCase().indexOf(searchCriteria.value.toLowerCase());
   const length = searchCriteria.value.length;
 
@@ -175,53 +223,73 @@ function onKeyDown(event: KeyboardEvent): void {
       activeIndex.value = 0
   }
 }
+
+watch(() => props.modelValue, (newValue: any): void => {
+  if (!newValue || props.clearOnSelect) return clearInput(props.clearOnSelect);
+  searchCriteria.value = newValue[props.labelAttr];
+});
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .searchable {
   position: relative;
+
+  .select-options {
+    display: none;
+    list-style-type: none;
+    background-color: var(--bs-body-bg);
+    border-radius: 0 0 5px 5px;
+    border: 1px solid var(--bs-border-color);
+    border-top: none;
+    max-height: 300px;
+    margin: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 150;
+
+    &__option {
+      padding: 2px 9px;
+      border-bottom: 1px solid var(--bs-border-color);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--bs-primary-text-emphasis);
+        background-color: var(--bs-primary-bg-subtle);
+      }
+    }
+
+    &__group {
+      &-title {
+        padding: 2px 7px;
+        font-weight: 700;
+        border-bottom: 1px solid var(--bs-border-color);
+      }
+
+      .select-options__option {
+        padding: 2px 20px;
+      }
+    }
+
+    .nav-item {
+      cursor: pointer;
+    }
+  }
+
+  .form-select:focus + .select-options,
+  .select-options__group {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
-.searchable .select-options {
-  display: none;
-  list-style-type: none;
-  background-color: var(--bs-body-bg);
-  border-radius: 0 0 5px 5px;
-  border: 1px solid var(--bs-border-color);
-  border-top: none;
-  max-height: 300px;
-  margin: 0;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  padding: 0;
+.clear-icon {
   position: absolute;
-  width: 100%;
-  z-index: 150;
-}
-.searchable .form-select:focus + .select-options,
-.select-options__group {
-  display: flex;
-  flex-direction: column;
-}
-
-.searchable .select-options .select-options__option {
-  padding: 2px 9px;
-  border-bottom: 1px solid var(--bs-border-color);
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   cursor: pointer;
-}
-
-.searchable .select-options .select-options__group .select-options__group-title {
-  padding: 2px 7px;
-  font-weight: 700;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-.searchable .select-options .select-options__group .select-options__option {
-  padding: 2px 20px;
-}
-
-.searchable .select-options .select-options__option:hover {
-  color: var(--bs-primary-text-emphasis);
-  background-color: var(--bs-primary-bg-subtle);
 }
 </style>

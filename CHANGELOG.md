@@ -1,6 +1,17 @@
 # Changelog
 
-## [v1.3.3](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.3 (2023-11-06)
+
+## [v1.4.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD)
+
+* Dark mode is now the default theme
+* Implemented router to allow multiple pages
+* Added new feature: community maps. Get ready to share your map layouts with the community!
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.3.3...v1.4.0)
+
+
+
+## [v1.3.3](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.3.3) (2023-11-06)
 
 * Changed levels for Ancient Destruction and Ancient Fortification accordingly to the latest patch 
 

@@ -43,7 +43,7 @@ onMounted(() => {
     if (!isLoading.value) {
       clearInterval(interval)
 
-      if (semver.gt(currentVersion.value, lastVisitedVersion.value)) {
+      if (lastVisitedVersion.value !== 'v0.0.0' && semver.gt(currentVersion.value, lastVisitedVersion.value)) {
         openModal()
       }
     }

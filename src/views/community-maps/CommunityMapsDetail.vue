@@ -12,7 +12,7 @@
                           :key="defensePosition.incrementId"
                           :showDefenseIcon="showDefenseIcons"
                           :editMode="editMode"
-                          :icon="getDefenseMapIcon(defensePosition.defenseIncrementId)"
+                          :defense="resolvedDefenses[defensePosition.defenseIncrementId]"
                           :position="defensePosition.position"
                           :rotation="defensePosition.rotationInDegrees"
                           :legendColor="getLegendColor(defensePosition.defenseIncrementId)"
@@ -191,7 +191,6 @@ import Input from "@/components/layout/form/Input.vue";
 import type {
   DefenseRootInterface,
   MapConfigInterface,
-  MapDefenseInterface,
   MapDefensePlacementInterface
 } from "@/interaces";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
@@ -230,6 +229,7 @@ const showDefenseIcons = ref<boolean>(true)
 const editMode = ref<boolean>(route.params.id === "new")
 const communityMapKey = ref<number>(0)
 const totalDu = ref<number>(0)
+const resolvedDefenses = ref<{[defenseIncrementId: number]: DefenseRootInterface}>({})
 const loading = ref(true)
 const map = ref<MapData>()
 const mapMetaConfigurationModal = ref<typeof BootstrapModal>()
@@ -397,11 +397,6 @@ async function onSave(): Promise<void> {
   }
 }
 
-function getDefenseMapIcon(defenseIncrementId: number): string {
-  const defense: MapDefenseInterface = mapConfigurations.value.defenses.find((defense) => defense.incrementId === defenseIncrementId) as MapDefenseInterface
-  return defense.mapIcon
-}
-
 function onDefenseDelete(defenseData: any): void {
   // Remove all references from the map layout
   mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout.filter((defensePosition) => {
@@ -432,7 +427,6 @@ function onDefenseSelection(defenseData: DefenseRootInterface|UserDataStoreDefen
     incrementId: nextDefenseIncrementId,
     id: defense.id,
     label: defense.name,
-    mapIcon: defense.mapIcon,
     relic: {
       mods: relicMods
     },
@@ -486,14 +480,13 @@ watch(mapConfigurations, async () => {
     return;
   }
 
-  const resolvedDefensesDu: {[defenseIncrementId: number]: number} = {};
   for (const defense of mapConfigurations.value.defenses) {
-    resolvedDefensesDu[defense.incrementId] = (await getDefenseRoot(defense.id)).defenseUnits;
+    resolvedDefenses.value[defense.incrementId] = await getDefenseRoot(defense.id);
   }
 
   mapConfigurations.value.mapLayout = mapConfigurations.value.mapLayout || []
   totalDu.value = mapConfigurations.value.mapLayout.reduce((total: number, defensePosition: MapDefensePlacementInterface) => {
-    return total + resolvedDefensesDu[defensePosition.defenseIncrementId];
+    return total + resolvedDefenses.value[defensePosition.defenseIncrementId].defenseUnits;
   }, 0) as number;
 }, {deep: true});
 

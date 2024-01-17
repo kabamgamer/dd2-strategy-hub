@@ -12,15 +12,15 @@
     <nav class="resource-pagination__paginator">
       <ul class="pagination">
         <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-          <a class="page-link" @click="changePage(currentPage - 1)" href="#" aria-label="Previous">
+          <a class="page-link" @click.prevent="changePage(currentPage - 1)" href="#" aria-label="Previous">
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
         <li class="page-item" v-for="page in visiblePages" :key="page" :class="{ 'active': page === currentPage, 'disabled': page === '...' }">
-          <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
+          <a class="page-link" @click.prevent="changePage(page)" href="#">{{ page }}</a>
         </li>
         <li class="page-item" :class="{ 'disabled': currentPage === result.meta.last_page }">
-          <a class="page-link" @click="changePage(currentPage + 1)" href="#" aria-label="Next">
+          <a class="page-link" @click.prevent="changePage(currentPage + 1)" href="#" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>

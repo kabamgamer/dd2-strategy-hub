@@ -1,31 +1,37 @@
 <template>
   <div class="map-defense" :class="sizeClass">
     <div class="defense" ref="defenseElement" v-if="!editMode" :style="defensePositionCss" @click="onDefenseClick">
-      <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
-      <IconDefense :style="{color: legendColor}" v-else />
+      <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + defense?.mapIcon)" alt="Defense icon">
+      <div v-else :class="{ omni: defense?.attackAngle === 360, node: defense?.hero === 'Ev2' }" :style="{color: legendColor}">
+        <IconDefenseCircle v-if="defense?.attackAngle === 360" />
+        <IconDefense v-else />
+      </div>
     </div>
 
     <ContextMenu ref="contextMenu" v-else>
       <template #trigger>
         <div class="defense" ref="defenseElement" :style="{transform: `rotate(${rotation}deg)`}">
-          <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + icon)" alt="Defense icon">
-          <IconDefense :style="{color: legendColor}" v-else />
+          <img v-if="showDefenseIcon" :src="cdn('/media/maps/defenses/' + defense?.mapIcon)" alt="Defense icon">
+          <div v-else :class="{ omni: defense?.attackAngle === 360, node: defense?.hero === 'Ev2' }" :style="{color: legendColor}">
+            <IconDefenseCircle v-if="defense?.attackAngle === 360" />
+            <IconDefense v-else />
+          </div>
         </div>
       </template>
 
       <template #menu-items>
         <a href="#" class="context-menu-item delete" @click.prevent="emit('delete')"><IconCross /></a>
-        <a href="#" class="context-menu-item rotate" @click.prevent="onRotate"><IconRotate /></a>
+        <a href="#" class="context-menu-item rotate" v-if="defense?.attackAngle !== 360" @click.prevent="onRotate"><IconRotate /></a>
         <a href="#" class="context-menu-item rotate" @click.prevent="emit('duplicate')"><IconDuplicate /></a>
       </template>
     </ContextMenu>
   </div>
-
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, defineProps, defineEmits } from "vue";
 import type { PropType } from "vue";
+
 // @ts-ignore
 import Draggabilly from "draggabilly/draggabilly.js";
 
@@ -37,6 +43,9 @@ import IconCross from "@/components/icons/IconCross.vue";
 import IconRotate from "@/components/icons/IconRotate.vue";
 import IconDefense from "@/components/icons/IconDefense.vue";
 import IconDuplicate from "@/components/icons/IconDuplicate.vue";
+import IconDefenseCircle from "@/components/icons/IconDefenseCircle.vue";
+
+import type { DefenseRootInterface } from "@/interaces";
 
 const props = defineProps({
   showDefenseIcon: {
@@ -51,9 +60,9 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  icon: {
-    type: String,
-    required: true,
+  defense: {
+    type: Object as PropType<DefenseRootInterface>,
+    required: false,
   },
   rotation: {
     type: Number,
@@ -86,18 +95,18 @@ const isXSmallIcon = computed(() => [
   'ev2_reflect_beam.png',
   'ev2_buff_beam.png',
   'ev2_weapon_manufacturer.png',
-].includes(props.icon as string))
+].includes(props.defense?.mapIcon as string))
 const isSmallIcon = computed(() => [
   'squire_cannonball.png',
   'monk_lightning_strikes_aura.png',
   'initiate_frost_strikes_aura.png',
-].includes(props.icon as string))
+].includes(props.defense?.mapIcon as string))
 const isLargeIcon = computed(() => [
   'initiate_firework_cannon.png',
-].includes(props.icon as string))
+].includes(props.defense?.mapIcon as string))
 const isXLargeIcon = computed(() => [
   'countess_elder_dragon.png',
-].includes(props.icon as string))
+].includes(props.defense?.mapIcon as string))
 
 function onDefenseClick(): void {
   emit('selectDefense')
@@ -177,6 +186,10 @@ onMounted(() => {
       height: 20px;
       line-height: 20px;
     }
+
+    &.no-icon .defense {
+      margin: 0;
+    }
   }
 
   &.s {
@@ -213,7 +226,7 @@ onMounted(() => {
     }
 
     &.no-icon .defense {
-      margin: 15px;
+      margin: 20px;
     }
   }
 
@@ -223,6 +236,10 @@ onMounted(() => {
     svg {
       width: 20px;
       height: 20px;
+    }
+
+    .defense {
+      margin: 5px;
     }
   }
 
@@ -259,6 +276,14 @@ onMounted(() => {
 
     img, svg {
       vertical-align: top;
+    }
+
+    .omni {
+      scale: .9;
+    }
+
+    .node {
+      scale: .8;
     }
   }
 }

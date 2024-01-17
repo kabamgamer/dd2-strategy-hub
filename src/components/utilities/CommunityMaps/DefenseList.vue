@@ -27,7 +27,7 @@ const props = defineProps({
 })
 
 const defenses = computed(() => {
-  let resolvedDefenses: { name: string, icon: string, count: number }[] = [];
+  let resolvedDefenses: { name: string, count: number }[] = [];
   const mapConfig = props.map as MapConfigInterface;
 
   mapConfig.defenses.forEach((defense: MapDefenseInterface) => {
@@ -39,7 +39,6 @@ const defenses = computed(() => {
 
     resolvedDefenses.push({
       name: defense.label,
-      icon: defense.mapIcon,
       count: defenseCount,
     });
   });

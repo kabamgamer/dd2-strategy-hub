@@ -77,6 +77,7 @@ export interface DefenseRootInterface {
     hero: string;
     type: string;
     defenseUnits: number;
+    attackAngle: number;
     isUnique: boolean;
 }
 
@@ -148,7 +149,6 @@ export interface MapDefenseInterface {
     id: string;
     incrementId: number;
     label: string;
-    mapIcon: string;
     shards: string[];
     relic: {
         mods: string[];

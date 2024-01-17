@@ -283,7 +283,7 @@ onMounted(() => {
     }
 
     .node {
-      scale: .8;
+      scale: .5;
     }
   }
 }

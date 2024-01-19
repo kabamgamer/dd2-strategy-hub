@@ -1,7 +1,15 @@
 # Changelog
 
 
-## [v1.4.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (2024-01-17)
+## [v1.4.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.1) (2024-01-19)
+
+* Added the ability to undo a user vote
+* Added the ability to select a defense godly stat
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.0...v1.4.1)
+
+
+## [v1.4.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.0) (2024-01-17)
 
 * Dark mode is now the default theme
 * Implemented router to allow multiple pages

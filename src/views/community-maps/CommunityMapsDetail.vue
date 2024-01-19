@@ -424,10 +424,12 @@ function onDefenseSelection(defenseData: DefenseRootInterface|UserDataStoreDefen
   let defense: DefenseRootInterface = defenseData as DefenseRootInterface;
   let relicMods: string[] = [];
   let shards: string[] = [];
+  let godlyStat: string = 'none';
   if ((defenseData as UserDataStoreDefenseInterface).incrementId) {
     defense = (defenseData as UserDataStoreDefenseInterface).defenseData as DefenseRootInterface;
     const userData = (defenseData as UserDataStoreDefenseInterface).userData;
     relicMods = userData.relic.mods;
+    godlyStat = userData.relic.godlyStat?.type || 'none';
     shards = userData.shards;
   }
 
@@ -436,9 +438,13 @@ function onDefenseSelection(defenseData: DefenseRootInterface|UserDataStoreDefen
     id: defense.id,
     label: defense.name,
     relic: {
-      mods: relicMods
+      mods: relicMods,
+      godlyStat: {
+        type: godlyStat,
+        value: 0,
+      },
     },
-    shards: shards
+    shards: shards,
   })
 }
 

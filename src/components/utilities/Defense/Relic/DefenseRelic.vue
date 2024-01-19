@@ -4,16 +4,7 @@
       <h5>Relic</h5>
       <Input type="number" label="Relic defense power" :placeholder="hideMods ? '' : undefined" v-model="modelValue.defensePower" />
       <Input type="number" label="Relic defense health" :placeholder="hideMods ? '' : undefined" v-model="modelValue.defenseHealth" />
-      <div v-if="!modelValue.godlyStat?.type" class="form-group mb-3">
-        <label>Relic godly stat</label>
-        <select class="form-select" @change="onGodlyStatTypeSelect">
-          <option>No godly stat</option>
-          <option value="critical_damage">Critical damage</option>
-          <option value="critical_chance">Critical chance</option>
-          <option value="defense_range">Defense range</option>
-          <option value="defense_resistance">Defense resistance</option>
-        </select>
-      </div>
+      <GodlyStatSelection v-if="!modelValue.godlyStat?.type" @update:modelValue="onGodlyStatTypeSelect" />
       <div v-else class="d-flex align-items-center">
         <div class="form-group mb-3">
           <label class="d-flex justify-content-between align-items-center">{{ godlyStatLabel }} <Cross class="cross" @click="onDeleteGodlyStat" /></label>
@@ -45,16 +36,21 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, computed } from "vue"
+
+import { useModStore } from "@/stores/ModInfo"
+import { useGodlyStat } from "@/composables/GodlyStat"
+
 import type { PropType } from "vue"
 import type { ModInterface, RelicInterface } from "@/interaces"
 
 import Input from "@/components/layout/form/Input.vue"
 import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
-import { onMounted, ref, computed } from "vue"
+import GodlyStatSelection from "@/components/utilities/Defense/GodlyStatSelection.vue";
 
-import { useModStore } from "@/stores/ModInfo"
 const { getModById } = useModStore()
+const { getGodlyStatLabelByType } = useGodlyStat()
 
 const props = defineProps({
   modelValue: {
@@ -66,20 +62,7 @@ const props = defineProps({
   hideMods: Boolean,
 })
 
-const godlyStatLabel = computed(() => {
-  switch (props.modelValue.godlyStat?.type) {
-    case 'critical_damage':
-      return 'Critical damage'
-    case 'critical_chance':
-      return 'Critical chance'
-    case 'defense_range':
-      return 'Defense range'
-    case 'defense_resistance':
-      return 'Defense resistance'
-    default:
-      return 'Godly stat'
-  }
-})
+const godlyStatLabel = computed(() => getGodlyStatLabelByType(props.modelValue.godlyStat?.type))
 
 const mods = props.modelValue?.mods ?? []
 const userSelection = ref<{modId: string|null, mod: ModInterface|null}[]>([
@@ -99,9 +82,9 @@ function onDeleteMod(index: number): void {
   props.modelValue?.mods.splice(index, 1)
 }
 
-function onGodlyStatTypeSelect(event: Event): void {
+function onGodlyStatTypeSelect(type: string): void {
   props.modelValue.godlyStat = {
-    type: (event.target as HTMLInputElement).value,
+    type,
     value: 0
   }
 }

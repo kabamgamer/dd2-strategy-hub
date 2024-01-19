@@ -48,7 +48,11 @@ export function useProtobot(): any {
                 label: defenseData.name,
                 shards: defenseData.shards.map((shardName: string): string|null => getShardId(shardName)),
                 relic: {
-                    mods: await Promise.all(defenseData.mods.map(async (modName: any) => await getModId(modName)))
+                    mods: await Promise.all(defenseData.mods.map(async (modName: any) => await getModId(modName))),
+                    godlyStat: {
+                        type: getGodlyStatType(defenseData.tertiary),
+                        value: 0,
+                    },
                 },
             };
 
@@ -83,6 +87,23 @@ export function useProtobot(): any {
         }
 
         return modId + '_servo'
+    }
+
+    function getGodlyStatType(tertiaryStat: any): string
+    {
+        if (!tertiaryStat) return 'none';
+
+        tertiaryStat = tertiaryStat.split(' / ')[0].trim();
+
+        let godlyStatType = tertiaryStat.replace(/\s/g, '_').toLowerCase().trim();
+
+        switch (godlyStatType) {
+            case 'crit_chance': godlyStatType = 'critical_chance'; break;
+            case 'crit_damage': godlyStatType = 'critical_damage'; break;
+            case 'defense_resist': godlyStatType = 'defense_resistance'; break;
+        }
+
+        return godlyStatType
     }
 
     return { protobotDefenses }

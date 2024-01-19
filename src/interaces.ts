@@ -152,6 +152,10 @@ export interface MapDefenseInterface {
     shards: string[];
     relic: {
         mods: string[];
+        godlyStat: {
+            type: string;
+            value: number;
+        };
     },
 }
 

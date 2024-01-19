@@ -212,7 +212,7 @@ import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 import { useProtobot } from "@/composables/Protobot";
 import useForm from "@/composables/Form";
 
-const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();
+const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, removeVoteForCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { protobotDefenses } = useProtobot();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
@@ -322,7 +322,15 @@ function addDefensePosition(defenseIncrementId: number): void {
 }
 
 function vote(userVote: string): void {
-  if (mapConfigurations.value.userVote === userVote) return;
+  if (mapConfigurations.value.userVote === userVote) {
+    removeVoteForCommunityMap(mapConfigurations.value.id)
+        .then(() => {
+          // @ts-ignore
+          mapConfigurations.value.votes[userVote] -= 1
+          mapConfigurations.value.userVote = null
+        })
+    return
+  }
 
   voteCommunityMap(mapConfigurations.value.id, userVote)
       .then(() => {
@@ -416,10 +424,12 @@ function onDefenseSelection(defenseData: DefenseRootInterface|UserDataStoreDefen
   let defense: DefenseRootInterface = defenseData as DefenseRootInterface;
   let relicMods: string[] = [];
   let shards: string[] = [];
+  let godlyStat: string = 'none';
   if ((defenseData as UserDataStoreDefenseInterface).incrementId) {
     defense = (defenseData as UserDataStoreDefenseInterface).defenseData as DefenseRootInterface;
     const userData = (defenseData as UserDataStoreDefenseInterface).userData;
     relicMods = userData.relic.mods;
+    godlyStat = userData.relic.godlyStat?.type || 'none';
     shards = userData.shards;
   }
 
@@ -428,9 +438,13 @@ function onDefenseSelection(defenseData: DefenseRootInterface|UserDataStoreDefen
     id: defense.id,
     label: defense.name,
     relic: {
-      mods: relicMods
+      mods: relicMods,
+      godlyStat: {
+        type: godlyStat,
+        value: 0,
+      },
     },
-    shards: shards
+    shards: shards,
   })
 }
 

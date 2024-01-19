@@ -20,6 +20,11 @@
 
         <slot name="defense-details">
           <div>
+            <div class="defense-info__godly-stat text-center">
+              <span v-if="!editMode">{{ getGodlyStatLabelByType(godlyStatType) }}</span>
+              <GodlyStatSelection v-else v-model="godlyStatType" hide-label />
+            </div>
+
             <div class="defense-info__mods defense-utils mb-3">
               <h5 class="text-center">Mods</h5>
               <div class="defense-info__mods_mod-slot defense-utils__util bg-dark-subtle" v-for="(mod, index) in userMods" :key="index">
@@ -68,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, onMounted } from "vue";
+import { ref, computed, defineProps, onMounted } from "vue";
 import type { PropType } from "vue";
 
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
@@ -76,6 +81,7 @@ import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 import { useDefenseStore } from "@/stores/DefenseInfo"
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
+import { useGodlyStat } from "@/composables/GodlyStat"
 import type {
   DefenseRootInterface,
   UserDefenseInterface,
@@ -85,11 +91,13 @@ import type {
 } from "@/interaces";
 import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue";
 import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue";
+import GodlyStatSelection from "@/components/utilities/Defense/GodlyStatSelection.vue";
 import Cross from "@/components/icons/IconCross.vue";
 
 const { getDefenseRoot } = useDefenseStore()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()
+const { getGodlyStatLabelByType } = useGodlyStat()
 
 const props = defineProps({
   editMode: {
@@ -110,6 +118,20 @@ const defenseData = ref<DefenseRootInterface|undefined>()
 const userMods = ref<Nullable<ModInterface>[]>([])
 const userShards = ref<Nullable<ShardInterface>[]>([])
 const isLoading = ref<boolean>(true)
+const godlyStatType = computed<string>({
+  get: (): string => userData.relic.godlyStat?.type ?? 'none',
+  set: (value: string): void => {
+    if (value === 'none') {
+      userData.relic.godlyStat = undefined
+      return
+    }
+
+    userData.relic.godlyStat = {
+      type: value,
+      value: 0,
+    }
+  }
+})
 
 Promise.all([loadDefenseData(), loadMods(), loadShards()]).then((): void => {
   isLoading.value = false
@@ -170,14 +192,34 @@ onMounted((): void => {
 })
 </script>
 
-<style scoped>
-.defense-info__header-icon__wrapper {
-  width: 30%;
-  max-width: 100px;
-  margin-right: 15px;
-}
-.defense-info__header-icon img {
-  width: 100%;
+<style lang="scss" scoped>
+.defense-info {
+  &__header-icon {
+    &__wrapper {
+      width: 30%;
+      max-width: 100px;
+      margin-right: 15px;
+    }
+
+    img {
+      width: 100%;
+    }
+  }
+
+  &__godly-stat {
+    color: #0dcaf0;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+
+  &__shards {
+    &_shard-icon img {
+      width: 50px;
+      margin-right: 10px;
+    }
+  }
 }
 
 .defense-utils__util {
@@ -189,10 +231,5 @@ onMounted((): void => {
 .defense-utils__util-name {
   font-weight: bold;
   width: 100%;
-}
-
-.defense-info__shards_shard-icon img {
-  width: 50px;
-  margin-right: 10px;
 }
 </style>

@@ -11,6 +11,10 @@ export default function useCommunityMapsApi(): any {
         return postAtEndpoint('/maps', map)
     }
 
+    async function removeVoteForCommunityMap(mapId: string): Promise<any> {
+        return deleteAtEndpoint(`/maps/${mapId}/vote`)
+    }
+
     async function voteCommunityMap(mapId: string, vote: string): Promise<any> {
         return postAtEndpoint(`/maps/${mapId}/vote`, {vote})
     }
@@ -23,5 +27,5 @@ export default function useCommunityMapsApi(): any {
         return deleteAtEndpoint(`/maps/${mapId}`)
     }
 
-    return { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap }
+    return { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, removeVoteForCommunityMap, voteCommunityMap }
 }

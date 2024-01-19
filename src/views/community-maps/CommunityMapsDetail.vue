@@ -212,7 +212,7 @@ import IconEyeSlash from "@/components/icons/IconEyeSlash.vue";
 import { useProtobot } from "@/composables/Protobot";
 import useForm from "@/composables/Form";
 
-const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, voteCommunityMap } = useCommunityMapsApi();
+const { getCommunityMapById, createCommunityMap, updateCommunityMap, deleteCommunityMap, removeVoteForCommunityMap, voteCommunityMap } = useCommunityMapsApi();
 const { protobotDefenses } = useProtobot();
 const { getMapById } = useMapStore();
 const { getDefenseRoot } = useDefenseStore();
@@ -322,7 +322,15 @@ function addDefensePosition(defenseIncrementId: number): void {
 }
 
 function vote(userVote: string): void {
-  if (mapConfigurations.value.userVote === userVote) return;
+  if (mapConfigurations.value.userVote === userVote) {
+    removeVoteForCommunityMap(mapConfigurations.value.id)
+        .then(() => {
+          // @ts-ignore
+          mapConfigurations.value.votes[userVote] -= 1
+          mapConfigurations.value.userVote = null
+        })
+    return
+  }
 
   voteCommunityMap(mapConfigurations.value.id, userVote)
       .then(() => {

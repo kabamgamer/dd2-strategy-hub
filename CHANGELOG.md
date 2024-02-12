@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.4.2](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.2) (2024-02-12)
+
+* Max out an ancient power with single click
+* Fixed some issues in shard compatibility. Now only tower compatible shards are shown in the shard selection
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.1...v1.4.2)
+
+
 
 ## [v1.4.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.1) (2024-01-19)
 
@@ -7,6 +15,7 @@
 * Added the ability to select a defense godly stat
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.0...v1.4.1)
+
 
 
 ## [v1.4.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.0) (2024-01-17)

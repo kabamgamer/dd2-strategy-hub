@@ -7,7 +7,7 @@
         <div class="input-group" style="max-width: 119px">
           <input type="number" min="0" max="10" v-model="ancientPowerPoints[ancientPower.id]" class="form-control ancient-power-reset" @change="ensureValidLevel(ancientPower.id)">
           <div class="input-group-append">
-            <span class="input-group-text">/10</span>
+            <span class="input-group-text">/<a class="link" @click.prevent="ancientPowerPoints[ancientPower.id] = 10">10</a></span>
           </div>
         </div>
       </Card>
@@ -52,5 +52,9 @@ function ensureValidLevel(id: string): void {
   .ancient-power-points__point {
     flex: 0 0 calc(100% / 7);
   }
+}
+
+.link {
+  cursor: pointer;
 }
 </style>

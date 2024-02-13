@@ -18,5 +18,16 @@ export function useGodlyStat(): any {
         return 'Godly stat'
     }
 
-    return { getGodlyTypes, getGodlyStatLabelByType }
+    function getMaxStatForGodlyType(godlyStatType: string): number {
+        const maxStats: {[godlyStatType: string]: number} = {
+            'critical_damage': 30,
+            'critical_chance': 10,
+            'defense_range': 600,
+            'defense_resistance': 10,
+        }
+
+        return maxStats[godlyStatType] || 0;
+    }
+
+    return { getGodlyTypes, getGodlyStatLabelByType, getMaxStatForGodlyType }
 }

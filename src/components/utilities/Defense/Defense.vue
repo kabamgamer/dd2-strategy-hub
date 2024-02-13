@@ -86,6 +86,10 @@
             <div :id="'userDetails' + id" class="collapse" :class="{ show: !defense.userData.isUserDataCollapsed }">
               <hr />
 
+              <div class="defense-info__actions">
+                <a class="defense-info__actions-action" @click.prevent="maxAllStats">Max stats</a>
+              </div>
+
               <div class="defense-info__pet">
                 <div class="row">
                   <div class="col-md-6">
@@ -153,6 +157,7 @@ import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
 import { useDebounce } from "@/composables/Debounce";
 import { useDefenseCalculations } from "@/composables/DefenseCalculations";
+import { useGodlyStat } from "@/composables/GodlyStat"
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
@@ -163,6 +168,7 @@ import DefenseSpecificStat from "@/components/utilities/Defense/DefenseSpecificS
 
 const userStore = useUserDataStore();
 const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
+const { getMaxStatForGodlyType } = useGodlyStat()
 
 const { debounce } = useDebounce()
 const { loading } = storeToRefs(googleSpreadsheetDataStore)
@@ -259,6 +265,22 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
   unwatchUserData = watch(() => defense.userData, recalculate, { deep: true })
 }
 
+function maxAllStats(): void {
+  defense.userData.pet = {
+    defensePower: 18000,
+    defenseHealth: 18000,
+  }
+  defense.userData.relic = {
+    defensePower: 110513,
+    defenseHealth: 30946,
+    godlyStat: !defense.userData.relic.godlyStat ? undefined : {
+      type: defense.userData.relic.godlyStat.type,
+      value: getMaxStatForGodlyType(defense.userData.relic.godlyStat.type),
+    },
+    mods: defense.userData.relic.mods,
+  }
+}
+
 watch(userDefenseMods, debounce(() => {
 hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as DefenseModData).type?.id === ModType.Diverse.id).length > 0
 }, 200), { deep: true })
@@ -322,24 +344,50 @@ onMounted((): void => {
 })
 </script>
 
-<style scoped>
-.defense-info__header-icon__wrapper {
-  width: 60%;
-  max-width: 150px;
-}
-.defense-info__header-icon {
-  border: 1px solid grey;
-}
+<style lang="scss" scoped>
+.defense-info {
+  &__header {
+    &-icon {
+      border: 1px solid grey;
 
-.defense-info__header-icon img {
-  width: 100%;
-}
+      &__wrapper {
+        width: 60%;
+        max-width: 150px;
+      }
 
-.defense-info__header-stats {
-  margin-left: 5px;
-  font-size: larger;
-  display: flex;
-  flex-direction: column;
+      img {
+        width: 100%;
+      }
+    }
+
+    &-stats {
+      margin-left: 5px;
+      font-size: larger;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: end;
+
+    &-action {
+      cursor: pointer;
+    }
+  }
+
+  &__level {
+    .btn {
+      padding: 0 3px;
+      margin: 0;
+
+      svg {
+        color: var(--bs-accordion-color);
+        width: 15px;
+      }
+    }
+  }
 }
 
 .du-badge {
@@ -348,14 +396,6 @@ onMounted((): void => {
 
 .defense-dps {
   margin-right: 5px
-}
-.defense-info__level .btn {
-  padding: 0 3px;
-  margin: 0;
-}
-.defense-info__level .btn svg {
-  color: var(--bs-accordion-color);
-  width: 15px;
 }
 
 .defense-header {

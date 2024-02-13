@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { defineProps, ref, watch } from "vue";
 
 import CustomInput from "@/components/layout/form/Input.vue";
 
@@ -19,4 +19,8 @@ const props = defineProps({
 })
 
 const pet = ref(props.modelValue)
+
+watch(() => props.modelValue, (newVal) => {
+  pet.value = newVal
+})
 </script>

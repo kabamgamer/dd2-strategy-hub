@@ -1,11 +1,19 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+
+* Added total inflicted damage column to nether archer bounces table
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.1...HEAD)
+
+
 
 ## [v1.4.3](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.3) (2024-02-13)
 
 * Defense calculators: Max out all defense stats with a single click
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.2...v1.4.3)
+
 
 
 ## [v1.4.2](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.2) (2024-02-12)

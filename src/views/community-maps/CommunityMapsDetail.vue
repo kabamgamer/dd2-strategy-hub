@@ -453,7 +453,8 @@ function openDefenseAccordion(defenseIncrementId: number): void {
   const defenseAccordionElement = document.getElementById('flush-collapse' + defenseIncrementId) as Element
   Collapse.getOrCreateInstance(defenseAccordionElement, {parent, toggle: false}).show();
   defenseAccordionElement.addEventListener('shown.bs.collapse', () => {
-    defenseAccordionElement.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
+    defenseAccordionElement.previousElementSibling?.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+    defenseAccordionElement.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
   })
 }
 
@@ -519,7 +520,7 @@ onMounted(() => {
 }
 
 .defenses-accordion {
-  max-height: 545px;
+  max-height: 668px;
   overflow-y: auto;
 }
 

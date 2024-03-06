@@ -114,8 +114,8 @@ export function useDefenseCalculations(): any {
             rangeGambitSubtraction = (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
         }
 
-        totalDefensePower += ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
         totalDefensePower *= ancientDestructionMultiplier()
+        totalDefensePower += ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
         if (shouldApplyDefenseBoosts()) {
             totalDefensePower += getDefensePowerSetupBoosts()
         }
@@ -142,9 +142,10 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        if (isBuffDefense()) {
-            const attackScalar: number = defense.attackScalar[defenseLevel-1]
-            totalDefensePower *= attackScalar
+        if (isBuffDefense() && defenseLevel > 1) {
+            const currentAttackScalar: number = defense.attackScalar[defenseLevel-1]
+            const firstAttackScalar: number = defense.attackScalar[0]
+            totalDefensePower += totalDefensePower * (currentAttackScalar / firstAttackScalar - 1)
         }
 
         return totalDefensePower
@@ -273,9 +274,10 @@ export function useDefenseCalculations(): any {
             criticalDamageMultiplier += AncientDefenseCriticalDamage.upgrades[ancientResetPoints.ancient_defense_critical_damage - 1]
         }
 
-        if (isBuffDefense()) {
-            const attackScalar: number = defense.attackScalar[defenseLevel-1]
-            criticalDamageMultiplier *= attackScalar
+        if (isBuffDefense() && defenseLevel > 1) {
+            const currentAttackScalar: number = defense.attackScalar[defenseLevel-1]
+            const firstAttackScalar: number = defense.attackScalar[0]
+            criticalDamageMultiplier += criticalDamageMultiplier * (currentAttackScalar / firstAttackScalar - 1)
         }
 
         return criticalDamageMultiplier

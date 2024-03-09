@@ -1,5 +1,7 @@
 import type OutputModifier from "@/classes/OutputModifier";
 import type ModType from "@/enums/ModType";
+import type DamageType from "@/enums/DamageType";
+import type StatusEffect from "@/enums/StatusEffect";
 
 export interface PetInterface {
     defensePower: number;
@@ -17,6 +19,7 @@ export interface ModInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    elementalAttunement?: DamageType;
     compatibilities?: string[];
     type?: ModType;
 }
@@ -34,6 +37,7 @@ export interface ShardInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    elementalAttunement?: DamageType;
     compatibilities?: string[];
 }
 
@@ -62,6 +66,8 @@ export interface DefenseRootInterface {
     name: string;
     icon: string;
     mapIcon: string;
+    statusEffects: StatusEffect[];
+    damageType: DamageType;
     baseDefensePower: number;
     baseDefenseHealth: number;
     baseAttackRate: number;
@@ -100,9 +106,23 @@ export interface SetupHeroBuffsInterface {
     radiantCriticalPower: number;
 }
 
+export interface SetupLaneMutatorsInterface {
+    armored: boolean;
+    berserked: boolean;
+    reckless: boolean;
+    softSpot: boolean;
+    spellbreaker: boolean;
+}
+
+export interface SetupEnemyTypesInterface {
+    frost: boolean;
+}
+
 export interface DefenseSetupModifiersInterface {
     combos: SetupElementalCombosInterface;
     heroBuffs: SetupHeroBuffsInterface;
+    laneMutators: SetupLaneMutatorsInterface;
+    enemyType: SetupEnemyTypesInterface;
 }
 
 // This interface is used to identify user data for defenses which will be different for every user

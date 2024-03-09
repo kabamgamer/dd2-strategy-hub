@@ -1,10 +1,8 @@
-export default class ModType {
-    static Power: ModType = new ModType('power');
-    static Anti: ModType = new ModType('anti');
-    static Unique: ModType = new ModType('unique');
-    static Diverse: ModType = new ModType('diverse');
+import EnumDefinition from "@/enums/EnumDefinition";
 
-    constructor(
-        public readonly id: string
-    ) {}
+export default class ModType extends EnumDefinition {
+    static Power: ModType = new this('power');
+    static Anti: ModType = new this('anti');
+    static Unique: ModType = new this('unique');
+    static Diverse: ModType = new this('diverse');
 }

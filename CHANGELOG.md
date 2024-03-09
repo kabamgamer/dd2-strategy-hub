@@ -1,12 +1,14 @@
 # Changelog
 
-## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+## [v1.4.4](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.4) (2024-03-09)
 
 * Defense calculators: Added total inflicted damage column to nether archer bounces table
-* Defense calculators: Added support for totem in max defense stats 
+* Defense calculators: Added support for totem in max defense stats
 * Defense calculators: Added button to max out all ascension
+* Defense calculators: Added onslaught mutators to defense setups section
+* Defense calculators: Added enemy type mutators to defense setups section
 
-[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.1...HEAD)
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.3...v1.4.4)
 
 
 

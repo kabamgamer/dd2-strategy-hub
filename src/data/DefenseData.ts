@@ -1,12 +1,17 @@
-import HasAscensionPoints from "@/traits/HasAscensionPoints";
-import type { AscensionPointInterface, DefenseRootInterface } from "@/interaces";
 import { DefenseHealthAP, DefensePowerAP, DefenseRangeAP, DefenseRateAP } from "@/data/AscensionPoints";
+import DamageType from "@/enums/DamageType";
+import StatusEffect from "@/enums/StatusEffect";
+import HasAscensionPoints from "@/traits/HasAscensionPoints";
+
+import type { AscensionPointInterface, DefenseRootInterface } from "@/interaces";
 
 export interface DefenseDataResponse {
     defense: string;
     hero: string;
     iconUrl: string;
     mapIcon: string;
+    statusEffect: string;
+    damageType: string;
     baseDefPwr: number;
     baseDefHealth: number;
     baseAtkRate: number;
@@ -40,6 +45,8 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
     name: string;
     icon: string;
     mapIcon: string;
+    statusEffects: StatusEffect[];
+    damageType: DamageType;
     baseDefensePower: number;
     baseDefenseHealth: number;
     baseAttackRate: number;
@@ -74,10 +81,16 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
             return
         }
 
+        const damageType: undefined|DamageType = DamageType.createEnum(data.damageType.toLowerCase());
+        if (damageType === undefined) {
+            throw new Error(`Invalid damage type: ${data.damageType}`);
+        }
+
         this.id = data.defense.replace(/\s/g, '');
         this.name = data.defense;
         this.icon = data.iconUrl;
         this.mapIcon = data.mapIcon;
+        this.damageType = damageType;
         this.baseDefensePower = data.baseDefPwr;
         this.baseDefenseHealth = data.baseDefHealth;
         this.baseAttackRate = data.baseAtkRate;
@@ -106,6 +119,10 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
             data.t4HpScalar,
             data.t5HpScalar,
         ];
+
+        if (data.statusEffect) {
+            this.statusEffects = StatusEffect.createEnumCollection(data.statusEffect.split(',').map((effect: string) => effect.trim().toLowerCase()));
+        }
 
         if (data.ascDefPwr !== 0) {
             this.ascensionPoints.push(new DefensePowerAP(data.ascDefPwr))

@@ -87,7 +87,8 @@
               <hr />
 
               <div class="defense-info__actions">
-                <a class="defense-info__actions-action" @click.prevent="maxAllStats">Max stats</a>
+                <a class="defense-info__actions-action" @click.prevent="maxAllStats('medallion')">Max stats (medallion)</a>
+                <a class="defense-info__actions-action" @click.prevent="maxAllStats('totem')">Max stats (totem)</a>
               </div>
 
               <div class="defense-info__pet">
@@ -265,14 +266,19 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
   unwatchUserData = watch(() => defense.userData, recalculate, { deep: true })
 }
 
-function maxAllStats(): void {
+function maxAllStats(type: string): void {
+  let isMedallion = true
+  if (type === 'totem') {
+    isMedallion = false
+  }
+
   defense.userData.pet = {
     defensePower: 18000,
     defenseHealth: 18000,
   }
   defense.userData.relic = {
-    defensePower: 110513,
-    defenseHealth: 30946,
+    defensePower: isMedallion ? 110513 : 46419,
+    defenseHealth: isMedallion ? 30946 : 73676,
     godlyStat: !defense.userData.relic.godlyStat ? undefined : {
       type: defense.userData.relic.godlyStat.type,
       value: getMaxStatForGodlyType(defense.userData.relic.godlyStat.type),
@@ -370,10 +376,12 @@ onMounted((): void => {
 
   &__actions {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+    margin-bottom: 10px;
 
     &-action {
       cursor: pointer;
+      font-size: 14px;
     }
   }
 

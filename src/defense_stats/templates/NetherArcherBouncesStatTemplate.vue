@@ -7,12 +7,14 @@
         <tr>
           <th>Bounce #</th>
           <th>Damage</th>
+          <th>Total DPS inflicted</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="(damage, bounce) in stat.value" :key="bounce">
           <td>{{ bounce }}</td>
           <td>{{ Math.round(damage).toLocaleString('en-US') }}</td>
+          <td>{{ Math.round(updatedTotalDps(damage, bounce)).toLocaleString('en-US') }}</td>
         </tr>
         </tbody>
       </table>
@@ -37,4 +39,13 @@ defineProps({
 })
 
 const arrowBouncesModal = ref<Modal|null>(null)
+
+let totalDps: number = 0
+function updatedTotalDps(damage: number, bounce: string|number): number {
+  if (bounce == 1) {
+    totalDps = 0;
+  }
+
+  return totalDps += damage;
+}
 </script>

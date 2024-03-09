@@ -1,16 +1,19 @@
 import { ref } from 'vue'
-import OutputModifier from "@/classes/OutputModifier";
-import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface, CalculatedDefenseStatsInterface, DefenseSetupModifiersInterface, UserSetupDefenseInterface, DefenseStatInterface } from "@/interaces";
-import type { UserAncientResetPoints } from "@/data/AncientPowers";
-import { AncientDefenseCriticalChance, AncientDefenseCriticalDamage, AncientDestruction, AncientFortification } from "@/data/AncientPowers";
 
 import NetherArcherBouncesStat from "@/defense_stats/NetherArcherBouncesStat";
 
-import HasAscensionPoints from "@/traits/HasAscensionPoints";
-
+import OutputModifier from "@/classes/OutputModifier";
+import { AncientDefenseCriticalChance, AncientDefenseCriticalDamage, AncientDestruction, AncientFortification } from "@/data/AncientPowers";
 import ModType from "@/enums/ModType";
-import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+import DamageType from "@/enums/DamageType";
+import HasAscensionPoints from "@/traits/HasAscensionPoints";
 import { getDefaultSetupModifiers } from "@/stores/UserData";
+
+import useDefenseDamageType from "@/composables/DefenseDamageType";
+
+import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface, CalculatedDefenseStatsInterface, DefenseSetupModifiersInterface, UserSetupDefenseInterface, DefenseStatInterface } from "@/interaces";
+import type { UserAncientResetPoints } from "@/data/AncientPowers";
+import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type DefenseShardData from "@/data/DefenseShardData";
 
 export function useDefenseCalculations(): any {
@@ -37,6 +40,8 @@ export function useDefenseCalculations(): any {
     const criticalChance = ref(0)
     const criticalDamage = ref(0)
     const defenseSpecificStats = ref<DefenseStatInterface[]>([])
+
+    const { getDamageType } = useDefenseDamageType()
 
     function calculateDefensePower(
         parsedDefense: DefenseRootInterface,
@@ -114,8 +119,8 @@ export function useDefenseCalculations(): any {
             rangeGambitSubtraction = (defense as unknown as HasAscensionPoints).defenseRangeAP?.setUpgradeLevel(userDefenseData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
         }
 
-        totalDefensePower += ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
         totalDefensePower *= ancientDestructionMultiplier()
+        totalDefensePower += ascensionDefensePower() + rangeGambitSubtraction + powerMods() + vampiricEmpowerment() + diverseMods('defensePower', 'additive')
         if (shouldApplyDefenseBoosts()) {
             totalDefensePower += getDefensePowerSetupBoosts()
         }
@@ -142,9 +147,10 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        if (isBuffDefense()) {
-            const attackScalar: number = defense.attackScalar[defenseLevel-1]
-            totalDefensePower *= attackScalar
+        if (isBuffDefense() && defenseLevel > 1) {
+            const currentAttackScalar: number = defense.attackScalar[defenseLevel-1]
+            const firstAttackScalar: number = defense.attackScalar[0]
+            totalDefensePower += totalDefensePower * (currentAttackScalar / firstAttackScalar - 1)
         }
 
         return totalDefensePower
@@ -182,11 +188,11 @@ export function useDefenseCalculations(): any {
                 return;
             }
 
-            if ((util as ModInterface).type?.id === ModType.Diverse.id) {
+            if ((util as ModInterface).type?.equals(ModType.Diverse)) {
                 return
             }
 
-            if ((util as ModInterface).type?.id === ModType.Unique.id) {
+            if ((util as ModInterface).type?.equals(ModType.Unique)) {
                 if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
                     return;
                 }
@@ -228,11 +234,11 @@ export function useDefenseCalculations(): any {
                 return;
             }
 
-            if ((util as ModInterface).type?.id === ModType.Diverse.id) {
+            if ((util as ModInterface).type?.equals(ModType.Diverse)) {
                 return
             }
 
-            if ((util as ModInterface).type?.id === ModType.Unique.id) {
+            if ((util as ModInterface).type?.equals(ModType.Unique)) {
                 if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
                     return;
                 }
@@ -273,9 +279,10 @@ export function useDefenseCalculations(): any {
             criticalDamageMultiplier += AncientDefenseCriticalDamage.upgrades[ancientResetPoints.ancient_defense_critical_damage - 1]
         }
 
-        if (isBuffDefense()) {
-            const attackScalar: number = defense.attackScalar[defenseLevel-1]
-            criticalDamageMultiplier *= attackScalar
+        if (isBuffDefense() && defenseLevel > 1) {
+            const currentAttackScalar: number = defense.attackScalar[defenseLevel-1]
+            const firstAttackScalar: number = defense.attackScalar[0]
+            criticalDamageMultiplier += criticalDamageMultiplier * (currentAttackScalar / firstAttackScalar - 1)
         }
 
         return criticalDamageMultiplier
@@ -289,7 +296,7 @@ export function useDefenseCalculations(): any {
                 return;
             }
 
-            if ((util as ModInterface).type?.id === ModType.Unique.id) {
+            if ((util as ModInterface).type?.equals(ModType.Unique)) {
                 if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
                     return;
                 }
@@ -320,7 +327,7 @@ export function useDefenseCalculations(): any {
 
         tooltipDps.value = tooltipDps.value * attackScalar * critDamageMultiplier / attackRate.value * defenseSetupHeroBuffs()
 
-        return attackDamage.value * critDamageMultiplier / attackRate.value * antiModsMultiplier() * defenseSetupComboBuffs() + explosiveGuard()
+        return attackDamage.value * critDamageMultiplier / attackRate.value * antiModsMultiplier() * defenseSetupComboBuffs() * defenseSetupModifiers() + explosiveGuard()
     }
 
     function motherlyInstinctModifier(baseDefensePower: number, percentage: number, calculateTooltipDps: boolean): number {
@@ -404,19 +411,19 @@ export function useDefenseCalculations(): any {
 
         // Calculate percentage modifiers
         defenseMods.forEach((mod: ModInterface) => {
-            if (mod.type?.id === ModType.Diverse.id) {
+            if (mod.type?.equals(ModType.Diverse)) {
                 return
             }
 
-            if (mod.type?.id === ModType.Power.id) {
+            if (mod.type?.equals(ModType.Power)) {
                 return
             }
 
-            if (mod.type?.id === ModType.Anti.id) {
+            if (mod.type?.equals(ModType.Anti)) {
                 return
             }
 
-            if (mod.type?.id === ModType.Unique.id) {
+            if (mod.type?.equals(ModType.Unique)) {
                 if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
                     return;
                 }
@@ -552,11 +559,11 @@ export function useDefenseCalculations(): any {
         let powerModsAdditive: number = 0;
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type?.id !== ModType.Power.id && mod.id !== 'unique_power_servo') {
+            if (mod.type?.equals(ModType.Power) && mod.id !== 'unique_power_servo') {
                 return
             }
 
-            if (mod.type?.id === ModType.Unique.id) {
+            if (mod.type?.equals(ModType.Unique)) {
                 if ((setupDefenseOptions[userDefenseData.incrementId]?.defenseCount ?? 1) > 1) {
                     return;
                 }
@@ -573,7 +580,7 @@ export function useDefenseCalculations(): any {
         const diverseStack = setupDefenses.length > 0 ? setupDefenses.length - 1 : (userDefenseData.diverseStack ?? 0)
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type?.id !== ModType.Diverse.id) {
+            if (mod.type?.equals(ModType.Diverse)) {
                 return
             }
 
@@ -592,7 +599,7 @@ export function useDefenseCalculations(): any {
         let antiModsPercentage: number = 0;
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type?.id !== ModType.Anti.id) {
+            if (mod.type?.equals(ModType.Anti)) {
                 return
             }
 
@@ -683,6 +690,57 @@ export function useDefenseCalculations(): any {
         }
 
         return comboModifier
+    }
+
+    function defenseSetupModifiers(): number {
+        let setupModifier = 1
+
+        // Armored enemies take 25% extra magical damage and 50% less damage from physical attacks (60% when also soft spot)
+        if (setupModifiers.laneMutators.armored) {
+            if (!defense.damageType.equals(DamageType.Physical)) {
+                setupModifier *= 1.25
+            } else {
+                if (!setupModifiers.laneMutators.softSpot) {
+                    setupModifier *= .50
+                } else {
+                    setupModifier *= .40
+                }
+            }
+        }
+
+        // Reckless/Berserked enemies take 50% extra damage
+        if (setupModifiers.laneMutators.berserked) {
+            setupModifier *= 1.50
+        }
+        if (setupModifiers.laneMutators.reckless) {
+            setupModifier *= 1.50
+        }
+
+        // Spellbreaker enemies take 25% extra physical 50% less magical damage (60% when also soft spot)
+        if (setupModifiers.laneMutators.spellbreaker) {
+            if (defense.damageType.equals(DamageType.Physical)) {
+                setupModifier *= 1.25
+            } else {
+                if (!setupModifiers.laneMutators.softSpot) {
+                    setupModifier *= .50
+                } else {
+                    setupModifier *= .40
+                }
+            }
+        }
+
+        // If enemies are frost enemies, they take +100% extra fire damage and -50% water damage
+        if (setupModifiers.enemyType?.frost) {
+            if (getDamageType(defense, defenseMods).equals(DamageType.Fire)) {
+                setupModifier *= 2
+            }
+
+            if (getDamageType(defense, defenseMods).equals(DamageType.Water)) {
+                setupModifier *= .50
+            }
+        }
+
+        return setupModifier
     }
 
     function defenseSetupHeroBuffs(): number {

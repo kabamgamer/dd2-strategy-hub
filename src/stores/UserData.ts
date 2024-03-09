@@ -167,6 +167,16 @@ export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {
             electrocute: false,
             shatter: false,
         },
+        enemyType: {
+            frost: false,
+        },
+        laneMutators: {
+            armored: false,
+            berserked: false,
+            reckless: false,
+            softSpot: false,
+            spellbreaker: false,
+        },
         heroBuffs: {
             talisman: false,
             talismanChiSupercharge: false,

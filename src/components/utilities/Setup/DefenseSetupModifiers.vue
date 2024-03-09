@@ -101,7 +101,7 @@
             </div>
           </div>
 
-          <div class="setup-modifiers__hero-buffs mt-3">
+          <div class="setup-modifiers__radiant-buffs mt-3">
             <strong>
               Radiant buffs:
             </strong>
@@ -117,6 +117,58 @@
                 <input type="number" min="0" max="4" class="form-control form-control-sm" :id="'radiantCriticalPowerHeroBuff' + setupIncrementId" v-model="setupModifiers.heroBuffs.radiantCriticalPower">
                 <div class="form-text">1 for each nearby hero with the shard</div>
               </div>
+            </div>
+          </div>
+
+          <div class="setup-modifiers__mutators mt-3">
+            <strong>
+              Lane mutators (<a target="_blank" href="https://wiki.dungeondefenders2.com/wiki/Mutators">more info</a>):
+            </strong>
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" :id="'laneMutator[' + setupIncrementId + '][armored]'" v-model="setupModifiers.laneMutators.armored">
+                  <label class="form-check-label" :for="'laneMutator[' + setupIncrementId + '][armored]'">Armored</label>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" :id="'laneMutator[' + setupIncrementId + '][berserked]'" v-model="setupModifiers.laneMutators.berserked">
+                  <label class="form-check-label" :for="'laneMutator[' + setupIncrementId + '][berserked]'">Berserked</label>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" :id="'laneMutator[' + setupIncrementId + '][reckless]'" v-model="setupModifiers.laneMutators.reckless">
+                  <label class="form-check-label" :for="'laneMutator[' + setupIncrementId + '][reckless]'">Reckless</label>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" :id="'laneMutator[' + setupIncrementId + '][softSpot]'" v-model="setupModifiers.laneMutators.softSpot">
+                  <label class="form-check-label" :for="'laneMutator[' + setupIncrementId + '][softSpot]'">Soft spot</label>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" :id="'laneMutator[' + setupIncrementId + '][spellbreaker]'" v-model="setupModifiers.laneMutators.spellbreaker">
+                  <label class="form-check-label" :for="'laneMutator[' + setupIncrementId + '][spellbreaker]'">Spellbreaker</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-modifiers__enemy-types mt-3">
+            <strong>
+              Enemy types:
+            </strong>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" :id="'enemyType[' + setupIncrementId + '][frost]'" v-model="setupModifiers.enemyType.frost">
+              <label class="form-check-label" :for="'enemyType[' + setupIncrementId + '][frost]'">Frost Enemies (<a target="_blank" href="https://wiki.dungeondefenders2.com/wiki/Frost_Enemies">more info</a>)</label>
             </div>
           </div>
         </div>
@@ -153,6 +205,22 @@ const props = defineProps({
 const emits = defineEmits(['change', 'update:modelValue']);
 
 const setupModifiers = ref<DefenseSetupModifiersInterface>(props.modelValue as DefenseSetupModifiersInterface);
+
+if (setupModifiers.value.laneMutators === undefined) {
+  setupModifiers.value.laneMutators = {
+    armored: false,
+    berserked: false,
+    reckless: false,
+    softSpot: false,
+    spellbreaker: false,
+  };
+}
+
+if (setupModifiers.value.enemyType === undefined) {
+  setupModifiers.value.enemyType = {
+    frost: false,
+  };
+}
 
 watch(setupModifiers, (newValue) => {
   emits('change', newValue);

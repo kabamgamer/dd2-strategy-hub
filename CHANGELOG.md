@@ -2,7 +2,9 @@
 
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
 
-* Added total inflicted damage column to nether archer bounces table
+* Defense calculators: Added total inflicted damage column to nether archer bounces table
+* Defense calculators: Added support for totem in max defense stats 
+* Defense calculators: Added button to max out all ascension
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.1...HEAD)
 

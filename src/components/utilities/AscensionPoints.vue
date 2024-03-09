@@ -1,6 +1,9 @@
 <template>
-  <div class="pet">
-    <h5>Ascension</h5>
+  <div class="ascension">
+    <div class="title">
+      <h5>Ascension</h5>
+      <a class="" @click.prevent="assignMaxToAll">Max ascension</a>
+    </div>
     <div class="row">
       <div class="col-md-4" v-for="ascensionPoint in ascensionPoints" :key="ascensionPoint.id">
         <label>{{ ascensionPoint.label }}</label>
@@ -30,12 +33,29 @@ const props = defineProps({
   },
 })
 
+function assignMaxToAll(): void {
+  props.ascensionPoints.forEach(assignMax)
+}
+
 function assignMax(ascensionPoint: AscensionPointInterface): void {
   props.modelValue[ascensionPoint.id] = ascensionPoint.maxLevel
 }
 </script>
 
 <style scoped>
+  .ascension {
+    .title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+
+      a {
+        font-size: 14px;
+        cursor: pointer;
+      }
+    }
+  }
   .ascension-point,
   .ascension-point + .input-group-append .input-group-text {
     padding: 5px;

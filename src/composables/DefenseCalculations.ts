@@ -695,16 +695,12 @@ export function useDefenseCalculations(): any {
     function defenseSetupModifiers(): number {
         let setupModifier = 1
 
-        // Armored enemies take 25% extra magical damage and 50% less damage from physical attacks (60% when also soft spot)
+        // Armored enemies take 25% extra magical damage and 50% less damage from physical attacks
         if (setupModifiers.laneMutators.armored) {
             if (!defense.damageType.equals(DamageType.Physical)) {
                 setupModifier *= 1.25
             } else {
-                if (!setupModifiers.laneMutators.softSpot) {
-                    setupModifier *= .50
-                } else {
-                    setupModifier *= .40
-                }
+                setupModifier *= .50
             }
         }
 
@@ -716,17 +712,18 @@ export function useDefenseCalculations(): any {
             setupModifier *= 1.50
         }
 
-        // Spellbreaker enemies take 25% extra physical 50% less magical damage (60% when also soft spot)
+        // Spellbreaker enemies take 25% extra physical 50% less magical damage
         if (setupModifiers.laneMutators.spellbreaker) {
             if (defense.damageType.equals(DamageType.Physical)) {
                 setupModifier *= 1.25
             } else {
-                if (!setupModifiers.laneMutators.softSpot) {
-                    setupModifier *= .50
-                } else {
-                    setupModifier *= .40
-                }
+                setupModifier *= .50
             }
+        }
+
+        // Enemies with a soft spot have 20% extra resistance
+        if (setupModifiers.laneMutators.softSpot) {
+            setupModifier *= .80
         }
 
         // If enemies are frost enemies, they take +100% extra fire damage and -50% water damage

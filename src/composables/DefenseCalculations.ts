@@ -580,7 +580,7 @@ export function useDefenseCalculations(): any {
         const diverseStack = setupDefenses.length > 0 ? setupDefenses.length - 1 : (userDefenseData.diverseStack ?? 0)
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type?.equals(ModType.Diverse)) {
+            if (!mod.type?.equals(ModType.Diverse)) {
                 return
             }
 

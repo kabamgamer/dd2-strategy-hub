@@ -194,6 +194,8 @@ const props = defineProps({
 
 const defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
 
+let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}|undefined;
+
 const id = ref<string>()
 const accordionCollapse = ref()
 const defenseLevel = ref<number>(1)
@@ -296,8 +298,11 @@ watch(defenseLevel, recalculate)
 watch(ancientPowerPoints, recalculate, { deep: true })
 watch(() => props.setupModifiers, recalculate, { deep: true })
 watch(() => props.setupDefenseOptions, recalculate, { deep: true })
-watch(() => props.defenseBoosts, (newValue, oldValue) => {
-  if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+watch(() => props.defenseBoosts, (newValue) => {
+  if (JSON.stringify(newValue) === JSON.stringify(defenseBoosts)) return
+
+  // Clone the defenseBoosts object to avoid reactivity issues
+  defenseBoosts = JSON.parse(JSON.stringify(newValue))
 
   setTimeout(recalculate, 400)
 }, { deep: true })

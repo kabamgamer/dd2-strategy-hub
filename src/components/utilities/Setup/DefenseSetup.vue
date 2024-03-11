@@ -168,6 +168,7 @@ function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps
   if (defense.defenseData?.id === 'BoostAura' || defense.defenseData?.id === 'BuffBeam') {
     resolvedDefenseBoosts[defense.incrementId].defensePower = calculatedStats.defensePower / 10
     resolvedDefenseBoosts[defense.incrementId].critDamage = calculatedStats.critDamage / 4
+    calculatedStats.totalDps = 0
   }
 
   for (const shard of defenseShards) {
@@ -214,9 +215,9 @@ async function shareSetup(): Promise<void> {
 
   navigator.clipboard.writeText(await shortenUrl(sharableLink));
 
-  shareButtonElement.value.classList.add('coppied')
+  shareButtonElement.value.classList.add('copied')
   setTimeout(() => {
-    shareButtonElement.value.classList.remove('coppied')
+    shareButtonElement.value.classList.remove('copied')
   }, 5000)
 
   return Promise.resolve()
@@ -255,12 +256,12 @@ onMounted((): void => {
     margin-left: 1rem;
     position: relative
   }
-  .share-btn.coppied::after {
+  .share-btn.copied::after {
     background: var(--bs-secondary-bg-subtle);
     color: var(--bs-body-color);
     border-radius: 4px;
     bottom: 120%;
-    content: 'Coppied to clipboard! Share this URL with your friends.';
+    content: 'Copied to clipboard! Share this URL with your friends.';
     display: block;
     left: -175%;
     padding: 1em;

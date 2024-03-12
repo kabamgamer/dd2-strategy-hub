@@ -44,7 +44,7 @@
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" v-model="setupModifiers.combos.shatter"
                          :id="'shatterModifiersCombo' + setupIncrementId">
-                  <label class="form-check-label" :for="'shatterModifiersCombo' + setupIncrementId">Shattered (not implemented)</label>
+                  <label class="form-check-label" :for="'shatterModifiersCombo' + setupIncrementId">Shattered</label>
                 </div>
               </div>
             </div>

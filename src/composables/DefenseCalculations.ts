@@ -696,6 +696,10 @@ export function useDefenseCalculations(): any {
             comboModifier *= 1.25
         }
 
+        if (setupModifiers.combos.shatter && getDamageType(defense).equals(DamageType.Earth)) {
+            comboModifier *= 1.5
+        }
+
         return comboModifier
     }
 

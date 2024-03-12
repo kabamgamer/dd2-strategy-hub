@@ -2,8 +2,9 @@
 
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
 
-* Added table view for defense lists
-* Display damage type/elemental in defense stats
+* Defense calculators: Added table view for defense lists
+* Defense calculators: Display damage type/elemental in defense stats
+* Defense calculators: Implemented shattered modifier in setups
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.4...HEAD)
 

@@ -23,6 +23,8 @@ export function useProtobot(): any {
                 incrementId: 1,
                 defenseData: await getDefenseRoot(userData.id),
                 userData,
+                userMods: [],
+                userShards: [],
             }
         }));
 

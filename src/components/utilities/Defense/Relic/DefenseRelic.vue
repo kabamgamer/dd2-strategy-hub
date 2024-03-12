@@ -57,6 +57,10 @@ const props = defineProps({
     type: Object as PropType<RelicInterface>,
     required: true
   },
+  mods: {
+    type: Array as PropType<ModInterface[]>,
+    required: true
+  },
   defenseCompatibility: String,
   hideRelic: Boolean,
   hideMods: Boolean,
@@ -74,12 +78,14 @@ const userSelection = ref<{modId: string|null, mod: ModInterface|null}[]>([
 function onAddMod(index: number, mod: ModInterface|null): void {
   if (!mod) return
   props.modelValue?.mods.push(mod.id);
+  props.mods?.push(mod)
 }
 
 function onDeleteMod(index: number): void {
   userSelection.value.splice(index, 1)
   userSelection.value[2] = {modId: null, mod: null}
   props.modelValue?.mods.splice(index, 1)
+  props.mods?.splice(index, 1)
 }
 
 function onGodlyStatTypeSelect(type: string): void {

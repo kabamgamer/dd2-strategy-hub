@@ -19,14 +19,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, watch, onMounted } from "vue";
+import { computed, defineProps } from "vue";
 
 import useDefenseDamageType from "@/composables/DefenseDamageType";
-import { useModStore } from "@/stores/ModInfo";
 
 import type { PropType } from "vue";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
-import type { ModInterface } from "@/types";
 
 import DamageType from "@/enums/DamageType";
 
@@ -41,34 +39,15 @@ import IconElementalWater from "@/components/icons/damage_types/IconElementalWat
 import HtmlTooltip from "@/components/layout/HtmlTooltip.vue";
 
 const { getDamageType } = useDefenseDamageType();
-const { getModById } = useModStore();
 
 const props = defineProps({
   defense: Object as PropType<UserDataStoreDefenseInterface>,
 });
 
-const defenseMods = ref<ModInterface[]>([]);
 const damageType = computed<undefined|DamageType>(() => {
-  if (defenseMods.value.length !== props.defense?.userData.relic.mods.length) return undefined;
-
   if (props.defense?.defenseData === undefined) return undefined;
 
-  return getDamageType((props.defense as UserDataStoreDefenseInterface).defenseData, defenseMods.value);
-});
-
-function mapMods(): void {
-  defenseMods.value = []
-  props.defense?.userData.relic.mods.forEach(async (modId: string): Promise<void> => {
-    defenseMods.value.push(await getModById(modId))
-  })
-}
-
-watch(() => props.defense, () => {
-  mapMods()
-}, {deep: true});
-
-onMounted(() => {
-  mapMods()
+  return getDamageType(props.defense as UserDataStoreDefenseInterface);
 });
 </script>
 

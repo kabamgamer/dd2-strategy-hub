@@ -46,28 +46,19 @@ import type {
   DefenseStatsInterface
 } from "@/types";
 
-import type DefenseModData from "@/data/DefenseModData";
-import type DefenseShardData from "@/data/DefenseShardData";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
-import { useDebounce } from "@/composables/Debounce";
 import { useDefenseCalculations } from "@/composables/DefenseCalculations";
-import { useModStore } from "@/stores/ModInfo"
-import { useShardStore } from "@/stores/ShardInfo"
 import { useUserDataStore } from "@/stores/UserData";
 import { storeToRefs } from "pinia";
-import ModType from "@/enums/ModType";
 import DefenseOverviewTableRow from "@/components/utilities/Defense/Overview/Table/DefenseOverviewTableRow.vue";
 import DefenseOverviewAccordionItem from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordionItem.vue";
 
 const userStore = useUserDataStore();
 
-const { debounce } = useDebounce()
 const { deleteDefense } = userStore
 const { ancientPowerPoints } = storeToRefs(userStore);
 const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, defenseSpecificStats, isBuffDefense } = useDefenseCalculations()
-const { getModById } = useModStore()
-const { getShardById } = useShardStore()
 
 const emit = defineEmits(['total-dps-calculated', 'row-select', 'defense-edit'])
 const props = defineProps({
@@ -93,10 +84,6 @@ let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}|unde
 
 const id = ref<string>()
 const defenseLevel = ref<number>(1)
-const hasDiverseMods = ref<boolean>(false)
-const userDefenseMods = ref<DefenseModData[]>([])
-const userDefenseShards = ref<DefenseShardData[]>([])
-const userSetupDefensesShards = ref<{ [defenseIncrementId: number]: DefenseShardData[] }>({})
 const isLoadingDefenseSetupShards = ref<boolean>(false)
 const attackRatePercentage = computed(() => Math.round((attackRate.value - (defense.defenseData?.baseAttackRate ?? 0)) / ((defense.defenseData?.maxAttackRate ?? 0) - (defense.defenseData?.baseAttackRate ?? 0)) * 100))
 const defenseStats = computed((): DefenseStatsInterface => ({
@@ -115,49 +102,17 @@ const defenseStats = computed((): DefenseStatsInterface => ({
 function recalculate(): void {
   if (!defense.userData) return
 
-  userDefenseMods.value = []
-  userDefenseShards.value = []
-
-  defense.userData.relic.mods.forEach(async (modId: string): Promise<void> => {
-    userDefenseMods.value.push(await getModById(modId))
-  })
-  defense.userData.shards.forEach(async (shardId: string): Promise<void> => {
-    userDefenseShards.value.push(await getShardById(shardId))
-  })
-
   // Await the loading of mods and shards before calculating
   const interval: any = setInterval((): void => {
-    if (
-        userDefenseMods.value.length === defense.userData.relic.mods.length
-        && userDefenseShards.value.length === defense.userData.shards.length
-        && (!props.setupDefenses || !isLoadingDefenseSetupShards.value)
-    ) {
+    if ((!props.setupDefenses || !isLoadingDefenseSetupShards.value)) {
       clearInterval(interval)
-      calculateDefensePower(defense.defenseData, defense.userData, userDefenseMods.value, userDefenseShards.value, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, userSetupDefensesShards.value, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
-      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value, userDefenseShards.value, props.defenseBoosts ? Object.keys(props.defenseBoosts) : [])
+      calculateDefensePower(defense, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
+      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value, props.defenseBoosts ? Object.keys(props.defenseBoosts) : [])
     }
   }, 100)
 }
 
-async function loadSetupShards(): Promise<void> {
-  if (!props.setupDefenses) return
-
-  isLoadingDefenseSetupShards.value = true
-  userSetupDefensesShards.value = {}
-  for (const setupDefense of props.setupDefenses) {
-    userSetupDefensesShards.value[setupDefense.incrementId] = [];
-    for (const shardId of setupDefense.userData.shards) {
-      userSetupDefensesShards.value[setupDefense.incrementId].push(await getShardById(shardId))
-    }
-  }
-
-  isLoadingDefenseSetupShards.value = false
-}
-
 watch(defense.userData, recalculate, { deep: true })
-watch(userDefenseMods, debounce(() => {
-hasDiverseMods.value = userDefenseMods.value.filter((mod: any) => (mod as DefenseModData).type?.equals(ModType.Diverse)).length > 0
-}, 200), { deep: true })
 
 // Trigger recalculation on data changes
 watch(defenseLevel, recalculate)
@@ -175,8 +130,6 @@ watch(() => props.defenseBoosts, (newValue) => {
 watch(() => props.setupDefenses, (newValue, oldValue) => {
   if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
 
-  loadSetupShards()
-
   setTimeout(recalculate, 400)
 }, { deep: true })
 
@@ -185,8 +138,6 @@ onMounted((): void => {
       .toString(16)
       .substring(1)
       .toLowerCase() + defense.incrementId
-
-  loadSetupShards()
 
   // Await the loading of defenseData before initializing calculations
   const interval: any = setInterval((): void => {

@@ -64,7 +64,9 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
       relic: new RelicData,
       shards: [],
       ascensionPoints: {},
-    }
+    },
+    userMods: [],
+    userShards: [],
   });
 
   defenseSelectionModal.value?.hide();

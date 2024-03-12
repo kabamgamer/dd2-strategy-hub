@@ -8,7 +8,7 @@
     <div class="defense-user-info__pet">
       <div class="row">
         <div class="col-md-6">
-          <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-mods="true" />
+          <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :mods="defense.userMods" :hide-mods="true" />
         </div>
         <div class="col-md-6">
           <Pet v-model="defense.userData.pet" />
@@ -19,15 +19,15 @@
     <hr />
 
     <div class="defense-user-info__relic">
-      <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :hide-relic="true" />
+      <DefenseRelic v-model="defense.userData.relic" :defenseCompatibility="defense.userData.id" :mods="defense.userMods" :hide-relic="true" />
 
-      <!--    <i v-if="hasDiverseMods">For proper testing diverse mods, use defense setups (see section below)</i>-->
+      <i v-if="hasDiverseMods">For proper testing diverse mods, use defense setups (see section below)</i>
     </div>
 
     <hr />
 
     <div class="defense-user-info__shards">
-      <Shards v-model="defense.userData.shards" :defenseCompatibility="defense.userData.id" />
+      <Shards v-model="defense.userData.shards" :shards="defense.userShards" :defenseCompatibility="defense.userData.id" />
     </div>
 
     <hr />
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRef } from "vue";
+import { defineProps, toRef, computed } from "vue";
 
 import type { PropType, ToRef } from "vue";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
@@ -50,6 +50,8 @@ import DefenseRelic from "@/components/utilities/Defense/Relic/DefenseRelic.vue"
 import Pet from "@/components/utilities/Defense/Pet.vue";
 import AscensionPoints from "@/components/utilities/AscensionPoints.vue";
 import Shards from "@/components/utilities/Defense/Shards.vue";
+import type {ModInterface} from "@/types";
+import ModType from "@/enums/ModType";
 
 const { getMaxStatForGodlyType } = useGodlyStat()
 
@@ -61,6 +63,13 @@ const props = defineProps({
 });
 
 const defense: ToRef<UserDataStoreDefenseInterface> = toRef(props, 'defense') as ToRef<UserDataStoreDefenseInterface>
+
+const hasDiverseMods = computed<boolean>(() => {
+  if (!props.defense?.userMods) return false
+
+  const modTypes = props.defense?.userMods.filter((mod: ModInterface) => mod.type?.equals(ModType.Diverse))
+  return modTypes.length > 0
+})
 
 function maxAllStats(type: string): void {
   let isMedallion = true

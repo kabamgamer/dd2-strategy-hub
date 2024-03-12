@@ -41,6 +41,10 @@ const props = defineProps({
     type: Array as PropType<string[]>,
     default: () => [],
   },
+  shards: {
+    type: Array as PropType<ShardInterface[]>,
+    default: () => [],
+  },
   defenseCompatibility: String,
 });
 
@@ -60,12 +64,14 @@ getAllShardsUncategorized().then((): void => {
 function onAddShard(index: number, shard: ShardInterface|undefined): void {
   if (!shard) return;
   props.modelValue.push(shard.id);
+  props.shards.push(shard);
 }
 
 function onDeleteShard(index: number): void {
   userSelection.value.splice(index, 1);
   userSelection.value[2] = {shard: undefined}
   props.modelValue.splice(index, 1);
+  props.shards.splice(index, 1);
 }
 </script>
 

@@ -21,6 +21,7 @@
           <th scope="col">Crit. Damage</th>
           <th scope="col">Tooltip DPS</th>
           <th scope="col">Actual DPS</th>
+          <th scope="col" class="text-center">Tier #</th>
         </tr>
       </thead>
       <tbody>

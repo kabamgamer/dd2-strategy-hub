@@ -45,6 +45,15 @@
       <td>{{ isBuffDefense ? 'N/A' : Math.round(defenseStats.tooltipDps).toLocaleString('en-US') }}</td>
       <td>{{ isBuffDefense ? 'N/A' : Math.round(defenseStats.totalDps).toLocaleString('en-US') }}</td>
     </template>
+
+    <!-- Defense upgrade tier -->
+    <td class="p-0" @click.stop>
+      <div class="defense-info__level">
+        <button class="btn btn-link btn--up" @click="$emit('defenseLevelUpdate', defenseLevel+1)" :disabled="defenseLevel===5"><IconChevronUp /></button>
+        <span class="defense-info__level-value">{{ defenseLevel }}</span>
+        <button class="btn btn-link btn--down" @click="$emit('defenseLevelUpdate', defenseLevel-1)" :disabled="defenseLevel===1"><IconChevronDown /></button>
+      </div>
+    </td>
   </tr>
 </template>
 
@@ -57,6 +66,8 @@ import type { DefenseStatsInterface } from "@/types";
 import HtmlTooltip from "@/components/layout/HtmlTooltip.vue";
 import type {UserDataStoreDefenseInterface} from "@/stores/UserData";
 import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageTypeIcon.vue";
+import IconChevronDown from "@/components/icons/IconChevronDown.vue";
+import IconChevronUp from "@/components/icons/IconChevronUp.vue";
 
 defineProps({
   icon: String,
@@ -64,6 +75,10 @@ defineProps({
   allChecked: Boolean,
   inSetup: Boolean,
   isBuffDefense: Boolean,
+  defenseLevel: {
+    type: Number,
+    required: true,
+  },
   defenseStats: {
     type: Object as PropType<DefenseStatsInterface>,
     required: true,
@@ -88,6 +103,25 @@ td {
 
   &:not(:nth-child(-n + 2)) {
     cursor: pointer;
+  }
+}
+
+.defense-info__level {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  .btn {
+    padding: 0;
+    margin: 0;
+    max-height: 15px;
+    display: flex;
+
+    svg {
+      color: var(--bs-table-color);
+      width: 18px;
+      height: 13px;
+    }
   }
 }
 </style>

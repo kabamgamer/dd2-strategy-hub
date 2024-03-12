@@ -1,10 +1,10 @@
 <template>
   <tr @click="$emit('defenseEdit')">
     <!-- Select for actions -->
-    <td @click.stop><input type="checkbox" :checked="allChecked || checked" @change="({target}) => $emit('rowSelect', checked = target.checked)" /></td>
+    <td @click.stop><input type="checkbox" :checked="allChecked || checked" @change="({target}) => $emit('rowSelect', checked = (target as HTMLInputElement)?.checked)" /></td>
 
     <!-- Damage type icon -->
-    <td style="width: 30px"><DefenseDamageTypeIcon :defense="defense" /></td>
+    <td @click.stop style="width: 30px"><DefenseDamageTypeIcon :defense="defense" /></td>
 
     <!-- Icon -->
     <td style="width: 50px"><img width="50" :src="icon" :alt="'Defense Icon ' + label"></td>
@@ -64,7 +64,10 @@ defineProps({
   allChecked: Boolean,
   inSetup: Boolean,
   isBuffDefense: Boolean,
-  defenseStats: Object as PropType<DefenseStatsInterface>,
+  defenseStats: {
+    type: Object as PropType<DefenseStatsInterface>,
+    required: true,
+  },
   defense: {
     type: Object as PropType<UserDataStoreDefenseInterface>,
     required: true,
@@ -83,7 +86,7 @@ td {
     text-align: center;
   }
 
-  &:not(:first-child) {
+  &:not(:nth-child(-n + 2)) {
     cursor: pointer;
   }
 }

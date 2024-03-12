@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="loading" />
 
     <h2 class="accordion-header defense-header" :id="id + '-heading'">
-      <button class="accordion-button" type="button" :class="{ collapsed: defense.userData.isCollapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!defense.userData.isCollapsed" :aria-controls="id">
+      <button class="accordion-button" type="button" :class="{ collapsed: defense.userData.isCollapsed && !inSetup }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!defense.userData.isCollapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
           <span class="defense-label">
             <DefenseDamageTypeIcon class="mx-1" :defense="defense" />
@@ -17,7 +17,7 @@
       </button>
     </h2>
 
-    <div :id="id" ref="accordionCollapse" class="accordion-collapse collapse" :class="{ show: !defense.userData.isCollapsed }" :aria-labelledby="id + '-heading'">
+    <div :id="id" ref="accordionCollapse" class="accordion-collapse collapse" :class="{ show: !defense.userData.isCollapsed || inSetup }" :aria-labelledby="id + '-heading'">
       <div class="accordion-body">
         <div class="defense-info">
           <div class="actions d-flex justify-content-between mb-2" v-if="!inSetup">
@@ -97,7 +97,7 @@ import { ref, onMounted, defineProps } from "vue";
 import { storeToRefs } from "pinia";
 
 import type { PropType } from "vue";
-import type { DefenseStatsInterface } from "@/types";
+import type { DefenseStatInterface, DefenseStatsInterface } from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
@@ -112,11 +112,17 @@ import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageT
 const props = defineProps({
   id: String,
   icon: String,
-  defenseLevel: Number,
-  defenseSpecificStats: Array,
+  defenseSpecificStats: Array as PropType<DefenseStatInterface[]>,
   inSetup: Boolean,
   isBuffDefense: Boolean,
-  defenseStats: Object as PropType<DefenseStatsInterface>,
+  defenseLevel: {
+    type: Number,
+    required: true,
+  },
+  defenseStats: {
+    type: Object as PropType<DefenseStatsInterface>,
+    required: true,
+  },
   defense: {
     type: Object as PropType<UserDataStoreDefenseInterface>,
     required: true,

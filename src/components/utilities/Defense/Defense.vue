@@ -52,7 +52,6 @@ import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
 import { useDebounce } from "@/composables/Debounce";
 import { useDefenseCalculations } from "@/composables/DefenseCalculations";
-import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import { useModStore } from "@/stores/ModInfo"
 import { useShardStore } from "@/stores/ShardInfo"
 import { useUserDataStore } from "@/stores/UserData";
@@ -62,12 +61,10 @@ import DefenseOverviewTableRow from "@/components/utilities/Defense/Overview/Tab
 import DefenseOverviewAccordionItem from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordionItem.vue";
 
 const userStore = useUserDataStore();
-const googleSpreadsheetDataStore = useGoogleSpreadsheetDataStore()
 
 const { debounce } = useDebounce()
-const { loading } = storeToRefs(googleSpreadsheetDataStore)
 const { deleteDefense } = userStore
-const { ancientPowerPoints, isDev } = storeToRefs(userStore);
+const { ancientPowerPoints } = storeToRefs(userStore);
 const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, defenseSpecificStats, isBuffDefense } = useDefenseCalculations()
 const { getModById } = useModStore()
 const { getShardById } = useShardStore()

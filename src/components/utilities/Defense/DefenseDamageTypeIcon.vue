@@ -56,14 +56,14 @@ const damageType = computed<undefined|DamageType>(() => {
   return getDamageType((props.defense as UserDataStoreDefenseInterface).defenseData, defenseMods.value);
 });
 
-function mapMods() {
+function mapMods(): void {
   defenseMods.value = []
   props.defense?.userData.relic.mods.forEach(async (modId: string): Promise<void> => {
     defenseMods.value.push(await getModById(modId))
   })
 }
 
-watch(() => props.defense, (newDefense) => {
+watch(() => props.defense, () => {
   mapMods()
 }, {deep: true});
 

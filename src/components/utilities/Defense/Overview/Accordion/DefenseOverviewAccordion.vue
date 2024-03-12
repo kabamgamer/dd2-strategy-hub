@@ -13,9 +13,12 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
 
+import type { PropType } from "vue";
+import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+
 import Defense from "@/components/utilities/Defense/Defense.vue";
 
 defineProps({
-  defenses: Array,
+  defenses: Array as PropType<UserDataStoreDefenseInterface[]>,
 });
 </script>

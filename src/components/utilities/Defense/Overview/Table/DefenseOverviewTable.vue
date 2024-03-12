@@ -69,7 +69,7 @@ const defenses: ToRef<UserDataStoreDefenseInterface[]> = toRef(props, 'defenses'
 const emit = defineEmits(['totalDpsCalculated', 'deleteDefense']);
 
 const allChecked = ref<boolean>(false);
-const editDefense = ref();
+const editDefense = ref<UserDataStoreDefenseInterface>();
 const editDefenseModal = ref();
 
 const selectedDefenses = ref<number[]>([]);
@@ -84,26 +84,28 @@ const deleteDefensesLabel = computed(() => {
 });
 
 function deleteDefenses(): void {
-  if (allChecked.value) {
-    selectedDefenses.value = defenses.value.map((defense) => defense.incrementId);
-  }
-
   selectedDefenses.value.forEach((incrementId) => emit('deleteDefense', incrementId));
 
   allChecked.value = false;
   selectedDefenses.value = [];
 }
 
-function checkAll() {
+function checkAll(): void {
   allChecked.value = !allChecked.value;
+
+  if (allChecked.value) {
+    selectedDefenses.value = defenses.value.map((defense) => defense.incrementId);
+  } else {
+    selectedDefenses.value = [];
+  }
 }
 
-function onDefenseEdit(defense) {
+function onDefenseEdit(defense: UserDataStoreDefenseInterface): void {
   editDefense.value = defense;
   editDefenseModal.value.show();
 }
 
-function selectDefense(defenseIncrementId: number, selected: boolean) {
+function selectDefense(defenseIncrementId: number, selected: boolean): void {
   if (selected) {
     selectedDefenses.value.push(defenseIncrementId);
   } else {

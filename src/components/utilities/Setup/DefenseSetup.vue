@@ -62,6 +62,19 @@
       </template>
     </DefenseOverviewTable>
   </div>
+
+  <BootstrapModal title="Select defense" ref="addDefenseModal">
+    <template #body>
+      <select class="form-select" @change="selectDefense" v-model="selectedDefense">
+        <option :value="null" selected>
+          Select a defense
+        </option>
+        <option v-for="defense in defenseSelection" :key="defense.incrementId" :value="defense">
+          {{ defense.userData.label }}
+        </option>
+      </select>
+    </template>
+  </BootstrapModal>
 </template>
 
 <script lang="ts" setup>
@@ -79,6 +92,7 @@ import DefenseSetupModifiers from "@/components/utilities/Setup/DefenseSetupModi
 import DefenseOverviewTable from "@/components/utilities/Defense/Overview/Table/DefenseOverviewTable.vue";
 import DefenseOverviewAccordion from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordion.vue";
 import SetupDefense from "@/components/utilities/Setup/SetupDefense.vue";
+import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 
 const props = defineProps({
   defenseSetup: {
@@ -101,9 +115,9 @@ const { deleteDefenseSetup } = userStore
 
 const id = ref<string>()
 const shareButtonElement = ref()
+const addDefenseModal = ref()
 const defensesStats = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const defenseBoosts = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
-const defenseSelect = ref<boolean>(false)
 const selectedDefense = ref<UserDataStoreDefenseInterface|null>(null)
 
 const setupDefenses = computed(() => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined))
@@ -164,7 +178,7 @@ function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps
 }
 
 function addDefense(): void {
-  defenseSelect.value = true
+  addDefenseModal.value.show()
 }
 
 function deleteDefense(defenseIncrementId: number): void {
@@ -181,7 +195,7 @@ function selectDefense(): void {
     return
   }
   props.defenseSetup.defenses[selectedDefense.value.incrementId] = {defenseCount: selectedDefense.value.defenseData?.hero !== 'Ev2' ? 1 : 2}
-  defenseSelect.value = false
+  addDefenseModal.value.hide()
   selectedDefense.value = null
 }
 

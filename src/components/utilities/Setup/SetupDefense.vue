@@ -68,7 +68,7 @@ const props = defineProps({
 
 const emit = defineEmits(['totalDpsCalculated', 'deleteDefense']);
 
-function onTotalDpsCalculated() {
+function onTotalDpsCalculated(): void {
   emit('totalDpsCalculated', props.defense, ...arguments)
 }
 </script>

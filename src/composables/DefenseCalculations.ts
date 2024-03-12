@@ -559,7 +559,7 @@ export function useDefenseCalculations(): any {
         let powerModsAdditive: number = 0;
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type?.equals(ModType.Power) && mod.id !== 'unique_power_servo') {
+            if (!mod.type?.equals(ModType.Power) && mod.id !== 'unique_power_servo') {
                 return
             }
 
@@ -599,7 +599,7 @@ export function useDefenseCalculations(): any {
         let antiModsPercentage: number = 0;
 
         defenseMods.forEach((mod: ModInterface): void => {
-            if (mod.type?.equals(ModType.Anti)) {
+            if (!mod.type?.equals(ModType.Anti)) {
                 return
             }
 

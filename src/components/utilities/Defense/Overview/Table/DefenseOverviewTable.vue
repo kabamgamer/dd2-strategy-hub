@@ -4,7 +4,7 @@
       <LoadingSpinner v-if="loading" />
       <thead>
         <tr>
-          <th scope="col"><input type="checkbox" @change="checkAll" /></th>
+          <th scope="col"><input type="checkbox" :checked="allChecked" @change="checkAll" /></th>
           <th scope="col">Icon</th>
           <th scope="col">Label</th>
           <th scope="col">Hit Points</th>
@@ -52,6 +52,8 @@ function checkAll() {
   allChecked.value = !allChecked.value;
   emit('selectAll', allChecked.value);
 }
+
+defineExpose({ allChecked });
 </script>
 
 <style lang="scss" scoped>

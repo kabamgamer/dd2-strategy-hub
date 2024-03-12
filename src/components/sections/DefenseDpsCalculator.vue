@@ -13,7 +13,9 @@
   <DefenseOverviewAccordion v-if="!tableView" :defenses="defenses" />
   <DefenseOverviewTable
       v-else
+      ref="defenseOverviewTable"
       :defenses="defenses"
+      :select-all="selectAll"
       @select-all="(selected: boolean) => selectAll = selected"
       @row-select="(defenseIncrementId: number, selected: boolean) => selectedDefenses[defenseIncrementId] = selected"
   />
@@ -42,6 +44,7 @@ const userStore = useUserDataStore()
 const { defenses, tableView } = storeToRefs(userStore);
 const { getNextDefenseIncrementId, deleteDefense } = userStore;
 
+const defenseOverviewTable = ref();
 const defenseSelectionModal = ref<InstanceType<typeof BootstrapModal>>();
 const selectAll = ref<boolean>(false);
 const selectedDefenses = ref<{ [defenseIncrementId: number]: boolean }>({});
@@ -68,6 +71,7 @@ function deleteDefenses(): void {
     selectedDefensesIncrementIds.value.forEach(defenseIncrementId => deleteDefense(defenseIncrementId));
   }
 
+  if (defenseOverviewTable.value) defenseOverviewTable.value.allChecked = false;
   selectedDefenses.value = {};
 }
 

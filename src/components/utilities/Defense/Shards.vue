@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue"
-import type { ShardInterface } from "@/interaces"
+import type { ShardInterface } from "@/types"
 
 import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"

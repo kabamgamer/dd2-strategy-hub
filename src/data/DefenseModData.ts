@@ -2,7 +2,7 @@ import DamageType from "@/enums/DamageType";
 import ModType from "@/enums/ModType";
 import HasOutputModifier from "@/traits/HasOutputModifier";
 
-import type { ModInterface } from "@/interaces";
+import type { ModInterface } from "@/types";
 import type OutputModifier from "@/classes/OutputModifier";
 
 export interface DefenseModDataResponse {

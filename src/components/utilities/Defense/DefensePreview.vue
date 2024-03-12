@@ -88,10 +88,10 @@ import type {
   ModInterface,
   ShardInterface,
   MapDefenseInterface
-} from "@/interaces";
+} from "@/types";
 import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue";
 import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue";
-import GodlyStatSelection from "@/components/utilities/Defense/GodlyStatSelection.vue";
+import GodlyStatSelection from "@/components/utilities/Defense/Relic/GodlyStatSelection.vue";
 import Cross from "@/components/icons/IconCross.vue";
 
 const { getDefenseRoot } = useDefenseStore()

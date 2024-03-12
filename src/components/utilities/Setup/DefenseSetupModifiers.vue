@@ -180,7 +180,7 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { defineProps, defineEmits, watch, ref } from "vue";
-import type { DefenseSetupModifiersInterface } from "@/interaces";
+import type { DefenseSetupModifiersInterface } from "@/types";
 
 const props = defineProps({
   setupIncrementId: Number,

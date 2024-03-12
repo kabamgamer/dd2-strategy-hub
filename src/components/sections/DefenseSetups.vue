@@ -19,7 +19,7 @@ import DefenseSetup from "@/components/utilities/Setup/DefenseSetup.vue";
 
 import { storeToRefs } from "pinia";
 
-import type { UserDefenseSetupInterface } from "@/interaces";
+import type { UserDefenseSetupInterface } from "@/types";
 import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData";
 
 const userStore = useUserDataStore()

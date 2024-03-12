@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import type { DefenseRootInterface, UserDefenseInterface, UserDefenseSetupInterface, DefenseSetupModifiersInterface } from "@/interaces";
+import type { DefenseRootInterface, UserDefenseInterface, UserDefenseSetupInterface, DefenseSetupModifiersInterface } from "@/types";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import DataMigrations from "@/data/DataMigrations";
 import { useDefenseStore } from "@/stores/DefenseInfo";
@@ -17,6 +17,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const dataMigration = new DataMigrations
 
     const colorMode = ref<string>(localStorage.getItem('colorMode') ?? 'dark')
+    const tableView = ref<boolean>(localStorage.getItem('tableView') === 'true')
     const lastVisitedVersion = ref<string>(localStorage.getItem('lastVisitedVersion') ?? 'v0.0.0')
     const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
@@ -152,11 +153,15 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('colorMode', colorMode.value)
     })
 
+    watch(tableView, () => {
+        localStorage.setItem('tableView', tableView.value ? 'true' : 'false')
+    })
+
     watch(lastVisitedVersion, () => {
         localStorage.setItem('lastVisitedVersion', lastVisitedVersion.value)
     })
 
-    return { isDev, colorMode, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
+    return { isDev, colorMode, tableView, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
 })
 
 export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {

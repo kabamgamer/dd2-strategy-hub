@@ -1,4 +1,4 @@
-import type { PetInterface } from "@/interaces";
+import type { PetInterface } from "@/types";
 
 export default class Pet implements PetInterface {
     public defensePower: number = 0;

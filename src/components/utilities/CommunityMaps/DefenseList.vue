@@ -17,7 +17,7 @@
 import { computed, defineProps } from "vue"
 
 import type { PropType } from "vue"
-import type { MapConfigInterface, MapDefenseInterface } from "@/interaces";
+import type { MapConfigInterface, MapDefenseInterface } from "@/types";
 
 const props = defineProps({
   map: {

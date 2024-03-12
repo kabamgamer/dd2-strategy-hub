@@ -45,7 +45,7 @@ import IconDefense from "@/components/icons/IconDefense.vue";
 import IconDuplicate from "@/components/icons/IconDuplicate.vue";
 import IconDefenseCircle from "@/components/icons/IconDefenseCircle.vue";
 
-import type { DefenseRootInterface } from "@/interaces";
+import type { DefenseRootInterface } from "@/types";
 
 const props = defineProps({
   showDefenseIcon: {

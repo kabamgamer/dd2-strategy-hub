@@ -11,7 +11,7 @@ import { getDefaultSetupModifiers } from "@/stores/UserData";
 
 import useDefenseDamageType from "@/composables/DefenseDamageType";
 
-import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface, CalculatedDefenseStatsInterface, DefenseSetupModifiersInterface, UserSetupDefenseInterface, DefenseStatInterface } from "@/interaces";
+import type { DefenseRootInterface, ModInterface, ShardInterface, UserDefenseInterface, CalculatedDefenseStatsInterface, DefenseSetupModifiersInterface, UserSetupDefenseInterface, DefenseStatInterface } from "@/types";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type DefenseShardData from "@/data/DefenseShardData";
@@ -409,7 +409,7 @@ export function useDefenseCalculations(): any {
             }
         })
 
-        // Calculate percentage modifiers
+        // Calculate additive modifiers
         defenseMods.forEach((mod: ModInterface) => {
             if (mod.type?.equals(ModType.Diverse)) {
                 return

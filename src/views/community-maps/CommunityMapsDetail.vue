@@ -192,7 +192,7 @@ import type {
   DefenseRootInterface,
   MapConfigInterface,
   MapDefensePlacementInterface
-} from "@/interaces";
+} from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type MapData from "@/data/MapData";
 

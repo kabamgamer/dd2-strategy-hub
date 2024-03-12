@@ -45,7 +45,7 @@
               onDefenseDpsCalculated(defense, totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, defenseShards)
             }"
         >
-          <template #defense-details>
+          <template #accordion-defense-details>
             <div class="setup-defense-options" v-if="defense.defenseData && !defense.defenseData.isUnique && defense.userData.id !== 'BoostAura'">
               <hr />
 
@@ -101,7 +101,7 @@ import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
 import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData"
 import { useShortUrl } from "@/composables/ShortUrl"
 import { storeToRefs } from "pinia"
-import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/interaces";
+import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/types";
 import type DefenseShardData from "@/data/DefenseShardData";
 
 import Defense from "@/components/utilities/Defense/Defense.vue";

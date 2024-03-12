@@ -3,7 +3,7 @@ import DamageType from "@/enums/DamageType";
 import StatusEffect from "@/enums/StatusEffect";
 import HasAscensionPoints from "@/traits/HasAscensionPoints";
 
-import type { AscensionPointInterface, DefenseRootInterface } from "@/interaces";
+import type { AscensionPointInterface, DefenseRootInterface } from "@/types";
 
 export interface DefenseDataResponse {
     defense: string;

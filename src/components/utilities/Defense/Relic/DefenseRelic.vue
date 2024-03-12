@@ -42,12 +42,12 @@ import { useModStore } from "@/stores/ModInfo"
 import { useGodlyStat } from "@/composables/GodlyStat"
 
 import type { PropType } from "vue"
-import type { ModInterface, RelicInterface } from "@/interaces"
+import type { ModInterface, RelicInterface } from "@/types"
 
 import Input from "@/components/layout/form/Input.vue"
 import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
-import GodlyStatSelection from "@/components/utilities/Defense/GodlyStatSelection.vue";
+import GodlyStatSelection from "@/components/utilities/Defense/Relic/GodlyStatSelection.vue";
 
 const { getModById } = useModStore()
 const { getGodlyStatLabelByType } = useGodlyStat()

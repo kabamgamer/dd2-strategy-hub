@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import type { AscensionPointInterface } from '@/interaces'
+import type { AscensionPointInterface } from '@/types'
 
 const props = defineProps({
   modelValue: {

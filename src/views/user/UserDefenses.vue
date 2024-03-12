@@ -33,7 +33,7 @@ import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import { useUserDataStore } from "@/stores/UserData";
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
-import type {DefenseRootInterface, UserDefenseInterface} from "@/interaces";
+import type {DefenseRootInterface, UserDefenseInterface} from "@/types";
 import PetData from "@/classes/Pet";
 import RelicData from "@/classes/Relic";
 

@@ -1,4 +1,4 @@
-import type { AscensionPointInterface } from "@/interaces";
+import type { AscensionPointInterface } from "@/types";
 
 export class DefenseHealthAP implements AscensionPointInterface {
     id: string = "defense_health"

@@ -1,6 +1,6 @@
 import type DamageType from "@/enums/DamageType";
 import type StatusEffect from "@/enums/StatusEffect";
-import type { DefenseRootInterface, ModInterface } from "@/interaces";
+import type { DefenseRootInterface, ModInterface } from "@/types";
 
 export default function useDefenseDamageType(): any {
     return {

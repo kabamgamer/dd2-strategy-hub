@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+
+* Added table view for defense lists
+* Display damage type/elemental in defense stats
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.4...HEAD)
+
+
+
 ## [v1.4.4](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.4) (2024-03-09)
 
 * Defense calculators: Added total inflicted damage column to nether archer bounces table

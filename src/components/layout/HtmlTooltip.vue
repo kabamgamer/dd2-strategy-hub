@@ -1,12 +1,21 @@
 <template>
   <div class="html-tooltip">
     <slot name="trigger"><IconQuestion width="20" height="20" /></slot>
-    <span class="html-tooltip__text"><slot /></span>
+    <span class="html-tooltip__text" :style="{ width: width + 'px', marginLeft: '-' + width/2 + 'px'}"><slot /></span>
   </div>
 </template>
 
 <script setup lang="ts">
+import { defineProps } from "vue";
+
 import IconQuestion from "@/components/icons/IconQuestion.vue";
+
+defineProps({
+  width: {
+    type: Number,
+    default: 200,
+  },
+});
 </script>
 
 <style lang="scss" scoped>
@@ -17,7 +26,6 @@ import IconQuestion from "@/components/icons/IconQuestion.vue";
 
   &__text {
     visibility: hidden;
-    width: 200px;
     background-color: black;
     color: #fff;
     text-align: center;
@@ -27,7 +35,6 @@ import IconQuestion from "@/components/icons/IconQuestion.vue";
     z-index: 1;
     bottom: 150%;
     left: 50%;
-    margin-left: -100px;
 
     &::after {
       content: "";

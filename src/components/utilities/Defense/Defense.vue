@@ -1,6 +1,7 @@
 <template>
   <DefenseOverviewTableRow
       v-if="tableView"
+      :defense="defense"
       :icon="defense.defenseData?.icon"
       :label="defense.userData.label"
       :defenseLevel="defenseLevel"
@@ -9,7 +10,7 @@
       :defense-stats="defenseStats"
       :all-checked="allChecked"
       @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
-      @row-select="(value) => $emit('row-select', value)"
+      @row-select="(value) => $emit('row-select', defense.incrementId, value)"
       @defense-edit="() => $emit('defense-edit', defense)"
   />
 

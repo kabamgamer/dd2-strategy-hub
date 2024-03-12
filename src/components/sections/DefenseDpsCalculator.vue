@@ -5,7 +5,6 @@
     </div>
 
     <div class="toolbar__actions">
-      <button class="btn btn-danger mx-2" :disabled="deleteDefensesDisabled" v-if="tableView" @click="deleteDefenses">{{ deleteDefensesLabel }}</button>
       <button class="btn btn-primary" @click="addDefense">Add defense</button>
     </div>
   </div>
@@ -15,10 +14,8 @@
       v-else
       ref="defenseOverviewTable"
       :defenses="defenses"
-      :select-all="selectAll"
-      @select-all="(selected: boolean) => selectAll = selected"
-      @row-select="(defenseIncrementId: number, selected: boolean) => selectedDefenses[defenseIncrementId] = selected"
       table-hover
+      @delete-defense="deleteDefense"
   />
 
   <BootstrapModal title="Select a defense" ref="defenseSelectionModal">
@@ -29,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserDataStore } from "@/stores/UserData";
 
@@ -47,33 +44,9 @@ const { getNextDefenseIncrementId, deleteDefense } = userStore;
 
 const defenseOverviewTable = ref();
 const defenseSelectionModal = ref<InstanceType<typeof BootstrapModal>>();
-const selectAll = ref<boolean>(false);
-const selectedDefenses = ref<{ [defenseIncrementId: number]: boolean }>({});
-
-const selectedDefensesIncrementIds = computed(() => Object.entries(selectedDefenses.value).filter(([, selected]) => selected).map(([defenseIncrementId]) => +defenseIncrementId));
-const deleteDefensesDisabled = computed(() => !selectAll.value && selectedDefensesIncrementIds.value.length === 0);
-const deleteDefensesLabel = computed(() => {
-  if (selectAll.value) {
-    return "Delete all defenses";
-  }
-
-  const selectedDefensesCount = selectedDefensesIncrementIds.value.length;
-  return `Delete defense${selectedDefensesCount > 1 ? "s" : ""}`;
-});
 
 function addDefense(): void {
   defenseSelectionModal.value?.show();
-}
-
-function deleteDefenses(): void {
-  if (selectAll.value) {
-    defenses.value = [];
-  } else {
-    selectedDefensesIncrementIds.value.forEach(defenseIncrementId => deleteDefense(defenseIncrementId));
-  }
-
-  if (defenseOverviewTable.value) defenseOverviewTable.value.allChecked = false;
-  selectedDefenses.value = {};
 }
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {

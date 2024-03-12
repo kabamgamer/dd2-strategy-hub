@@ -1,10 +1,17 @@
 <template>
+  <div class="table__toolbar">
+    <div class="table__toolbar-actions">
+      <button class="btn btn-sm btn-danger" :disabled="deleteDefensesDisabled" @click.prevent="deleteDefenses">{{ deleteDefensesLabel }}</button>
+    </div>
+  </div>
+
   <div class="table-responsive-md">
     <table class="table table-striped table-sm position-relative" :class="{ 'table-hover': tableHover }">
       <LoadingSpinner v-if="loading" />
       <thead>
         <tr>
           <th scope="col"><input type="checkbox" :checked="allChecked" @change="checkAll" /></th>
+          <th scope="col"></th>
           <th scope="col">Icon</th>
           <th scope="col">Label</th>
           <th scope="col">Hit Points</th>
@@ -17,16 +24,15 @@
         </tr>
       </thead>
       <tbody>
-        <Defense
-            v-for="defense in defenses"
-            :key="defense.incrementId"
+        <slot name="defense-list" v-for="defense in defenses" :defense="defense" :allChecked="allChecked" :selectDefenseCallback="selectDefense" :key="defense.incrementId">
+          <Defense
             :all-checked="allChecked"
             :defense="defense"
             table-view
-            @row-select="(checked: boolean) => $emit('rowSelect', defense.incrementId, checked)"
+            @row-select="selectDefense"
             @defense-edit="onDefenseEdit"
-            @total-dps-calculated="() => $emit('totalDpsCalculated', ...arguments)"
-        />
+          />
+        </slot>
       </tbody>
     </table>
   </div>
@@ -39,10 +45,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, onMounted } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted, toRef } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
+
+import type { ToRef } from "vue";
+import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
 import Defense from "@/components/utilities/Defense/Defense.vue";
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
@@ -50,25 +59,56 @@ import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 import DefenseUserInfo from "@/components/utilities/Defense/DefenseUserInfo.vue";
 
 const { loading } = storeToRefs(useGoogleSpreadsheetDataStore())
-defineProps({
+const props = defineProps({
   defenses: Array,
   tableHover: Boolean,
 });
 
-const emit = defineEmits(['selectAll', 'rowSelect', 'totalDpsCalculated']);
+const defenses: ToRef<UserDataStoreDefenseInterface[]> = toRef(props, 'defenses') as ToRef<UserDataStoreDefenseInterface[]>;
 
-const allChecked = ref(false);
+const emit = defineEmits(['totalDpsCalculated', 'deleteDefense']);
+
+const allChecked = ref<boolean>(false);
 const editDefense = ref();
 const editDefenseModal = ref();
 
+const selectedDefenses = ref<number[]>([]);
+const deleteDefensesDisabled = computed(() => !allChecked.value && selectedDefenses.value.length < 1);
+const deleteDefensesLabel = computed(() => {
+  if (allChecked.value) {
+    return "Delete all defenses";
+  }
+
+  const selectedDefensesCount = selectedDefenses.value.length;
+  return `Delete defense${selectedDefensesCount > 1 ? "s" : ""}`;
+});
+
+function deleteDefenses(): void {
+  if (allChecked.value) {
+    selectedDefenses.value = defenses.value.map((defense) => defense.incrementId);
+  }
+
+  selectedDefenses.value.forEach((incrementId) => emit('deleteDefense', incrementId));
+
+  allChecked.value = false;
+  selectedDefenses.value = [];
+}
+
 function checkAll() {
   allChecked.value = !allChecked.value;
-  emit('selectAll', allChecked.value);
 }
 
 function onDefenseEdit(defense) {
   editDefense.value = defense;
   editDefenseModal.value.show();
+}
+
+function selectDefense(defenseIncrementId: number, selected: boolean) {
+  if (selected) {
+    selectedDefenses.value.push(defenseIncrementId);
+  } else {
+    selectedDefenses.value = selectedDefenses.value.filter((id) => id !== defenseIncrementId);
+  }
 }
 
 onMounted(() => {
@@ -86,6 +126,14 @@ th {
 
   &:first-child {
     text-align: center;
+  }
+}
+
+.table__toolbar {
+  &-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
   }
 }
 </style>

@@ -5,9 +5,14 @@
     <h2 class="accordion-header defense-header" :id="id + '-heading'">
       <button class="accordion-button" type="button" :class="{ collapsed: defense.userData.isCollapsed }" data-bs-toggle="collapse" :data-bs-target="'#' + id" :aria-expanded="!defense.userData.isCollapsed" :aria-controls="id">
         <span class="d-flex justify-content-between w-100">
-          <span class="defense-label">{{ defense.userData.label }}</span>
+          <span class="defense-label">
+            <DefenseDamageTypeIcon class="mx-1" :defense="defense" />
+            {{ defense.userData.label }}
+          </span>
 
-          <span class="defense-dps" v-if="!isBuffDefense">{{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}</span>
+          <span class="defense-dps" v-if="!isBuffDefense">
+            {{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}
+          </span>
         </span>
       </button>
     </h2>
@@ -102,6 +107,7 @@ import DefenseSpecificStat from "@/components/utilities/Defense/DefenseSpecificS
 import DefenseUserInfo from "@/components/utilities/Defense/DefenseUserInfo.vue";
 
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
+import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageTypeIcon.vue";
 
 const props = defineProps({
   id: String,

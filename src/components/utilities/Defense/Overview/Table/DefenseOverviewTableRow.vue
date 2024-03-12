@@ -3,14 +3,17 @@
     <!-- Select for actions -->
     <td @click.stop><input type="checkbox" :checked="allChecked || checked" @change="({target}) => $emit('rowSelect', checked = target.checked)" /></td>
 
+    <!-- Damage type icon -->
+    <td style="width: 30px"><DefenseDamageTypeIcon :defense="defense" /></td>
+
     <!-- Icon -->
-    <td><img height="50" :src="icon" :alt="'Defense Icon ' + label"></td>
+    <td style="width: 50px"><img width="50" :src="icon" :alt="'Defense Icon ' + label"></td>
 
     <!-- Label -->
     <td>{{ label }}</td>
 
     <!-- Defense HP -->
-    <td>{{ isBuffDefense ? 'N/A' : Math.round(defenseStats.defenseHitPoints).toLocaleString('en-US') }}</td>
+    <td>{{ defense.userData.id === 'BuffBeam' ? 'N/A' : Math.round(defenseStats.defenseHitPoints).toLocaleString('en-US') }}</td>
 
     <!-- Defense Rate -->
     <td v-if="!isBuffDefense">{{ defenseStats.attackRate.toFixed(3).replace(/(\.[^0]*)0+$/, '$1').replace(/\.$/, '') }} ({{ defenseStats.attackRatePercentage }}%)</td>
@@ -52,6 +55,8 @@ import type { PropType } from "vue";
 import type { DefenseStatsInterface } from "@/types";
 
 import HtmlTooltip from "@/components/layout/HtmlTooltip.vue";
+import type {UserDataStoreDefenseInterface} from "@/stores/UserData";
+import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageTypeIcon.vue";
 
 defineProps({
   icon: String,
@@ -60,6 +65,10 @@ defineProps({
   inSetup: Boolean,
   isBuffDefense: Boolean,
   defenseStats: Object as PropType<DefenseStatsInterface>,
+  defense: {
+    type: Object as PropType<UserDataStoreDefenseInterface>,
+    required: true,
+  },
 });
 
 const checked = ref<boolean>(false);

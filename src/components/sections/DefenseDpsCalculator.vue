@@ -18,6 +18,7 @@
       :select-all="selectAll"
       @select-all="(selected: boolean) => selectAll = selected"
       @row-select="(defenseIncrementId: number, selected: boolean) => selectedDefenses[defenseIncrementId] = selected"
+      table-hover
   />
 
   <BootstrapModal title="Select a defense" ref="defenseSelectionModal">

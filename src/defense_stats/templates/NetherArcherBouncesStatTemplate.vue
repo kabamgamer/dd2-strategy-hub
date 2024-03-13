@@ -29,7 +29,7 @@ import type { Modal } from "bootstrap";
 
 import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 
-import type { DefenseStatInterface } from "@/interaces";
+import type { DefenseStatInterface } from "@/types";
 
 defineProps({
   stat: {

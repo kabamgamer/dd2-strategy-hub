@@ -1,4 +1,4 @@
-import type { DefenseStatInterface, ModInterface, ShardInterface } from "@/interaces";
+import type { DefenseStatInterface, ModInterface, ShardInterface } from "@/types";
 
 export default class NetherArcherBouncesStat implements DefenseStatInterface {
     public readonly template: string = 'NetherArcherBouncesStatTemplate'

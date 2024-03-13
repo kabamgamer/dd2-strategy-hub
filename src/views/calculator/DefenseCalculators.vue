@@ -4,6 +4,14 @@
       <AncientPowerPoints />
     </Section>
 
+    <div class="table-view-toggle w-100 d-flex justify-content-end">
+      <SwitchField
+          v-model="tableView"
+          label="Table view"
+          rounded
+      />
+    </div>
+
     <Section section-title="Defense DPS calculator">
       <DefenseDpsCalculator />
     </Section>
@@ -19,6 +27,12 @@ import AncientPowerPoints from "@/components/sections/AncientPowerPoints.vue";
 import DefenseDpsCalculator from "@/components/sections/DefenseDpsCalculator.vue";
 import DefenseSetups from "@/components/sections/DefenseSetups.vue";
 import Section from "@/components/layout/Section.vue";
+import SwitchField from "@/components/layout/form/SwitchField.vue";
+
+import { storeToRefs } from "pinia";
+import { useUserDataStore } from "@/stores/UserData";
+
+const { tableView } = storeToRefs(useUserDataStore());
 
 </script>
 

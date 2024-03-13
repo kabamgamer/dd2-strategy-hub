@@ -42,12 +42,12 @@ import { useModStore } from "@/stores/ModInfo"
 import { useGodlyStat } from "@/composables/GodlyStat"
 
 import type { PropType } from "vue"
-import type { ModInterface, RelicInterface } from "@/interaces"
+import type { ModInterface, RelicInterface } from "@/types"
 
 import Input from "@/components/layout/form/Input.vue"
 import ModSelection from "@/components/utilities/Defense/Relic/ModSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
-import GodlyStatSelection from "@/components/utilities/Defense/GodlyStatSelection.vue";
+import GodlyStatSelection from "@/components/utilities/Defense/Relic/GodlyStatSelection.vue";
 
 const { getModById } = useModStore()
 const { getGodlyStatLabelByType } = useGodlyStat()
@@ -55,6 +55,10 @@ const { getGodlyStatLabelByType } = useGodlyStat()
 const props = defineProps({
   modelValue: {
     type: Object as PropType<RelicInterface>,
+    required: true
+  },
+  mods: {
+    type: Array as PropType<ModInterface[]>,
     required: true
   },
   defenseCompatibility: String,
@@ -74,12 +78,14 @@ const userSelection = ref<{modId: string|null, mod: ModInterface|null}[]>([
 function onAddMod(index: number, mod: ModInterface|null): void {
   if (!mod) return
   props.modelValue?.mods.push(mod.id);
+  props.mods?.push(mod)
 }
 
 function onDeleteMod(index: number): void {
   userSelection.value.splice(index, 1)
   userSelection.value[2] = {modId: null, mod: null}
   props.modelValue?.mods.splice(index, 1)
+  props.mods?.splice(index, 1)
 }
 
 function onGodlyStatTypeSelect(type: string): void {

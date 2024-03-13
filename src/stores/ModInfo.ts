@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { ModInterface } from "@/interaces";
+import type { ModInterface } from "@/types";
 import DefenseModData from "@/data/DefenseModData";
 import type { DefenseModDataResponse } from "@/data/DefenseModData";
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";

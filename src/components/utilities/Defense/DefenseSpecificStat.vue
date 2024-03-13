@@ -11,7 +11,7 @@
 import { defineProps } from "vue";
 
 import type { PropType } from "vue";
-import type { DefenseStatInterface } from "@/interaces";
+import type { DefenseStatInterface } from "@/types";
 
 import NetherArcherBouncesStatTemplate from "@/defense_stats/templates/NetherArcherBouncesStatTemplate.vue";
 

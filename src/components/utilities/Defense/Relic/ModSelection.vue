@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { defineProps, defineEmits, watch, ref, computed } from 'vue'
-import type { ModInterface } from '@/interaces'
+import type { ModInterface } from '@/types'
 
 import SearchableSelect from "@/components/layout/form/SearchableSelect.vue";
 

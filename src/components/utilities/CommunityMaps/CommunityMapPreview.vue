@@ -62,7 +62,7 @@ import DefenseList from "@/components/utilities/CommunityMaps/DefenseList.vue";
 import useCdn from "@/composables/Cdn";
 
 import type { PropType } from "vue"
-import type { MapConfigInterface } from "@/interaces";
+import type { MapConfigInterface } from "@/types";
 import type MapData from "@/data/MapData";
 
 const { cdn } = useCdn();

@@ -1,4 +1,4 @@
-import type { AscensionPointInterface } from "@/interaces";
+import type { AscensionPointInterface } from "@/types";
 import {DefenseHealthAP, DefensePowerAP, DefenseRangeAP, DefenseRateAP} from "@/data/AscensionPoints";
 
 export default abstract class HasAscensionPoints {

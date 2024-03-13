@@ -1,4 +1,4 @@
-import type { UserDefenseSetupInterface } from "@/interaces";
+import type { UserDefenseSetupInterface } from "@/types";
 
 export default class DataMigrations {
     public migrateDefenseSetups(data: object[]): UserDefenseSetupInterface[] {

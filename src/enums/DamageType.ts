@@ -31,4 +31,8 @@ export default class DamageType extends EnumDefinition {
 
         return [];
     }
+
+    public get label(): string {
+        return this.id.charAt(0).toUpperCase() + this.id.slice(1);
+    }
 }

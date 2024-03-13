@@ -33,79 +33,66 @@
 
     <DefenseSetupModifiers :setupIncrementId="defenseSetup.incrementId" v-model="defenseSetup.modifiers" />
 
-    <div class="row">
-      <div class="col-md-4" v-for="defense in setupDefenses" :key="defense.incrementId">
-        <Defense
+    <DefenseOverviewAccordion v-if="!tableView" :defenses="setupDefenses">
+      <template #defense-list="{ defense }">
+        <div class="col-md-4">
+          <SetupDefense
             :defense="defense"
             :setupDefenses="setupDefenses"
-            :setupDefenseOptions="defenseSetup.defenses"
+            :defenseSetup="defenseSetup"
             :defenseBoosts="defenseBoosts"
-            :setupModifiers="defenseSetup.modifiers"
-            @total-dps-calculated="(totalDps: number, defensePower: number, defenseHealth: number, criticalDamage: number, criticalChance: number, defenseShards: DefenseShardData[]) => {
-              onDefenseDpsCalculated(defense, totalDps, defensePower, defenseHealth, criticalDamage, criticalChance, defenseShards)
-            }"
-        >
-          <template #defense-details>
-            <div class="setup-defense-options" v-if="defense.defenseData && !defense.defenseData.isUnique && defense.userData.id !== 'BoostAura'">
-              <hr />
-
-              <div class="mb-3 row">
-                <label for="defenseCount" class="col-sm-4 col-form-label" v-if="defense.defenseData?.hero === 'Ev2'">Node count:</label>
-                <label for="defenseCount" class="col-sm-4 col-form-label" v-else>Defense count:</label>
-                <div class="col-sm-8">
-                  <input type="number" v-model="defenseSetup.defenses[defense.incrementId].defenseCount" class="form-control" id="defenseCount">
-                </div>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-center">
-              <button class="btn btn-danger" @click.prevent="deleteDefense(defense.incrementId)">
-                Delete
-              </button>
-            </div>
-          </template>
-        </Defense>
-      </div>
-
-      <div class="col-md-4" v-if="defenseSelect">
-        <div class="accordion-item position-relative mb-3">
-          <h2 class="accordion-header" :id="id + '-heading'">
-            <button class="accordion-button" type="button">
-              <span class="d-flex justify-content-between w-100"></span>
-            </button>
-          </h2>
-
-          <div class="accordion-collapse collapse show">
-            <div class="accordion-body">
-              <select class="form-select" @change="selectDefense" v-model="selectedDefense">
-                <option :value="null" selected>
-                  Select a defense
-                </option>
-                <option v-for="defense in defenseSelection" :key="defense.incrementId" :value="defense">
-                  {{ defense.userData.label }}
-                </option>
-              </select>
-            </div>
-          </div>
+            @total-dps-calculated="onDefenseDpsCalculated"
+            @delete-defense="deleteDefense"
+          />
         </div>
-      </div>
-    </div>
+      </template>
+    </DefenseOverviewAccordion>
+    <DefenseOverviewTable v-else :defenses="setupDefenses" @delete-defense="deleteDefense">
+      <template #defense-list="{ defense, allChecked, selectDefenseCallback }">
+        <SetupDefense
+          :defense="defense"
+          :allChecked="allChecked"
+          :setupDefenses="setupDefenses"
+          :defenseSetup="defenseSetup"
+          :defenseBoosts="defenseBoosts"
+          @row-select="selectDefenseCallback"
+          @total-dps-calculated="onDefenseDpsCalculated"
+          table-view
+        />
+      </template>
+    </DefenseOverviewTable>
   </div>
+
+  <BootstrapModal title="Select defense" ref="addDefenseModal">
+    <template #body>
+      <select class="form-select" @change="selectDefense" v-model="selectedDefense">
+        <option :value="null" selected>
+          Select a defense
+        </option>
+        <option v-for="defense in defenseSelection" :key="defense.incrementId" :value="defense">
+          {{ defense.userData.label }}
+        </option>
+      </select>
+    </template>
+  </BootstrapModal>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, defineProps, computed } from "vue"
-import type { PropType } from "vue"
+import { ref, onMounted, defineProps, computed, toRef } from "vue"
+import type { PropType, ToRef } from "vue"
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
 import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData"
 import { useShortUrl } from "@/composables/ShortUrl"
 import { storeToRefs } from "pinia"
-import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/interaces";
+import type { UserDefenseSetupInterface, CalculatedDefenseStatsInterface } from "@/types";
 import type DefenseShardData from "@/data/DefenseShardData";
 
-import Defense from "@/components/utilities/Defense/Defense.vue";
 import DefenseSetupModifiers from "@/components/utilities/Setup/DefenseSetupModifiers.vue";
+import DefenseOverviewTable from "@/components/utilities/Defense/Overview/Table/DefenseOverviewTable.vue";
+import DefenseOverviewAccordion from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordion.vue";
+import SetupDefense from "@/components/utilities/Setup/SetupDefense.vue";
+import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 
 const props = defineProps({
   defenseSetup: {
@@ -114,25 +101,27 @@ const props = defineProps({
   },
 })
 
-if (props.defenseSetup.modifiers === undefined) {
-  props.defenseSetup.modifiers = getDefaultSetupModifiers()
+const defenseSetup: ToRef<UserDefenseSetupInterface> = toRef(props, 'defenseSetup') as ToRef<UserDefenseSetupInterface>
+
+if (defenseSetup.value.modifiers === undefined) {
+  defenseSetup.value.modifiers = getDefaultSetupModifiers()
 }
 
 const { shortenUrl } = useShortUrl()
 const userStore = useUserDataStore()
 
-const { defenses } = storeToRefs(userStore)
+const { defenses, tableView } = storeToRefs(userStore)
 const { deleteDefenseSetup } = userStore
 
 const id = ref<string>()
 const shareButtonElement = ref()
+const addDefenseModal = ref()
 const defensesStats = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const defenseBoosts = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
-const defenseSelect = ref<boolean>(false)
 const selectedDefense = ref<UserDataStoreDefenseInterface|null>(null)
 
-const setupDefenses = computed(() => defenses.value.filter((defense) => props.defenseSetup.defenses[defense.incrementId] !== undefined))
-const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && props.defenseSetup.defenses[defense.incrementId] === undefined))
+const setupDefenses = computed(() => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined))
+const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && defenseSetup.value.defenses[defense.incrementId] === undefined))
 const totalDu = computed((): number => setupDefenses.value.reduce((accumulator, defense: UserDataStoreDefenseInterface) => accumulator + ((defense.defenseData?.defenseUnits ?? 0) * props.defenseSetup.defenses[defense.incrementId].defenseCount), 0))
 const totalDps = computed((): number => {
   let calculatedTotalDps = 0
@@ -140,7 +129,7 @@ const totalDps = computed((): number => {
   for (const defense of setupDefenses.value) {
     const defenseStats = defensesStats.value[defense.incrementId]
     if (defenseStats) {
-      calculatedTotalDps += defenseStats.totalDps * props.defenseSetup.defenses[defense.incrementId].defenseCount
+      calculatedTotalDps += defenseStats.totalDps * defenseSetup.value.defenses[defense.incrementId].defenseCount
     }
   }
 
@@ -168,6 +157,7 @@ function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps
   if (defense.defenseData?.id === 'BoostAura' || defense.defenseData?.id === 'BuffBeam') {
     resolvedDefenseBoosts[defense.incrementId].defensePower = calculatedStats.defensePower / 10
     resolvedDefenseBoosts[defense.incrementId].critDamage = calculatedStats.critDamage / 4
+    calculatedStats.totalDps = 0
   }
 
   for (const shard of defenseShards) {
@@ -188,7 +178,7 @@ function onDefenseDpsCalculated(defense: UserDataStoreDefenseInterface, totalDps
 }
 
 function addDefense(): void {
-  defenseSelect.value = true
+  addDefenseModal.value.show()
 }
 
 function deleteDefense(defenseIncrementId: number): void {
@@ -205,7 +195,7 @@ function selectDefense(): void {
     return
   }
   props.defenseSetup.defenses[selectedDefense.value.incrementId] = {defenseCount: selectedDefense.value.defenseData?.hero !== 'Ev2' ? 1 : 2}
-  defenseSelect.value = false
+  addDefenseModal.value.hide()
   selectedDefense.value = null
 }
 
@@ -214,9 +204,9 @@ async function shareSetup(): Promise<void> {
 
   navigator.clipboard.writeText(await shortenUrl(sharableLink));
 
-  shareButtonElement.value.classList.add('coppied')
+  shareButtonElement.value.classList.add('copied')
   setTimeout(() => {
-    shareButtonElement.value.classList.remove('coppied')
+    shareButtonElement.value.classList.remove('copied')
   }, 5000)
 
   return Promise.resolve()
@@ -255,12 +245,12 @@ onMounted((): void => {
     margin-left: 1rem;
     position: relative
   }
-  .share-btn.coppied::after {
+  .share-btn.copied::after {
     background: var(--bs-secondary-bg-subtle);
     color: var(--bs-body-color);
     border-radius: 4px;
     bottom: 120%;
-    content: 'Coppied to clipboard! Share this URL with your friends.';
+    content: 'Copied to clipboard! Share this URL with your friends.';
     display: block;
     left: -175%;
     padding: 1em;

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ShardInterface } from "@/interaces";
+import type { ShardInterface } from "@/types";
 
 import type { PropType } from "vue";
 import { ref, watch, computed } from "vue";

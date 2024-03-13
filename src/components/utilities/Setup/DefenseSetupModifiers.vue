@@ -44,7 +44,7 @@
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" v-model="setupModifiers.combos.shatter"
                          :id="'shatterModifiersCombo' + setupIncrementId">
-                  <label class="form-check-label" :for="'shatterModifiersCombo' + setupIncrementId">Shattered (not implemented)</label>
+                  <label class="form-check-label" :for="'shatterModifiersCombo' + setupIncrementId">Shattered</label>
                 </div>
               </div>
             </div>
@@ -180,7 +180,7 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { defineProps, defineEmits, watch, ref } from "vue";
-import type { DefenseSetupModifiersInterface } from "@/interaces";
+import type { DefenseSetupModifiersInterface } from "@/types";
 
 const props = defineProps({
   setupIncrementId: Number,

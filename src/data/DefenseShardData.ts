@@ -1,4 +1,4 @@
-import type { ShardInterface } from "@/interaces";
+import type { ShardInterface } from "@/types";
 import type OutputModifier from "@/classes/OutputModifier";
 import HasOutputModifier from "@/traits/HasOutputModifier";
 import DamageType from "@/enums/DamageType";
@@ -64,7 +64,7 @@ export default class DefenseShardData extends HasOutputModifier implements Shard
         this.defenseRange = this.getOutputModifierForValue(data.defenseRangeModifier)
         this.criticalChance = this.getOutputModifierForValue(data.criticalChanceModifier)
         this.criticalDamage = this.getOutputModifierForValue(data.criticalDamageModifier)
-        this.elementalAttunement = DamageType.createEnum(data.elementalAttunement)
+        this.elementalAttunement = DamageType.createEnum(data.elementalAttunement?.toLowerCase())
 
         if (data.compatibilities !== undefined) {
             this.compatibilities = data.compatibilities.split(',')

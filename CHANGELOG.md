@@ -1,5 +1,15 @@
 # Changelog
 
+## [v1.5.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.5.0) (2024-03-13)
+
+* Defense calculators: Added table view for defense lists
+* Defense calculators: Display damage type/elemental in defense stats
+* Defense calculators: Implemented shattered modifier in setups
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.4.4...v1.5.0)
+
+
+
 ## [v1.4.4](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.4.4) (2024-03-09)
 
 * Defense calculators: Added total inflicted damage column to nether archer bounces table

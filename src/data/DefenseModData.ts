@@ -2,7 +2,7 @@ import DamageType from "@/enums/DamageType";
 import ModType from "@/enums/ModType";
 import HasOutputModifier from "@/traits/HasOutputModifier";
 
-import type { ModInterface } from "@/interaces";
+import type { ModInterface } from "@/types";
 import type OutputModifier from "@/classes/OutputModifier";
 
 export interface DefenseModDataResponse {
@@ -56,7 +56,7 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
         this.name = data.name
         this.description = data.description
         this.inTooltip = data.inTooltip
-        this.type = ModType.createEnum(data.type)
+        this.type = ModType.createEnum(data.type?.toLowerCase())
         this.defensePower = this.getOutputModifierForValue(data.defensePowerModifier)
         this.defenseHealth = this.getOutputModifierForValue(data.defenseHealthModifier)
         this.defenseRate = this.getOutputModifierForValue(data.defenseRateModifier)

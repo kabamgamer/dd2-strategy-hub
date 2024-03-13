@@ -86,7 +86,7 @@ import { useUserDataStore } from "@/stores/UserData"
 import { storeToRefs } from "pinia"
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData"
-import type { UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface } from "@/interaces";
+import type { UserDefenseSetupInterface, UserDefenseInterface, UserSetupDefenseInterface } from "@/types";
 
 import Modal from "@/components/layout/BootstrapModal.vue";
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";

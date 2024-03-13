@@ -5,7 +5,7 @@ import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo";
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
-import type { ModInterface, UserDefenseInterface } from "@/interaces";
+import type { ModInterface, UserDefenseInterface } from "@/types";
 
 export function useProtobot(): any {
     const protobotDefenses = ref<UserDataStoreDefenseInterface[]>([]);
@@ -23,6 +23,8 @@ export function useProtobot(): any {
                 incrementId: 1,
                 defenseData: await getDefenseRoot(userData.id),
                 userData,
+                userMods: [],
+                userShards: [],
             }
         }));
 

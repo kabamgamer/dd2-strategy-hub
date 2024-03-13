@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, watch, ref, computed } from 'vue'
 import type { PropType } from 'vue'
-import type { DefenseRootInterface } from '@/interaces'
+import type { DefenseRootInterface } from '@/types'
 
 import SearchableSelect from "@/components/layout/form/SearchableSelect.vue";
 

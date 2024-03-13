@@ -1,22 +1,35 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import type { DefenseRootInterface, UserDefenseInterface, UserDefenseSetupInterface, DefenseSetupModifiersInterface } from "@/interaces";
+import type {
+    DefenseRootInterface,
+    UserDefenseInterface,
+    UserDefenseSetupInterface,
+    DefenseSetupModifiersInterface,
+    ShardInterface, ModInterface
+} from "@/types";
 import type { UserAncientResetPoints } from "@/data/AncientPowers";
 import DataMigrations from "@/data/DataMigrations";
 import { useDefenseStore } from "@/stores/DefenseInfo";
+import { useModStore } from "@/stores/ModInfo";
+import { useShardStore } from "@/stores/ShardInfo";
 
 export interface UserDataStoreDefenseInterface {
     incrementId: number
     userData: UserDefenseInterface,
-    defenseData?: DefenseRootInterface
+    defenseData?: DefenseRootInterface,
+    userMods: ModInterface[],
+    userShards: ShardInterface[],
 }
 
 export const useUserDataStore = defineStore('userDataStore', () => {
     const { getDefenseRoot } = useDefenseStore();
+    const { getModById } = useModStore();
+    const { getShardById } = useShardStore();
 
     const dataMigration = new DataMigrations
 
     const colorMode = ref<string>(localStorage.getItem('colorMode') ?? 'dark')
+    const tableView = ref<boolean>(localStorage.getItem('tableView') === 'true')
     const lastVisitedVersion = ref<string>(localStorage.getItem('lastVisitedVersion') ?? 'v0.0.0')
     const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
@@ -24,6 +37,8 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const ancientPowerPoints = ref<UserAncientResetPoints>(getAncientPowerPoints())
 
     loadDefenseData()
+    loadModData()
+    loadShardData()
 
     function getDefenses(): UserDataStoreDefenseInterface[] {
         const defenses: UserDefenseInterface[] = JSON.parse(localStorage.getItem('defenses') ?? '[]')
@@ -33,6 +48,8 @@ export const useUserDataStore = defineStore('userDataStore', () => {
             allDefenses.push({
                 incrementId: userDefense.incrementId,
                 userData: userDefense,
+                userShards: [],
+                userMods: [],
             })
         }
 
@@ -73,6 +90,26 @@ export const useUserDataStore = defineStore('userDataStore', () => {
             if (defenses.value[index].defenseData) continue
 
             defenses.value[index].defenseData = await getDefenseRoot(item.userData.id)
+        }
+    }
+
+    async function loadModData(): Promise<void> {
+        for (const index in defenses.value) {
+            const item = defenses.value[index]
+
+            if (item.userData.relic.mods.length < 1) continue
+
+            defenses.value[index].userMods = await Promise.all(item.userData.relic.mods.map(async (modId: string): Promise<ModInterface> => await getModById(modId)))
+        }
+    }
+
+    async function loadShardData(): Promise<void> {
+        for (const index in defenses.value) {
+            const item = defenses.value[index]
+
+            if (item.userData.shards.length < 1) continue
+
+            defenses.value[index].userShards = await Promise.all(item.userData.shards.map(async (shardId: string): Promise<ShardInterface> => await getShardById(shardId)))
         }
     }
 
@@ -120,10 +157,14 @@ export const useUserDataStore = defineStore('userDataStore', () => {
             defenses.value.push({
                 incrementId: defense.incrementId,
                 userData: defense,
+                userShards: [],
+                userMods: [],
             })
         })
 
         loadDefenseData()
+        loadModData()
+        loadShardData()
     }
 
     function importDefenseSetups(setups: UserDefenseSetupInterface[]): void {
@@ -152,11 +193,15 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('colorMode', colorMode.value)
     })
 
+    watch(tableView, () => {
+        localStorage.setItem('tableView', tableView.value ? 'true' : 'false')
+    })
+
     watch(lastVisitedVersion, () => {
         localStorage.setItem('lastVisitedVersion', lastVisitedVersion.value)
     })
 
-    return { isDev, colorMode, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
+    return { isDev, colorMode, tableView, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
 })
 
 export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {

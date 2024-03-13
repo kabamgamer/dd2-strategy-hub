@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { ShardInterface } from "@/interaces";
+import type { ShardInterface } from "@/types";
 import DefenseShardData from "@/data/DefenseShardData";
 import type { DefenseShardDataResponse } from "@/data/DefenseShardData";
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";

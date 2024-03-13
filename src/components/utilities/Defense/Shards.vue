@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue"
-import type { ShardInterface } from "@/interaces"
+import type { ShardInterface } from "@/types"
 
 import ShardSelection from "@/components/utilities/Defense/ShardSelection.vue"
 import Cross from "@/components/icons/IconCross.vue"
@@ -39,6 +39,10 @@ const { getShardById, getAllShardsUncategorized } = useShardStore()
 const props = defineProps({
   modelValue: {
     type: Array as PropType<string[]>,
+    default: () => [],
+  },
+  shards: {
+    type: Array as PropType<ShardInterface[]>,
     default: () => [],
   },
   defenseCompatibility: String,
@@ -60,12 +64,14 @@ getAllShardsUncategorized().then((): void => {
 function onAddShard(index: number, shard: ShardInterface|undefined): void {
   if (!shard) return;
   props.modelValue.push(shard.id);
+  props.shards.push(shard);
 }
 
 function onDeleteShard(index: number): void {
   userSelection.value.splice(index, 1);
   userSelection.value[2] = {shard: undefined}
   props.modelValue.splice(index, 1);
+  props.shards.splice(index, 1);
 }
 </script>
 

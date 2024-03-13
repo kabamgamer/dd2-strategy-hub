@@ -125,7 +125,7 @@ watch(() => props.defenseBoosts, (newValue) => {
   // Clone the defenseBoosts object to avoid reactivity issues
   defenseBoosts = JSON.parse(JSON.stringify(newValue))
 
-  setTimeout(recalculate, 400)
+  recalculate()
 }, { deep: true })
 watch(() => props.setupDefenses, (newValue, oldValue) => {
   if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return

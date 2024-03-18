@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+
+* Fixed an issue with talisman effect in formula
+* Updated storm elemental icon
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.0...HEAD)
+
+
+
 ## [v1.5.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.5.0) (2024-03-13)
 
 * Defense calculators: Added table view for defense lists

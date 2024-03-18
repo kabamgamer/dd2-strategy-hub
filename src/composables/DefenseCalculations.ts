@@ -128,7 +128,7 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        if (setupModifiers.heroBuffs.talisman && defense.defenseData.id === 'FrostbiteTower') {
+        if (setupModifiers.heroBuffs.talisman && !isBuffDefense()) {
             // Add 60% defense power if talisman is active
             totalDefensePower *= 1.60
 

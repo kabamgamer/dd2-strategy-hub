@@ -3,7 +3,8 @@
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
 
 * Fixed an issue with talisman effect in formula
-* Updated storm elemental icon
+* Fixed an issue with diverse stacks stacking multiple times on the same type of defense
+* Updated storm elemental icon color
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.0...HEAD)
 

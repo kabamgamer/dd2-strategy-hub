@@ -6,6 +6,7 @@
 * Fixed an issue with diverse stacks stacking multiple times on the same type of defense
 * Fixed an issue with elemental attument shards
 * Prevent defense setup names from being too long
+* Defense calculator: Fixed costs for proton beam/weapon manufacturer for remaining nodes after 1st node
 * Updated storm elemental icon color
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.0...v1.5.1)

@@ -581,7 +581,7 @@ export function useDefenseCalculations(): any {
     function diverseMods(stat: string, modifierType: string): number {
         const defenseIds: string[] = setupDefenses.map((setupDefense: UserDataStoreDefenseInterface) => setupDefense.userData.id)
         const uniqueDefenseCount: number = defenseIds.filter((defenseId: string, index: number) => defenseIds.indexOf(defenseId) === index).length
-        const diverseStack = uniqueDefenseCount > 0 ? uniqueDefenseCount - 1 : (defense.userData.diverseStack ?? 0)
+        const diverseStack: number = uniqueDefenseCount > 0 ? uniqueDefenseCount - 1 : (defense.userData.diverseStack ?? 0)
 
         let calculatedDiversePower = 0
         defense.userMods.forEach((mod: ModInterface): void => {

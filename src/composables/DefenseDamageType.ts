@@ -1,7 +1,7 @@
 import DamageType from "@/enums/DamageType";
 
 import type StatusEffect from "@/enums/StatusEffect";
-import type { ModInterface } from "@/types";
+import type {ModInterface, ShardInterface} from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
 export default function useDefenseDamageType(): any {
@@ -15,12 +15,12 @@ export default function useDefenseDamageType(): any {
                 return defense.defenseData.damageType;
             }
 
-            const elementalAttunementMods: ModInterface[] = defense.userMods.filter((mod: ModInterface) => mod.elementalAttunement !== undefined);
-            if (elementalAttunementMods.length === 0) {
+            const elementalAttunementUtils: (ModInterface|ShardInterface)[] = [...defense.userMods, ...defense.userShards].filter((mod: ModInterface|ShardInterface) => mod.elementalAttunement !== undefined);
+            if (elementalAttunementUtils.length === 0) {
                 return defense.defenseData.damageType;
             }
 
-            return elementalAttunementMods[0].elementalAttunement as DamageType;
+            return elementalAttunementUtils[0].elementalAttunement as DamageType;
         },
 
         getStatusEffect(defense: UserDataStoreDefenseInterface): StatusEffect[] {

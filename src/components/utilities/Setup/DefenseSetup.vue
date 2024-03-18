@@ -2,7 +2,7 @@
   <div class="setup">
     <div class="setup__toolbar d-flex justify-content-between mb-2">
       <div class="setup__toolbar_left">
-        <h3><input type="text" v-model="defenseSetup.label" class="form-control-plaintext p-0"> <span v-if="defenses.length === 0">(Configure a defense first)</span></h3>
+        <h4><input type="text" v-model="defenseSetup.label" maxlength="25" class="form-control-plaintext p-0"> <span v-if="defenses.length === 0">(Configure a defense first)</span></h4>
       </div>
 
       <div class="setup__toolbar_right d-flex">
@@ -122,7 +122,42 @@ const selectedDefense = ref<UserDataStoreDefenseInterface|null>(null)
 
 const setupDefenses = computed(() => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined))
 const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && defenseSetup.value.defenses[defense.incrementId] === undefined))
-const totalDu = computed((): number => setupDefenses.value.reduce((accumulator, defense: UserDataStoreDefenseInterface) => accumulator + ((defense.defenseData?.defenseUnits ?? 0) * props.defenseSetup.defenses[defense.incrementId].defenseCount), 0))
+const totalDu = computed((): number => setupDefenses.value.reduce((accumulator: number, defense: UserDataStoreDefenseInterface) => {
+  if (!defense.defenseData) {
+    return accumulator
+  }
+
+  let defenseUnits: number = defense.defenseData.defenseUnits;
+  let defenseCount: number = (props.defenseSetup as UserDefenseSetupInterface).defenses[defense.incrementId].defenseCount;
+
+  if (defenseCount < 1) {
+    return accumulator
+  }
+
+  if (defense.defenseData.id === 'ProtonBeam') {
+    accumulator += defenseUnits;
+    defenseCount -= 1;
+    defenseUnits = 10;
+  }
+
+  if (defense.defenseData.id === 'WeaponManufacturer') {
+    if (defenseCount === 1) {
+      return accumulator + defenseUnits
+    }
+
+    // Weapon Manufacturer's main node
+    accumulator += defenseUnits;
+
+    // Weapon Manufacturer's second node
+    accumulator += 10;
+
+    // Weapon Manufacturer's remaining nodes
+    defenseUnits = 20;
+    defenseCount -= 2;
+  }
+
+  return accumulator + defenseUnits * defenseCount
+}, 0))
 const totalDps = computed((): number => {
   let calculatedTotalDps = 0
 
@@ -220,7 +255,7 @@ onMounted((): void => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .add-btn {
     margin-left: 1rem;
   }
@@ -229,16 +264,25 @@ onMounted((): void => {
     position: relative;
   }
 
-  .setup__toolbar_stats {
-    font-size: 1.1rem;
-    font-weight: bold;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-  }
-  .setup__toolbar_stats__stat {
-    margin-left: 15px;
+  .setup__toolbar {
+    &_stats {
+      font-size: 1.1rem;
+      font-weight: bold;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      margin-right: 10px;
+
+      &__stat {
+        margin-left: 15px;
+      }
+    }
+
+    &_left {
+      @media (min-width: 992px) {
+        width: 400px;
+      }
+    }
   }
 
   .share-btn {

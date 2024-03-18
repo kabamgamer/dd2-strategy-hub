@@ -128,7 +128,7 @@ export function useDefenseCalculations(): any {
             }
         }
 
-        if (setupModifiers.heroBuffs.talisman && defense.defenseData.id === 'FrostbiteTower') {
+        if (setupModifiers.heroBuffs.talisman && !isBuffDefense()) {
             // Add 60% defense power if talisman is active
             totalDefensePower *= 1.60
 
@@ -579,9 +579,11 @@ export function useDefenseCalculations(): any {
     }
 
     function diverseMods(stat: string, modifierType: string): number {
-        let calculatedDiversePower = 0
-        const diverseStack = setupDefenses.length > 0 ? setupDefenses.length - 1 : (defense.userData.diverseStack ?? 0)
+        const defenseIds: string[] = setupDefenses.map((setupDefense: UserDataStoreDefenseInterface) => setupDefense.userData.id)
+        const uniqueDefenseCount: number = defenseIds.filter((defenseId: string, index: number) => defenseIds.indexOf(defenseId) === index).length
+        const diverseStack: number = uniqueDefenseCount > 0 ? uniqueDefenseCount - 1 : (defense.userData.diverseStack ?? 0)
 
+        let calculatedDiversePower = 0
         defense.userMods.forEach((mod: ModInterface): void => {
             if (!mod.type?.equals(ModType.Diverse)) {
                 return

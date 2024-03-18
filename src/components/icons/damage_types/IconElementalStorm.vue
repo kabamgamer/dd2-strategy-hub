@@ -9,6 +9,6 @@
 
 <style scoped>
 svg {
-  color: #00f4ff;
+  color: #e4a438;
 }
 </style>

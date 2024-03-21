@@ -2,8 +2,10 @@
 
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
 
+* Defense calculators: Added support for Drain Aura mod
 * Defense calculators: Added support for Thick Vines shard
-* Defense calculators: Added support for Blazing Phoenix
+* Defense calculators: Added support for Blazing Phoenix shard
+* Defense calculators: Added support for Explosive Guard, Shielding Guard and Explosive Shielding Guard shards
 * Defense calculators: Fixed an issue with Frosty Power shard calculations
 * Defense calculators: Fixed an issue where setup calculations sometimes wouldn't refresh when defense shards where update
 

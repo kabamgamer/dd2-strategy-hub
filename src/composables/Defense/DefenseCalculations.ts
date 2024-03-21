@@ -52,10 +52,15 @@ export function useDefenseCalculations(
     
     const defenseHitPoints = computed<number>(() => defenseHealth.value * (defense.defenseData?.hpScalar[defenseLevel.value - 1] ?? 0))
 
-    const { tooltipAttackDamage, nonTooltipAttackDamageBonus } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth)
+    const { tooltipAttackDamage, nonTooltipAttackDamageBonus, nonCritAttackDamageBonus } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth)
 
     const tooltipDps = computed<number>(() => tooltipAttackDamage.value * criticalMultiplier.value / attackRate.value)
-    const totalDps = computed<number>(() => (tooltipAttackDamage.value + nonTooltipAttackDamageBonus.value) * defenseSetupComboBuffs.value * defenseSetupModifiers.value * criticalMultiplier.value / attackRate.value + (bouncingPhoenixStat.value?.dps ?? 0))
+    const totalDps = computed<number>(() => {
+        const totalAttackDamage: number = tooltipAttackDamage.value + nonTooltipAttackDamageBonus.value
+        let dps: number = totalAttackDamage * defenseSetupComboBuffs.value * defenseSetupModifiers.value * criticalMultiplier.value / attackRate.value
+        dps += bouncingPhoenixStat.value?.dps ?? 0
+        return dps + nonCritAttackDamageBonus.value
+    })
 
     const bouncingPhoenixStat = computed<undefined|BlazingPhoenixStat>(() => {
         if (!getDefenseShardById('blazing_phoenix')) {

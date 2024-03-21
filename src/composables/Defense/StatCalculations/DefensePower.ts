@@ -59,12 +59,6 @@ export default function useDefensePowerCalculations(
             additiveValues += defensePowerSetupBoosts.value
         }
 
-        if (defense.isBuffDefense) {
-            const currentAttackScalar: number = defense.defenseData.attackScalar[calculationConditions.defenseLevel.value-1]
-            const firstAttackScalar: number = defense.defenseData.attackScalar[0]
-            additiveValues += additiveValues * (currentAttackScalar / firstAttackScalar - 1)
-        }
-
         return additiveValues
     })
 

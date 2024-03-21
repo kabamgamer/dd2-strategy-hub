@@ -29,23 +29,25 @@ export default class HasOutputModifier {
         valuesAndMutators.forEach((mutator: string) => {
             const mutatorParts: string[] = mutator.split(':');
             const mutatorName: string = mutatorParts[0];
-            const mutatorValue: string|undefined = mutatorParts[1];
+            const mutatorValues: undefined|string = mutatorParts[1];
 
             mutators[mutatorName] = {}
-            if (mutatorValue === undefined) {
+            if (mutatorValues === undefined) {
                 return
             }
 
-            // Check if the mutator value contains arguments in between []
-            if (!mutatorValue.includes('[') || !mutatorValue.includes(']')) {
-                mutators[mutatorName][mutatorValue] = true
-                return
-            }
+            mutatorValues.split(';').forEach((mutatorValue: string) => {
+                // Check if the mutator value contains arguments in between []
+                if (!mutatorValue.includes('[') || !mutatorValue.includes(']')) {
+                    mutators[mutatorName][mutatorValue] = true
+                    return
+                }
 
-            const mutatorValueParts: string[] = mutatorValue.split('[');
-            const mutatorValueName: string = mutatorValueParts[0];
-            const mutatorValueArguments: string = mutatorValueParts[1].replace(']', '');
-            mutators[mutatorName][mutatorValueName] = mutatorValueArguments.split(',')
+                const mutatorValueParts: string[] = mutatorValue.split('[');
+                const mutatorValueName: string = mutatorValueParts[0];
+                const mutatorValueArguments: string = mutatorValueParts[1].replace(']', '');
+                mutators[mutatorName][mutatorValueName] = mutatorValueArguments.split(',')
+            })
         })
 
         return mutators

@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+
+* Defense calculators: Added support for Thick Vines shard
+* Defense calculators: Added support for Blazing Phoenix
+* Defense calculators: Fixed an issue with Frosty Power shard calculations
+* Defense calculators: Fixed an issue where setup calculations sometimes wouldn't refresh when defense shards where update
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.1...HEAD)
+
+
+
 ## [v1.5.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.5.1) (2024-03-18)
 
 * Fixed an issue with talisman effect in formula

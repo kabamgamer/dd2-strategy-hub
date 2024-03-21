@@ -16,8 +16,10 @@ export interface DefenseShardDataResponse {
     defenseRangeModifier?: string;
     criticalChanceModifier?: string;
     criticalDamageModifier?: string;
+    damageModifier?: string;
     elementalAttunement?: string;
     compatibilities?: string;
+    customOptions?: string;
 }
 
 export default class DefenseShardData extends HasOutputModifier implements ShardInterface {
@@ -33,8 +35,10 @@ export default class DefenseShardData extends HasOutputModifier implements Shard
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    damageModifier?: OutputModifier;
     elementalAttunement?: DamageType;
     compatibilities?: string[] = undefined;
+    customOptions?: string;
 
     constructor(data: DefenseShardDataResponse) {
         super()
@@ -64,7 +68,9 @@ export default class DefenseShardData extends HasOutputModifier implements Shard
         this.defenseRange = this.getOutputModifierForValue(data.defenseRangeModifier)
         this.criticalChance = this.getOutputModifierForValue(data.criticalChanceModifier)
         this.criticalDamage = this.getOutputModifierForValue(data.criticalDamageModifier)
+        this.damageModifier = this.getOutputModifierForValue(data.damageModifier);
         this.elementalAttunement = DamageType.createEnum(data.elementalAttunement?.toLowerCase())
+        this.customOptions = data.customOptions;
 
         if (data.compatibilities !== undefined) {
             this.compatibilities = data.compatibilities.split(',')

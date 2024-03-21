@@ -1,13 +1,14 @@
+import type { Ref } from "vue";
 import type { DefenseStatInterface, ModInterface, ShardInterface } from "@/types";
 
-export default class NetherArcherBouncesStat implements DefenseStatInterface {
+export default class NetherArcherBouncesStat implements DefenseStatInterface<{ [bounce: number]: number }> {
     public readonly template: string = 'NetherArcherBouncesStatTemplate'
-    private readonly totalDps: number
+    private readonly totalDps: Ref<number>
     private readonly defenseMods: ModInterface[]
     private readonly defenseShards: ShardInterface[]
 
     constructor(
-        totalDps: number,
+        totalDps: Ref<number>,
         defenseMods: ModInterface[],
         defenseShards: ShardInterface[]
     ) {
@@ -25,7 +26,7 @@ export default class NetherArcherBouncesStat implements DefenseStatInterface {
 
         const bounces: { [bounce: number]: number } = {}
         for (let i: number = 1; i <= this.bounces; i++) {
-            bounces[i] = this.totalDps * bouncesDamageMultipliers[i]
+            bounces[i] = this.totalDps.value * bouncesDamageMultipliers[i]
         }
 
         return bounces

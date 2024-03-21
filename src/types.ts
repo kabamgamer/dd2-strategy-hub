@@ -19,8 +19,10 @@ export interface ModInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    damageModifier?: OutputModifier;
     elementalAttunement?: DamageType;
     compatibilities?: string[];
+    customOptions?: string;
     type?: ModType;
 }
 
@@ -37,8 +39,10 @@ export interface ShardInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    damageModifier?: OutputModifier;
     elementalAttunement?: DamageType;
     compatibilities?: string[];
+    customOptions?: string;
 }
 
 export interface RelicInterface {
@@ -173,9 +177,9 @@ export interface CalculatedDefenseStatsInterface {
     defensePower: number;
 }
 
-export interface DefenseStatInterface {
+export interface DefenseStatInterface<TVal>{
     get label(): string;
-    get value(): any;
+    get value(): TVal;
     template?: string;
 }
 

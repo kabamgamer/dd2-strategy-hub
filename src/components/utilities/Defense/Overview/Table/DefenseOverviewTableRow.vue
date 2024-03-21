@@ -23,28 +23,28 @@
     <td>{{ defenseStats.defenseRange }}</td>
 
     <!-- Critical chance -->
-    <td>{{ isBuffDefense ? 'N/A' : ((defenseStats.criticalChance * 100).toFixed(2) + '%') }}</td>
+    <td>{{ isBuffDefense ? 'N/A' : (defenseStats.criticalChance.toFixed(2) + '%') }}</td>
 
     <!-- Critical damage -->
     <td v-if="isBuffDefense">
-      {{ (defenseStats.criticalDamage * 100 / 4).toFixed(2) }}%
+      {{ (defenseStats.criticalDamage / 4).toFixed(2) }}%
       <HtmlTooltip>
         This is the critical damage bonus applied to other defenses
       </HtmlTooltip>
     </td>
-    <td v-else>{{ (defenseStats.criticalDamage * 100).toFixed(2) }}%</td>
+    <td v-else>{{ (defenseStats.criticalDamage).toFixed(2) }}%</td>
 
-    <!-- Defense DPS -->
-    <td colspan="2" v-if="isBuffDefense">
+    <!-- Tooltip DPS -->
+    <td v-if="isBuffDefense">
       {{ Math.round(defenseStats.defensePower / 10).toLocaleString('en-US') }}
       <HtmlTooltip>
         This is the defense power bonus applied to other defenses
       </HtmlTooltip>
     </td>
-    <template v-else>
-      <td>{{ isBuffDefense ? 'N/A' : Math.round(defenseStats.tooltipDps).toLocaleString('en-US') }}</td>
-      <td>{{ isBuffDefense ? 'N/A' : Math.round(defenseStats.totalDps).toLocaleString('en-US') }}</td>
-    </template>
+    <td v-else>{{ isBuffDefense ? 'N/A' : Math.round(defenseStats.tooltipDps).toLocaleString('en-US') }}</td>
+
+    <!-- Actual DPS -->
+    <td>{{ defenseStats.totalDps > 0 ? Math.round(defenseStats.totalDps).toLocaleString('en-US') : 'N/A' }}</td>
 
     <!-- Defense upgrade tier -->
     <td class="p-0" @click.stop>

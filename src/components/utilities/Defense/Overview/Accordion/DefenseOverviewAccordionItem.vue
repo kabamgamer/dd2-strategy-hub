@@ -10,7 +10,7 @@
             {{ defense.userData.label }}
           </span>
 
-          <span class="defense-dps" v-if="!isBuffDefense">
+          <span class="defense-dps" v-if="defenseStats.totalDps > 0">
             {{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}
           </span>
         </span>
@@ -56,19 +56,19 @@
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense HP:</strong> {{ Math.round(defenseStats.defenseHitPoints).toLocaleString('en-US') }}</span>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Rate:</strong> {{ defenseStats.attackRate.toFixed(3).replace(/(\.[^0]*)0+$/, '$1').replace(/\.$/, '') }} ({{ defenseStats.attackRatePercentage }}%)</span>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseStats.defenseRange }}</span>
-                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (defenseStats.criticalChance * 100).toFixed(2) }}%</span>
-                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (defenseStats.criticalDamage * 100).toFixed(2) }}%</span>
+                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ defenseStats.criticalChance.toFixed(2) }}%</span>
+                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ defenseStats.criticalDamage.toFixed(2) }}%</span>
                 </template>
 
                 <template v-else>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power bonus:</strong> {{ Math.round(defenseStats.defensePower / 10) }}</span>
-                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (defenseStats.criticalDamage * 100 / 4).toFixed(2) }}%</span>
+                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (defenseStats.criticalDamage / 4).toFixed(2) }}%</span>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseStats.defenseRange }}</span>
                 </template>
 
-                <div v-for="(stat, index) in defenseSpecificStats" :key="index">
+                <template v-for="(stat, index) in defenseSpecificStats" :key="index">
                   <DefenseSpecificStat :stat="stat" />
-                </div>
+                </template>
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageT
 const props = defineProps({
   id: String,
   icon: String,
-  defenseSpecificStats: Array as PropType<DefenseStatInterface[]>,
+  defenseSpecificStats: Array as PropType<DefenseStatInterface<any>[]>,
   inSetup: Boolean,
   isBuffDefense: Boolean,
   defenseLevel: {

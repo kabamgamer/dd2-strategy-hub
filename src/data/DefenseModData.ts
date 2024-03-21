@@ -17,8 +17,10 @@ export interface DefenseModDataResponse {
     defenseRangeModifier?: string;
     criticalChanceModifier?: string;
     criticalDamageModifier?: string;
+    damageModifier?: string;
     elementalAttunement?: string;
     compatibilities?: string;
+    customOptions?: string;
 }
 
 export default class DefenseModData extends HasOutputModifier implements ModInterface {
@@ -32,8 +34,10 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    damageModifier?: OutputModifier;
     elementalAttunement?: DamageType;
     compatibilities?: string[] = undefined;
+    customOptions?: string;
     type?: ModType;
 
     constructor(data: DefenseModDataResponse) {
@@ -63,7 +67,9 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
         this.defenseRange = this.getOutputModifierForValue(data.defenseRangeModifier)
         this.criticalChance = this.getOutputModifierForValue(data.criticalChanceModifier)
         this.criticalDamage = this.getOutputModifierForValue(data.criticalDamageModifier)
+        this.damageModifier = this.getOutputModifierForValue(data.damageModifier);
         this.elementalAttunement = DamageType.createEnum(data.elementalAttunement)
+        this.customOptions = data.customOptions;
 
         if (data.compatibilities !== undefined) {
             this.compatibilities = data.compatibilities.split(',')

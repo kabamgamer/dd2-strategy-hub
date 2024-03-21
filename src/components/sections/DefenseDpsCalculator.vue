@@ -37,6 +37,7 @@ import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
 import DefenseOverviewTable from "@/components/utilities/Defense/Overview/Table/DefenseOverviewTable.vue";
 import DefenseOverviewAccordion from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordion.vue";
+import UserDefense from "@/classes/UserDefense";
 
 const userStore = useUserDataStore()
 const { defenses, tableView } = storeToRefs(userStore);
@@ -51,7 +52,7 @@ function addDefense(): void {
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {
   const incrementId = getNextDefenseIncrementId();
-  defenses.value.push({
+  defenses.value.push(new UserDefense({
     incrementId,
     defenseData,
     userData: {
@@ -67,7 +68,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
     },
     userMods: [],
     userShards: [],
-  });
+  }));
 
   defenseSelectionModal.value?.hide();
 }

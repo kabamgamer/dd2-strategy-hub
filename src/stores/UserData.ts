@@ -12,6 +12,7 @@ import DataMigrations from "@/data/DataMigrations";
 import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
+import UserDefense from '@/classes/UserDefense';
 
 export interface UserDataStoreDefenseInterface {
     incrementId: number
@@ -19,6 +20,11 @@ export interface UserDataStoreDefenseInterface {
     defenseData?: DefenseRootInterface,
     userMods: ModInterface[],
     userShards: ShardInterface[],
+    isBuffDefense: boolean,
+    ascensionDefenseHealth: number,
+    ascensionDefensePower: number,
+    ascensionRange: number,
+    ascensionRate: number,
 }
 
 export const useUserDataStore = defineStore('userDataStore', () => {
@@ -45,12 +51,12 @@ export const useUserDataStore = defineStore('userDataStore', () => {
 
         const allDefenses: UserDataStoreDefenseInterface[] = []
         for (const userDefense of defenses) {
-            allDefenses.push({
+            allDefenses.push(new UserDefense({
                 incrementId: userDefense.incrementId,
                 userData: userDefense,
                 userShards: [],
                 userMods: [],
-            })
+            }))
         }
 
         return allDefenses
@@ -154,12 +160,12 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         importedDefenses.forEach((defense: UserDefenseInterface) => {
             defense.isCollapsed = false
             defense.isUserDataCollapsed = true
-            defenses.value.push({
+            defenses.value.push(new UserDefense({
                 incrementId: defense.incrementId,
                 userData: defense,
                 userShards: [],
                 userMods: [],
-            })
+            }))
         })
 
         loadDefenseData()

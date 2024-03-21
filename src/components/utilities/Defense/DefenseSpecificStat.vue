@@ -17,7 +17,7 @@ import NetherArcherBouncesStatTemplate from "@/defense_stats/templates/NetherArc
 
 defineProps({
   stat: {
-    type: Object as PropType<DefenseStatInterface>,
+    type: Object as PropType<DefenseStatInterface<any>>,
     required: true,
   },
 })

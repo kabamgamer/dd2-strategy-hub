@@ -4,6 +4,11 @@ export interface OutputModifierMutatorsInterface {
         types?: string[];
         noStack?: string[];
     };
+    fromHealth?: {
+        vampiric?: boolean;
+        ancientFortificationBonus?: string[];
+        exclude?: string[];
+    };
 }
 
 export default class OutputModifier {

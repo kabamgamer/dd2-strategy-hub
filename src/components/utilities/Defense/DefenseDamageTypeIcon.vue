@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from "vue";
 
-import useDefenseDamageType from "@/composables/DefenseDamageType";
+import useDefenseDamageType from "@/composables/Defense/DefenseDamageType";
 
 import type { PropType } from "vue";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
@@ -53,4 +53,4 @@ const damageType = computed<undefined|DamageType>(() => {
 
 <style scoped>
 
-</style>
+</style>@/composables/defense/DefenseDamageType

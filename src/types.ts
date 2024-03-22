@@ -178,8 +178,9 @@ export interface CalculatedDefenseStatsInterface {
 }
 
 export interface DefenseStatInterface<TVal>{
-    get label(): string;
-    get value(): TVal;
+    label: string;
+    value: TVal;
+    dps?: number;
     template?: string;
 }
 

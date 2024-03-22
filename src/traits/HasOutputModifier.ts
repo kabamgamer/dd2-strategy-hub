@@ -28,30 +28,58 @@ export default class HasOutputModifier {
 
         valuesAndMutators.forEach((mutator: string) => {
             const mutatorParts: string[] = mutator.split(':');
-            const mutatorName: string = mutatorParts[0];
+            let mutatorName: string = mutatorParts[0];
             const mutatorValues: undefined|string = mutatorParts[1];
 
-            mutators[mutatorName] = {}
-            if (mutatorValues === undefined) {
+            if (mutatorValues === undefined && mutatorName.includes('=')) {
+                const mutatorNameParts: string[] = mutatorName.split('=')
+                mutatorName = mutatorNameParts[0]
+                const mutatorValue = mutatorNameParts[1]
+                mutators[mutatorName] = this.getMutatorScalarValue(mutatorValue)
                 return
             }
 
-            mutatorValues.split(';').forEach((mutatorValue: string) => {
+            if (mutatorValues === undefined) {
+                mutators[mutatorName] = true
+                return
+            }
+
+            mutators[mutatorName] = {}
+            if (!mutatorValues.includes('=') && !mutatorValues.includes(';')) {
+                mutators[mutatorName][mutatorValues] = true
+                return
+            }
+
+            mutatorValues.split(';').forEach((mutatorOption: string) => {
+                const mutatorOptionParts: string[] = mutatorOption.split('=');
+                const mutatorOptionName: string = mutatorOptionParts[0];
+                const mutatorOptionValue: undefined|string = mutatorOptionParts[1];
+
                 // Check if the mutator value contains arguments in between []
-                if (!mutatorValue.includes('[') || !mutatorValue.includes(']')) {
-                    mutators[mutatorName][mutatorValue] = true
+                if (!mutatorOptionValue) {
+                    mutators[mutatorName][mutatorOptionName] = true
                     return
                 }
 
-                const mutatorValueParts: string[] = mutatorValue.split('[');
-                const mutatorValueName: string = mutatorValueParts[0];
-                const mutatorValueArguments: string = mutatorValueParts[1].replace(']', '');
-                mutators[mutatorName][mutatorValueName] = mutatorValueArguments.split(',')
+                // Check if the mutator value contains arguments in between []
+                if (!mutatorOptionValue.includes('[') || !mutatorOptionValue.includes(']')) {
+                    mutators[mutatorName][mutatorOptionName] = this.getMutatorScalarValue(mutatorOptionValue)
+                    return
+                }
+
+                const mutatorOptionValueArguments: string = mutatorOptionValue.replace(/[[\]]/g, '');
+                mutators[mutatorName][mutatorOptionName] = mutatorOptionValueArguments.split(',')
             })
         })
 
         return mutators
     }
 
+    private getMutatorScalarValue(mutatorValue: string): string|number {
+        if (/^[+-]?(\d*[.])?\d+$/.test(mutatorValue)) {
+            return parseFloat(mutatorValue)
+        }
 
+        return mutatorValue
+    }
 }

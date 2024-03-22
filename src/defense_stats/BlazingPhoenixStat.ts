@@ -1,16 +1,21 @@
 import type { ComputedRef } from "vue";
-import type { DefenseStatInterface } from "@/types";
+import type { DefenseStatInterface, ShardInterface } from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 
 export default class BlazingPhoenixStat implements DefenseStatInterface<string> {
     private readonly blazingPhoenixDamage: number
+    private readonly criticalMultiplier: number;
 
     constructor(
         defense: UserDataStoreDefenseInterface,
         defensePowerAdditives: ComputedRef<number>,
+        criticalMultiplier: ComputedRef<number>,
+        shard: ShardInterface,
+        modsShardsMultiplier: number,
     ) {
-        this.blazingPhoenixDamage = this.calculateBlazingPhoenixDamage(defense, defensePowerAdditives)
+        this.criticalMultiplier = criticalMultiplier.value
+        this.blazingPhoenixDamage = this.calculateBlazingPhoenixDamage(defense, defensePowerAdditives, shard) * modsShardsMultiplier * this.criticalMultiplier
     }
 
     get label(): string 
@@ -29,9 +34,8 @@ export default class BlazingPhoenixStat implements DefenseStatInterface<string> 
         return this.blazingPhoenixDamage / 10
     }
 
-    // 1,033,950
-    private calculateBlazingPhoenixDamage(defense: UserDataStoreDefenseInterface, defensePowerAdditives: ComputedRef<number>): number {
+    private calculateBlazingPhoenixDamage(defense: UserDataStoreDefenseInterface, defensePowerAdditives: ComputedRef<number>, shard: ShardInterface): number {
         const defensePower = defense.userData.pet.defensePower * useAncientPowers().ancientDestructionMultiplier.value + (defense.defenseData?.baseDefensePower ?? 0) + defense.userData.relic.defensePower + defensePowerAdditives.value;
-        return defensePower * 58;
+        return defensePower * parseFloat(shard.customOptions ?? '0') / 100;
     }
 }

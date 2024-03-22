@@ -1,18 +1,21 @@
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import type { ComputedRef, Ref } from 'vue';
-import type { ModInterface, ShardInterface } from '@/types';
+import type { DefenseStatInterface, ModInterface, ShardInterface } from '@/types';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type OutputModifier from '@/classes/OutputModifier';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
 import useSetupCalculations from '@/composables/Defense/StatCalculations/SetupModifiers';
+import ExplosiveGuardStat from '@/defense_stats/ExplosiveGuardStat';
+import ShieldingGuardStat from '@/defense_stats/ShieldingGuardStat';
+import BlazingPhoenixStat from '@/defense_stats/BlazingPhoenixStat';
 
 interface DefenseAttackDamageCalculationsComposable {
     tooltipAttackDamage: ComputedRef<number>,
     nonTooltipAttackDamageBonus: ComputedRef<number>,
-    nonCritAttackDamageBonus: ComputedRef<number>,
+    defenseSpecificStats: ComputedRef<DefenseStatInterface<any>[]>,
 }
 
 export default function useAttackDamageCalculations(
@@ -22,6 +25,7 @@ export default function useAttackDamageCalculations(
     defensePowerAdditives: ComputedRef<number>,
     defenseHealthAdditives: ComputedRef<number>,
     vampiricHealth: ComputedRef<number>,
+    criticalMultiplier: ComputedRef<number>,
 ): DefenseAttackDamageCalculationsComposable {
     const { ancientDestructionMultiplier, ancientFortificationMultiplier } = useAncientPowers()
     const { forRegularModsAndShards } = useModsShards(defense, calculationConditions)
@@ -55,10 +59,8 @@ export default function useAttackDamageCalculations(
         return baseAttackDamage * attackDamageMultiplier + bonusAttackDamage;
     })
 
-    const nonTooltipAttackDamageBonus = computed<number>((): number => getAttackDamageBonus(tooltipAttackDamage.value))
-    const nonCritAttackDamageBonus = computed<number>((): number => getAttackDamageBonus(tooltipAttackDamage.value, false))
-
-    function getAttackDamageBonus(baseAttackDamage: number, includeCrits: boolean = true): number {
+    const nonTooltipAttackDamageMupltiplier = ref<number>(1)
+    const nonTooltipAttackDamageBonus = computed<number>((): number => {
         let bonusAttackDamage = 0
         let attackDamageMultiplier = 0
         forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface) => {
@@ -66,28 +68,91 @@ export default function useAttackDamageCalculations(
                 return
             }
 
-            if (util.damageModifier.mutators.noCrit && includeCrits) {
-                return
-            }
+            const criticalDivision: number = util.damageModifier.mutators.noCrit ? criticalMultiplier.value : 1
 
             if (util.damageModifier.mutators.fromPower) {
-                bonusAttackDamage += attackDamageFromPower(util.damageModifier)
+                bonusAttackDamage += attackDamageFromPower(util.damageModifier) / criticalDivision
                 return
             }
 
             if (util.damageModifier.mutators.fromHealth) {
-                bonusAttackDamage += attackDamageFromHealth(util.damageModifier)
+                bonusAttackDamage += attackDamageFromHealth(util.damageModifier) / criticalDivision
                 return
             }
 
-            bonusAttackDamage += util.damageModifier.additive ?? 0
+            bonusAttackDamage += (util.damageModifier.additive ?? 0) / criticalDivision
             if (util.damageModifier.percentage) {
-                attackDamageMultiplier += util.damageModifier.percentage / 100
+                attackDamageMultiplier += util.damageModifier.percentage / 100 / criticalDivision
             }
         })
 
-        bonusAttackDamage *= 1 + attackDamageMultiplier
-        return baseAttackDamage * attackDamageMultiplier + bonusAttackDamage;
+        nonTooltipAttackDamageMupltiplier.value = 1 + attackDamageMultiplier
+        bonusAttackDamage *= nonTooltipAttackDamageMupltiplier.value
+        return tooltipAttackDamage.value * attackDamageMultiplier + bonusAttackDamage;
+    })
+    
+    const defenseSpecificStats = computed<DefenseStatInterface<any>[]>(() => {
+        const resolvedDefenseSpecificStats: DefenseStatInterface<any>[] = []
+
+        if (!defense.defenseData) return resolvedDefenseSpecificStats
+
+        let shard: ShardInterface|undefined
+        shard = defense.userShards.find((shard: ShardInterface) => shard.id === 'shielding_guard')
+        if (shard) {
+            resolvedDefenseSpecificStats.push(new ShieldingGuardStat(parseFloat(shard.customOptions ?? '0'), defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value))
+        }
+
+        shard = defense.userShards.find((shard: ShardInterface) => shard.id === 'explosive_shielding_guard')
+        if (shard) {
+            const shardValues: {shield: number, explosion: number} = JSON.parse(shard.customOptions ?? '{}')
+            resolvedDefenseSpecificStats.push(new ExplosiveGuardStat(shardValues.explosion, defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value, "ESG Explosion"))
+            resolvedDefenseSpecificStats.push(new ShieldingGuardStat(shardValues.shield, defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value, "ESG Shield"))
+        }
+
+        shard = defense.userShards.find((shard: ShardInterface) => shard.id === 'blazing_phoenix')
+        if (shard) {
+            resolvedDefenseSpecificStats.push(new BlazingPhoenixStat(defense, defensePowerAdditives, criticalMultiplier, shard, nonTooltipAttackDamageMupltiplier.value))
+        }
+
+        return [...resolvedDefenseSpecificStats, ...dynamicCustomStats()]
+    })
+
+    function dynamicCustomStats(): DefenseStatInterface<any>[] {
+        const resolvedDefenseSpecificStats: DefenseStatInterface<any>[] = []
+
+        forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface) => {
+            if (!util.damageModifier || !util.damageModifier.mutators.customStat) {
+                return
+            }
+
+            const damageModifierClone: OutputModifier = Object.assign(Object.create(Object.getPrototypeOf(util.damageModifier)), util.damageModifier)
+            damageModifierClone.percentage = util.damageModifier.mutators.customStat
+            const effectiveCriticalMultiplier: number = damageModifierClone.mutators.noCrit ? 1 : criticalMultiplier.value
+
+            let customStatDamage: undefined|number
+            if (damageModifierClone.mutators.fromPower) {
+                customStatDamage = attackDamageFromPower(damageModifierClone)
+            }
+
+            if (damageModifierClone.mutators.fromHealth) {
+                customStatDamage = attackDamageFromHealth(damageModifierClone)
+            }
+
+            if (!customStatDamage) {
+                customStatDamage = (damageModifierClone.additive ?? 0)
+                if (damageModifierClone.percentage) {
+                    customStatDamage += damageModifierClone.percentage / 100
+                }
+            }
+
+            customStatDamage *= nonTooltipAttackDamageMupltiplier.value * effectiveCriticalMultiplier
+            resolvedDefenseSpecificStats.push({
+                label: util.name,
+                value: Math.round(customStatDamage).toLocaleString('en-US'),
+            })
+        })
+
+        return resolvedDefenseSpecificStats
     }
 
     function attackDamageFromPower(damageModifier: OutputModifier): number {
@@ -167,11 +232,11 @@ export default function useAttackDamageCalculations(
                     break
             }
         })
-        ancientBonus *= ancientDestructionMultiplier.value
+        ancientBonus *= stat === 'defensePower' ? ancientDestructionMultiplier.value : ancientFortificationMultiplier.value
         ancientBonus += petStat + relicStat + baseStat
 
         return ancientBonus
     }
 
-    return { tooltipAttackDamage, nonTooltipAttackDamageBonus, nonCritAttackDamageBonus }
+    return { tooltipAttackDamage, nonTooltipAttackDamageBonus, defenseSpecificStats }
 }

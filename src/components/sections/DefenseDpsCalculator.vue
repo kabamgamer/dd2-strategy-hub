@@ -44,13 +44,19 @@ const { defenses, tableView } = storeToRefs(userStore);
 const { getNextDefenseIncrementId, deleteDefense } = userStore;
 
 const defenseOverviewTable = ref();
+const isDefenseSelection = ref<boolean>(false);
 const defenseSelectionModal = ref<InstanceType<typeof BootstrapModal>>();
 
 function addDefense(): void {
+  isDefenseSelection.value = true;
   defenseSelectionModal.value?.show();
 }
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {
+  if (!isDefenseSelection.value) {
+    return;
+  }
+
   const incrementId = getNextDefenseIncrementId();
   defenses.value.push(new UserDefense({
     incrementId,
@@ -70,6 +76,7 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
     userShards: [],
   }));
 
+  isDefenseSelection.value = false;
   defenseSelectionModal.value?.hide();
 }
 </script>

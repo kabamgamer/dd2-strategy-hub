@@ -1,21 +1,18 @@
 import { computed } from 'vue'
 
 import type { Ref } from 'vue'
-import type { ModInterface, ShardInterface, CalculatedDefenseStatsInterface, DefenseSetupModifiersInterface, UserSetupDefenseInterface, DefenseStatInterface } from "@/types";
+import type { CalculatedDefenseStatsInterface, DefenseSetupModifiersInterface, UserSetupDefenseInterface, DefenseStatInterface } from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
 import useDefensePowerCalculations from '@/composables/Defense/StatCalculations/DefensePower';
 import useDefenseHealthCalculations from '@/composables/Defense/StatCalculations/DefenseHealth';
 
 import NetherArcherBouncesStat from "@/defense_stats/NetherArcherBouncesStat";
-import BlazingPhoenixStat from '@/defense_stats/BlazingPhoenixStat';
 import useDefenseCriticalCalculations from './StatCalculations/DefenseCritical';
 import useDefenseRateCalculations from './StatCalculations/DefenseRate';
 import useDefenseRangeCalculations from './StatCalculations/DefenseRange';
 import useSetupCalculations from './StatCalculations/SetupModifiers';
 import useAttackDamageCalculations from './StatCalculations/AttackDamage';
-import ExplosiveGuardStat from '@/defense_stats/ExplosiveGuardStat';
-import ShieldingGuardStat from '@/defense_stats/ShieldingGuardStat';
 
 export interface CalculationConditionsInterface {
     defenseLevel: Ref<number>,
@@ -52,64 +49,24 @@ export function useDefenseCalculations(
     
     const defenseHitPoints = computed<number>(() => defenseHealth.value * (defense.defenseData?.hpScalar[defenseLevel.value - 1] ?? 0))
 
-    const { tooltipAttackDamage, nonTooltipAttackDamageBonus, nonCritAttackDamageBonus } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth)
+    const { tooltipAttackDamage, nonTooltipAttackDamageBonus, defenseSpecificStats } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth, criticalMultiplier)
+    const customStatsDps = computed<number>(() => defenseSpecificStats.value.reduce((acc: number, stat: DefenseStatInterface<any>) => acc + (stat.dps ?? 0), 0))
 
     const tooltipDps = computed<number>(() => tooltipAttackDamage.value * criticalMultiplier.value / attackRate.value)
-    const totalDps = computed<number>(() => {
-        const totalAttackDamage: number = tooltipAttackDamage.value + nonTooltipAttackDamageBonus.value
-        let dps: number = totalAttackDamage * defenseSetupComboBuffs.value * defenseSetupModifiers.value * criticalMultiplier.value / attackRate.value
-        dps += bouncingPhoenixStat.value?.dps ?? 0
-        return dps + nonCritAttackDamageBonus.value
-    })
+    const totalDps = computed<number>(() => (tooltipAttackDamage.value + nonTooltipAttackDamageBonus.value) * defenseSetupComboBuffs.value * defenseSetupModifiers.value * criticalMultiplier.value / attackRate.value + customStatsDps.value)
 
-    const bouncingPhoenixStat = computed<undefined|BlazingPhoenixStat>(() => {
-        if (!getDefenseShardById('blazing_phoenix')) {
-            return undefined
-        }
+    const defenseSpecificStatsDependingOnTotalDps = computed<DefenseStatInterface<any>[]>((): DefenseStatInterface<any>[] => {
+        const resolvedDefenseSpecificStats: DefenseStatInterface<any>[] = []
 
-        return new BlazingPhoenixStat(defense, defensePowerAdditives)
-    })
-    const defenseSpecificStats = computed<DefenseStatInterface<any>[]>(() => {
-        const defaultConstructorParams: [Ref<number>, ModInterface[], ShardInterface[]] = [totalDps, defense.userMods, defense.userShards]
-        const defenseSpecificStats: DefenseStatInterface<any>[] = []
-
-        if (!defense.defenseData) return defenseSpecificStats
-
-        switch (defense.defenseData.id) {
+        switch (defense.userData.id) {
             case 'NetherArcher':
-                defenseSpecificStats.push(new NetherArcherBouncesStat(...defaultConstructorParams))
+                resolvedDefenseSpecificStats.push(new NetherArcherBouncesStat(totalDps, defense))
                 break
-            case 'BlazeBalloon':
-                if (bouncingPhoenixStat.value) {
-                    defenseSpecificStats.push(bouncingPhoenixStat.value)
-                }
         }
 
-        let shard: ShardInterface|undefined
-        shard = getDefenseShardById('explosive_guard')
-        if (shard) {
-            defenseSpecificStats.push(new ExplosiveGuardStat(parseFloat(shard.customOptions ?? '0'), defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value))
-        }
-
-        shard = getDefenseShardById('shielding_guard')
-        if (shard) {
-            defenseSpecificStats.push(new ShieldingGuardStat(parseFloat(shard.customOptions ?? '0'), defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value))
-        }
-
-        shard = getDefenseShardById('explosive_shielding_guard')
-        if (shard) {
-            const shardValues: {shield: number, explosion: number} = JSON.parse(shard.customOptions ?? '{}')
-            defenseSpecificStats.push(new ExplosiveGuardStat(shardValues.explosion, defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value, "ESG Explosion"))
-            defenseSpecificStats.push(new ShieldingGuardStat(shardValues.shield, defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value, "ESG Shield"))
-        }
-
-        return defenseSpecificStats
+        return resolvedDefenseSpecificStats
     })
-
-    function getDefenseShardById(shardId: string): ShardInterface|undefined {
-        return defense.userShards.find((shard: ShardInterface) => shard.id === shardId)
-    }
 
     // expose managed state as return value
-    return { totalDps, tooltipDps, attackDamage: tooltipAttackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, defenseSpecificStats }
+    return { totalDps, tooltipDps, attackDamage: tooltipAttackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, defenseSpecificStats: [...defenseSpecificStats.value, ...defenseSpecificStatsDependingOnTotalDps.value] }
 }

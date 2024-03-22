@@ -13,8 +13,9 @@ export interface OutputModifierMutatorsInterface {
         skipAscension?: boolean;
         ancientDestructionBonus?: string[];
     };
-    noCrit?: {};
-    noUpgradeScaling?: {};
+    noCrit?: boolean;
+    noUpgradeScaling?: boolean;
+    customStat?: number;
 }
 
 export default class OutputModifier {

@@ -82,7 +82,10 @@ export default function useDefenseHealthCalculations(
         if (defense.defenseData.id === 'BuffBeam') {
             vampiricHealthStat = defense.userData.relic.defenseHealth
         } else {
-            vampiricHealthStat = (defense.userData.pet.defenseHealth + defense.defenseData.baseDefenseHealth + defense.userData.relic.defenseHealth) * ancientFortificationMultiplier.value + defenseHealthAdditives.value
+            vampiricHealthStat = (defense.userData.pet.defenseHealth + defense.defenseData.baseDefenseHealth + defense.userData.relic.defenseHealth) * ancientFortificationMultiplier.value + defense.ascensionDefenseHealth
+            forRegularModsAndShards('defenseHealth', (util: ModInterface|ShardInterface): void => {
+                vampiricHealthStat += util.defenseHealth?.additive ?? 0
+            })
         }
 
         if (calculationConditions.defenseLevel.value === 1) {

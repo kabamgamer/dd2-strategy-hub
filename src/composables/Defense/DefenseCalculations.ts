@@ -47,7 +47,13 @@ export function useDefenseCalculations(
 
     const { defenseSetupComboBuffs, defenseSetupModifiers } = useSetupCalculations(defense, calculationConditions)
     
-    const defenseHitPoints = computed<number>(() => defenseHealth.value * (defense.defenseData?.hpScalar[defenseLevel.value - 1] ?? 0))
+    const defenseHitPoints = computed<number>(() => {
+        if (defense.isBuffDefense) {
+            return 0
+        }
+
+        return defenseHealth.value * (defense.defenseData?.hpScalar[defenseLevel.value - 1] ?? 0)
+    })
 
     const { tooltipAttackDamage, nonTooltipAttackDamageBonus, defenseSpecificStats } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth, criticalMultiplier)
     const customStatsDps = computed<number>(() => defenseSpecificStats.value.reduce((acc: number, stat: DefenseStatInterface<any>) => acc + (stat.dps ?? 0), 0))

@@ -13,7 +13,7 @@
     <td>{{ label }}</td>
 
     <!-- Defense HP -->
-    <td>{{ defense.userData.id === 'BuffBeam' ? 'N/A' : Math.round(defenseStats.defenseHitPoints).toLocaleString('en-US') }}</td>
+    <td>{{ defense.isBuffDefense ? 'N/A' : Math.round(defenseStats.defenseHitPoints).toLocaleString('en-US') }}</td>
 
     <!-- Defense Rate -->
     <td v-if="!isBuffDefense">{{ defenseStats.attackRate.toFixed(3).replace(/(\.[^0]*)0+$/, '$1').replace(/\.$/, '') }} ({{ defenseStats.attackRatePercentage }}%)</td>

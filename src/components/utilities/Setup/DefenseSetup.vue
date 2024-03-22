@@ -118,6 +118,7 @@ const addDefenseModal = ref()
 const defensesStats = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const selectedDefense = ref<UserDataStoreDefenseInterface|null>(null)
 
+// TODO Reorder setup defenses when table is reordered
 const setupDefenses = computed<UserDataStoreDefenseInterface[]>(() => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined))
 const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && defenseSetup.value.defenses[defense.incrementId] === undefined))
 const defenseBoosts = computed<{[incrementId: number]: CalculatedDefenseStatsInterface}>(() => {

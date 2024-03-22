@@ -2,6 +2,8 @@
 
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
 
+* Defense calculators: Added option to sort defenses in table by drag & drop
+* Defense calculators: Added option to configure visible columns in defense table
 * Defense calculators: Added support for mods/shards with damage additives (eg. Reckless Shock/Stunning Revelation)
 * Defense calculators: Added support for mods/shards which scale damage based off of health stat (eg. Thick vines/Earthen guards)
 * Defense calculators: Added support for mods/shards which purely base off of defense power (eg. drain aura)
@@ -9,6 +11,7 @@
 * Defense calculators: Added calculations for Explosive Guard, Shielding Guard and Explosive Shielding Guard shards
 * Defense calculators: Fixed an issue with Frosty Power shard calculations
 * Defense calculators: Fixed an issue where setup calculations sometimes wouldn't refresh when defense shards where update
+* Removed light mode
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.1...HEAD)
 

@@ -10,7 +10,7 @@
         :in-setup="setupDefenses !== undefined"
         :is-buff-defense="defense.isBuffDefense"
         :defense-stats="defenseStats"
-        :all-checked="allChecked"
+        :selected="selected"
         @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
         @row-select="(value) => $emit('row-select', defense.incrementId, value)"
         @defense-edit="() => $emit('defense-edit', defense)"
@@ -69,8 +69,8 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  selected: Boolean,
   collapsed: Boolean,
-  allChecked: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
   setupDefenseOptions: Object as PropType<{ [defensesIncrementId: number]: UserSetupDefenseInterface }|undefined>,
   defenseBoosts: Object as PropType<{[incrementId: number]: CalculatedDefenseStatsInterface}|undefined>,

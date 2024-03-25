@@ -4,7 +4,7 @@
     <td @click.stop><IconBars class="sorting-handle" /></td>
 
     <!-- Select for actions -->
-    <td @click.stop><input type="checkbox" :checked="allChecked || checked" @change="({target}) => $emit('rowSelect', checked = (target as HTMLInputElement)?.checked)" /></td>
+    <td @click.stop><input type="checkbox" :checked="checked" @change="() => $emit('rowSelect', !checked)" /></td>
 
     <!-- Icon -->
     <td style="width: 50px"><img width="50" :src="icon" :alt="'Defense Icon ' + label"></td>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import { defineProps, toRef } from "vue";
 import { storeToRefs } from "pinia";
 
 import type { PropType } from "vue";
@@ -54,9 +54,9 @@ import IconBars from "@/components/icons/IconBars.vue";
 const props = defineProps({
   icon: String,
   label: String,
-  allChecked: Boolean,
   inSetup: Boolean,
   isBuffDefense: Boolean,
+  selected: Boolean,
   defenseLevel: {
     type: Number,
     required: true,
@@ -72,7 +72,7 @@ const props = defineProps({
 });
 
 const { tableHeaders } = storeToRefs(useUserDataStore())
-const checked = ref<boolean>(false);
+const checked = toRef(props, 'selected');
 
 function statForHeader(tableHeader: TableHeaderInterface): string | number {
   let headerStat: number = (props.defenseStats as any)[tableHeader.key];

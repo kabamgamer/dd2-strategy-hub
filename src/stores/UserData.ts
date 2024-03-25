@@ -38,7 +38,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const tableView = ref<boolean>(localStorage.getItem('tableView') === 'true')
     const lastVisitedVersion = ref<string>(localStorage.getItem('lastVisitedVersion') ?? 'v0.0.0')
     const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
-    const tableHeaders = ref<{ [key: string]: TableHeaderInterface}>(getTableHeaders())
+    const tableHeaders = ref<TableHeaderInterface[]>(getTableHeaders())
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
     const defenseSetups = ref<UserDefenseSetupInterface[]>(getDefenseSetups())
     const ancientPowerPoints = ref<UserAncientResetPoints>(getAncientPowerPoints())
@@ -63,20 +63,20 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         return allDefenses
     }
 
-    function getTableHeaders(): { [key: string]: TableHeaderInterface} {
-        const tableHeaders: { [key: string]: TableHeaderInterface} = JSON.parse(localStorage.getItem('tableHeaders') ?? '{}')
+    function getTableHeaders(): TableHeaderInterface[] {
+        const tableHeaders: TableHeaderInterface[] = JSON.parse(localStorage.getItem('tableHeaders') ?? '[]')
 
-        if (Object.keys(tableHeaders).length > 0) return tableHeaders
+        if (tableHeaders.length > 0) return tableHeaders
 
-        const defaultTableHeaders: { [key: string]: TableHeaderInterface} = {
-            defenseHitPoints: { key: "defenseHitPoints", label: "Hit Points", visible: true },
-            attackRate: { key: "attackRate", label: "Rate", visible: true },
-            defenseRange: { key: "defenseRange", label: "Range", visible: true },
-            criticalChance: { key: "criticalChance", label: "Crit. Chance", visible: true },
-            criticalDamage: { key: "criticalDamage", label: "Crit. Damage", visible: true },
-            tooltipDps: { key: "tooltipDps", label: "Tooltip DPS", visible: true },
-            totalDps: { key: "totalDps", label: "Actual DPS", visible: true },
-        };
+        const defaultTableHeaders: TableHeaderInterface[] = [
+            { key: "defenseHitPoints", label: "Hit Points", visible: true },
+            { key: "attackRate", label: "Rate", visible: true },
+            { key: "defenseRange", label: "Range", visible: true },
+            { key: "criticalChance", label: "Crit. Chance", visible: true },
+            { key: "criticalDamage", label: "Crit. Damage", visible: true },
+            { key: "tooltipDps", label: "Tooltip DPS", visible: true },
+            { key: "totalDps", label: "Actual DPS", visible: true },
+        ];
         return defaultTableHeaders
     }
 

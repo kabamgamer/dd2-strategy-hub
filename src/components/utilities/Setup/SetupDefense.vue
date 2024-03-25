@@ -1,7 +1,7 @@
 <template>
   <Defense
     :defense="defense"
-    :all-checked="allChecked"
+    :selected="selected"
     :setupDefenses="setupDefenses"
     :setupDefenseOptions="defenseSetup.defenses"
     :defenseBoosts="defenseBoosts"
@@ -59,7 +59,7 @@ const props = defineProps({
     type: Object as PropType<UserDefenseSetupInterface>,
     required: true,
   },
-  allChecked: Boolean,
+  selected: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
   setupDefenseOptions: Object as PropType<{ [defensesIncrementId: number]: UserSetupDefenseInterface }|undefined>,
   defenseBoosts: Object as PropType<{[incrementId: number]: CalculatedDefenseStatsInterface}|undefined>,

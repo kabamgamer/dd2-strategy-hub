@@ -14,9 +14,9 @@
             <div class="dropdown">
               <IconElipsis class="btn--context-menu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" />
               <ul class="dropdown-menu">
-                <li v-for="availableTableHeader in availableTableHeaders" :key="availableTableHeader.key">
-                  <span class="dropdown-item" @click.prevent="tableHeaders[availableTableHeader.key].visible = !tableHeaders[availableTableHeader.key].visible">
-                    <IconCheck class="column-visibility-indicator column-visibility-indicator--visible" v-if="tableHeaders[availableTableHeader.key].visible" />
+                <li v-for="availableTableHeader in availableTableHeaders" :key="availableTableHeader?.key">
+                  <span class="dropdown-item" @click.prevent="getHeader(availableTableHeader.key).visible = !getHeader(availableTableHeader.key).visible">
+                    <IconCheck v-if="getHeader(availableTableHeader.key)?.visible" class="column-visibility-indicator column-visibility-indicator--visible"  />
                     <IconCross class="column-visibility-indicator column-visibility-indicator--hidden" v-else />
                     {{ availableTableHeader.label }}
                   </span>
@@ -27,17 +27,17 @@
           <th scope="col"><input type="checkbox" :checked="allChecked" @change="checkAll" /></th>
           <th scope="col">Icon</th>
           <th scope="col">Label</th>
-          <th class="column--dragable" v-for="tableHeader in tableHeaders" v-show="tableHeader.visible" :key="tableHeader.key" scope="col">{{ tableHeader.label }}</th>
+          <th v-for="tableHeader in tableHeaders" v-show="tableHeader.visible" :key="tableHeader.key" scope="col">{{ tableHeader.label }}</th>
           <th scope="col" class="text-center">Tier #</th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody ref="tableRowsWrapper">
-        <slot name="defense-list" v-for="defense in defenses" :defense="defense" :allChecked="allChecked" :selectDefenseCallback="selectDefense" :key="defense.incrementId">
+        <slot name="defense-list" v-for="defense in defenses" :defense="defense" :selected="selectedDefenses.includes(defense.incrementId)" :selectDefenseCallback="selectDefense" :key="defense.incrementId">
           <Defense
-            :all-checked="allChecked"
             :defense="defense"
             table-view
+            :selected="selectedDefenses.includes(defense.incrementId)"
             @row-select="selectDefense"
             @defense-edit="onDefenseEdit"
           />
@@ -99,29 +99,29 @@ const availableTableHeaders = ref<TableHeaderInterface[]>([
   { key: "tooltipDps", label: "Tooltip DPS", visible: true },
   { key: "totalDps", label: "Actual DPS", visible: true },
 ]);
-const tableHeaderWrapper = ref();
 const tableRowsWrapper = ref();
 
-// TODO Fix a few reactivity issues with sorting header columns
-/** @ts-ignore */
-useDraggable(tableHeaderWrapper, tableHeaders, { animation: 150, draggable: '.column--dragable' })
 /** @ts-ignore */
 useDraggable(tableRowsWrapper, props.defenses, { animation: 150, handle: '.sorting-handle' })
 
-const allChecked = ref<boolean>(false);
 const editDefense = ref<UserDataStoreDefenseInterface>();
 const editDefenseModal = ref();
 
+const allChecked = ref<boolean>(false);
 const selectedDefenses = ref<number[]>([]);
-const deleteDefensesDisabled = computed(() => !allChecked.value && selectedDefenses.value.length < 1);
+const deleteDefensesDisabled = computed(() => selectedDefenses.value.length < 1);
 const deleteDefensesLabel = computed(() => {
-  if (allChecked.value) {
+  if (selectedDefenses.value.length === defenses.value.length) {
     return "Delete all defenses";
   }
 
   const selectedDefensesCount = selectedDefenses.value.length;
   return `Delete defense${selectedDefensesCount > 1 ? "s" : ""}`;
 });
+
+function getHeader(headerKey: string): TableHeaderInterface {
+  return tableHeaders.value.find((header: TableHeaderInterface) => header.key === headerKey)
+}
 
 function deleteDefenses(): void {
   selectedDefenses.value.forEach((incrementId) => emit('deleteDefense', incrementId));
@@ -156,8 +156,6 @@ function selectDefense(defenseIncrementId: number, selected: boolean): void {
 onMounted(() => {
   editDefenseModal.value._on('hidden.bs.modal', () => editDefense.value = undefined);
 });
-
-defineExpose({ allChecked });
 </script>
 
 <style lang="scss" scoped>
@@ -179,9 +177,6 @@ th {
   }
 }
 
-.column--dragable {
-  cursor: move;
-}
 .btn--context-menu {
   cursor: pointer;
   height: 15px;

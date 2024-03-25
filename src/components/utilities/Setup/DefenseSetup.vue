@@ -48,10 +48,10 @@
       </template>
     </DefenseOverviewAccordion>
     <DefenseOverviewTable v-else :defenses="setupDefenses" @delete-defense="deleteDefense">
-      <template #defense-list="{ defense, allChecked, selectDefenseCallback }">
+      <template #defense-list="{ defense, selected, selectDefenseCallback }">
         <SetupDefense
           :defense="defense"
-          :allChecked="allChecked"
+          :selected="selected"
           :setupDefenses="setupDefenses"
           :defenseSetup="defenseSetup"
           :defenseBoosts="defenseBoosts"
@@ -119,7 +119,16 @@ const defensesStats = ref<{[incrementId: number]: CalculatedDefenseStatsInterfac
 const selectedDefense = ref<UserDataStoreDefenseInterface|null>(null)
 
 // TODO Reorder setup defenses when table is reordered
-const setupDefenses = computed<UserDataStoreDefenseInterface[]>(() => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined))
+const setupDefenses = computed<UserDataStoreDefenseInterface[]>({
+  get: () => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined),
+  set: (value: UserDataStoreDefenseInterface[]) => {
+    const defenses: {[incrementId: number]: {defenseCount: number}} = {}
+    value.forEach((defense) => {
+      defenses[defense.incrementId] = defenseSetup.value.defenses[defense.incrementId]
+    })
+    defenseSetup.value.defenses = defenses
+  },
+})
 const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && defenseSetup.value.defenses[defense.incrementId] === undefined))
 const defenseBoosts = computed<{[incrementId: number]: CalculatedDefenseStatsInterface}>(() => {
   const resolvedDefenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface} = {}

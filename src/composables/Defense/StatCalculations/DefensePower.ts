@@ -180,9 +180,8 @@ export default function useDefensePowerCalculations(
 
         let dragonsNestsCount: number = 0
         calculationConditions.setupDefenses.value.forEach((setupDefense: UserDataStoreDefenseInterface) => {
-            if (setupDefense.userData.id === 'Dragon\'sNest') {
-                // @ts-ignore
-                dragonsNestsCount += calculationConditions.setupDefenseOptions.value[setupDefense.incrementId].defenseCount
+            if (setupDefense.userData.id === 'Dragon\'sNest' && calculationConditions.setupDefenseOptions.value) {
+                dragonsNestsCount += calculationConditions.setupDefenseOptions.value[setupDefense.incrementId]?.defenseCount ?? 0
             }
         })
 

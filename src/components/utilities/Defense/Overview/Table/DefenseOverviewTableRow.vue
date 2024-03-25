@@ -1,7 +1,7 @@
 <template>
   <tr @click="$emit('defenseEdit')">
     <!-- Handle for sorting -->
-    <td @click.stop><IconBars class="sorting-handle" /></td>
+    <td @click.stop><IconBars v-if="sortRows" class="sorting-handle" /></td>
 
     <!-- Select for actions -->
     <td @click.stop><input type="checkbox" :checked="checked" @change="() => $emit('rowSelect', !checked)" /></td>
@@ -57,6 +57,7 @@ const props = defineProps({
   inSetup: Boolean,
   isBuffDefense: Boolean,
   selected: Boolean,
+  sortRows: Boolean,
   defenseLevel: {
     type: Number,
     required: true,

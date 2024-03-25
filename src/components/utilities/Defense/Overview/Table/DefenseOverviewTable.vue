@@ -11,7 +11,7 @@
       <thead>
         <tr ref="tableHeaderWrapper">
           <th scope="col">
-            <div class="dropdown">
+            <div class="dropdown" v-if="configureColumns">
               <IconElipsis class="btn--context-menu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" />
               <ul class="dropdown-menu">
                 <li v-for="availableTableHeader in availableTableHeaders" :key="availableTableHeader?.key">
@@ -36,6 +36,7 @@
         <slot name="defense-list" v-for="defense in defenses" :defense="defense" :selected="selectedDefenses.includes(defense.incrementId)" :selectDefenseCallback="selectDefense" :key="defense.incrementId">
           <Defense
             :defense="defense"
+            :sort-rows="sortRows"
             table-view
             :selected="selectedDefenses.includes(defense.incrementId)"
             @row-select="selectDefense"
@@ -83,6 +84,8 @@ const { loading } = storeToRefs(useGoogleSpreadsheetDataStore())
 const props = defineProps({
   defenses: Array,
   tableHover: Boolean,
+  configureColumns: Boolean,
+  sortRows: Boolean,
 });
 
 const defenses: ToRef<UserDataStoreDefenseInterface[]> = toRef(props, 'defenses') as ToRef<UserDataStoreDefenseInterface[]>;
@@ -120,6 +123,7 @@ const deleteDefensesLabel = computed(() => {
 });
 
 function getHeader(headerKey: string): TableHeaderInterface {
+  /** @ts-ignore */
   return tableHeaders.value.find((header: TableHeaderInterface) => header.key === headerKey)
 }
 

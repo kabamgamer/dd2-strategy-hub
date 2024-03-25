@@ -16,6 +16,7 @@ export interface OutputModifierMutatorsInterface {
     noCrit?: boolean;
     noUpgradeScaling?: boolean;
     customStat?: number;
+    asDamageType?: string;
 }
 
 export default class OutputModifier {

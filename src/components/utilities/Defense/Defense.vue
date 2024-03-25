@@ -11,6 +11,7 @@
         :is-buff-defense="defense.isBuffDefense"
         :defense-stats="defenseStats"
         :selected="selected"
+        :sort-rows="sortRows"
         @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
         @row-select="(value) => $emit('row-select', defense.incrementId, value)"
         @defense-edit="() => $emit('defense-edit', defense)"
@@ -70,6 +71,7 @@ const props = defineProps({
     default: false,
   },
   selected: Boolean,
+  sortRows: Boolean,
   collapsed: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
   setupDefenseOptions: Object as PropType<{ [defensesIncrementId: number]: UserSetupDefenseInterface }|undefined>,

@@ -73,6 +73,8 @@ export function useDefenseCalculations(
         return resolvedDefenseSpecificStats
     })
 
+    const allDefenseSpecificStats = computed<DefenseStatInterface<any>[]>((): DefenseStatInterface<any>[] => [...defenseSpecificStats.value, ...defenseSpecificStatsDependingOnTotalDps.value])
+
     // expose managed state as return value
-    return { totalDps, tooltipDps, attackDamage: tooltipAttackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, defenseSpecificStats: [...defenseSpecificStats.value, ...defenseSpecificStatsDependingOnTotalDps.value] }
+    return { totalDps, tooltipDps, attackDamage: tooltipAttackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, defenseSpecificStats: allDefenseSpecificStats  }
 }

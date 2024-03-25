@@ -7,12 +7,14 @@ import type { CalculationConditionsInterface } from '@/composables/Defense/Defen
 import type OutputModifier from '@/classes/OutputModifier';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
-import useSetupCalculations from '@/composables/Defense/StatCalculations/SetupModifiers';
+import useSetupCalculations, { SetupModifierCalculation } from '@/composables/Defense/StatCalculations/SetupModifiers';
 import ExplosiveGuardStat from '@/defense_stats/ExplosiveGuardStat';
 import ShieldingGuardStat from '@/defense_stats/ShieldingGuardStat';
 import BlazingPhoenixStat from '@/defense_stats/BlazingPhoenixStat';
+import useDefenseDamageType from '../DefenseDamageType';
+import DamageType from '@/enums/DamageType';
 
-interface DefenseAttackDamageCalculationsComposable {
+export interface DefenseAttackDamageCalculationsComposable {
     tooltipAttackDamage: ComputedRef<number>,
     nonTooltipAttackDamageBonus: ComputedRef<number>,
     defenseSpecificStats: ComputedRef<DefenseStatInterface<any>[]>,
@@ -27,6 +29,7 @@ export default function useAttackDamageCalculations(
     vampiricHealth: ComputedRef<number>,
     criticalMultiplier: ComputedRef<number>,
 ): DefenseAttackDamageCalculationsComposable {
+    const { getDamageType } = useDefenseDamageType()
     const { ancientDestructionMultiplier, ancientFortificationMultiplier } = useAncientPowers()
     const { forRegularModsAndShards } = useModsShards(defense, calculationConditions)
     const { defenseSetupHeroBuffs } = useSetupCalculations(defense, calculationConditions)
@@ -105,13 +108,13 @@ export default function useAttackDamageCalculations(
         shard = defense.userShards.find((shard: ShardInterface) => shard.id === 'explosive_shielding_guard')
         if (shard) {
             const shardValues: {shield: number, explosion: number} = JSON.parse(shard.customOptions ?? '{}')
-            resolvedDefenseSpecificStats.push(new ExplosiveGuardStat(shardValues.explosion, defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value, "ESG Explosion"))
+            resolvedDefenseSpecificStats.push(new ExplosiveGuardStat(shardValues.explosion, defense, calculationConditions, defenseHealthAdditives.value, calculationConditions.defenseLevel.value, "ESG Explosion"))
             resolvedDefenseSpecificStats.push(new ShieldingGuardStat(shardValues.shield, defense, defenseHealthAdditives.value, calculationConditions.defenseLevel.value, "ESG Shield"))
         }
 
         shard = defense.userShards.find((shard: ShardInterface) => shard.id === 'blazing_phoenix')
         if (shard) {
-            resolvedDefenseSpecificStats.push(new BlazingPhoenixStat(defense, defensePowerAdditives, criticalMultiplier, shard, nonTooltipAttackDamageMupltiplier.value))
+            resolvedDefenseSpecificStats.push(new BlazingPhoenixStat(defense, calculationConditions, defensePowerAdditives, criticalMultiplier, shard, nonTooltipAttackDamageMupltiplier.value))
         }
 
         return [...resolvedDefenseSpecificStats, ...dynamicCustomStats()]
@@ -145,7 +148,10 @@ export default function useAttackDamageCalculations(
                 }
             }
 
+            const customStatDamageType = damageModifierClone.mutators.asDamageType ? new DamageType(damageModifierClone.mutators.asDamageType) : getDamageType(defense)
+
             customStatDamage *= nonTooltipAttackDamageMupltiplier.value * effectiveCriticalMultiplier
+            customStatDamage *= SetupModifierCalculation.getSetupBonusMultiplier(calculationConditions.setupModifiers, customStatDamageType)
             resolvedDefenseSpecificStats.push({
                 label: util.name,
                 value: Math.round(customStatDamage).toLocaleString('en-US'),

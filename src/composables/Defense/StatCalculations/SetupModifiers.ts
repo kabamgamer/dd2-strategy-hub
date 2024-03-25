@@ -1,8 +1,9 @@
 import { computed } from 'vue';
 
-import type { ComputedRef } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
+import type { DefenseSetupModifiersInterface } from '@/types';
 import useDefenseDamageType from "@/composables/Defense/DefenseDamageType";
 import DamageType from '@/enums/DamageType';
 
@@ -12,68 +13,39 @@ interface DefenseSetupCalculationsComposable {
     defenseSetupModifiers: ComputedRef<number>,
 }
 
-export default function useSetupCalculations(
-    defense: UserDataStoreDefenseInterface,
-    calculationConditions: CalculationConditionsInterface,
-): DefenseSetupCalculationsComposable {
-    const { getDamageType } = useDefenseDamageType()
-    
-    const defenseSetupComboBuffs = computed<number>((): number => {
+export class SetupModifierCalculation {
+    public static getSetupBonusMultiplier(setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>, damageType: DamageType): number {
+        return this.getSetupComboBuffsModifier(setupModifiers, damageType) * this.getSetupModifierForDamageType(setupModifiers, damageType) * this.getSetupHeroBuffsModifier(setupModifiers)
+    }
+
+    public static getSetupComboBuffsModifier(setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>, damageType: DamageType): number {
         let comboModifier = 1
 
-        if (!calculationConditions.setupModifiers.value) {
+        if (!setupModifiers.value) {
             return comboModifier
         }
 
-        if (calculationConditions.setupModifiers.value.combos.ignite) {
+        if (setupModifiers.value.combos.ignite) {
             comboModifier *= 1.25
         }
 
-        if (calculationConditions.setupModifiers.value.combos.shatter && getDamageType(defense).equals(DamageType.Earth)) {
+        if (setupModifiers.value.combos.shatter && damageType.equals(DamageType.Earth)) {
             comboModifier *= 1.5
         }
 
         return comboModifier
-    })
-    
-    const defenseSetupHeroBuffs = computed<number>((): number => {
-        let heroBuffModifier = 1
+    }
 
-        if (!calculationConditions.setupModifiers.value) {
-            return heroBuffModifier
-        }
-
-        if (calculationConditions.setupModifiers.value.heroBuffs.callToArms && !defense.isBuffDefense) {
-            let callToArmsMultiplier = 1.45;
-            if (calculationConditions.setupModifiers.value.heroBuffs.callToArmsInspiredShout) {
-                callToArmsMultiplier = 1.70
-            }
-
-            heroBuffModifier *= callToArmsMultiplier
-        }
-
-        if (calculationConditions.setupModifiers.value.heroBuffs.eruption && !defense.isBuffDefense) {
-            let eruptionMultiplier = 1.3;
-            if (calculationConditions.setupModifiers.value.heroBuffs.eruptionTwiceAsBright) {
-                eruptionMultiplier = 2.12
-            }
-
-            heroBuffModifier *= eruptionMultiplier
-        }
-
-        return heroBuffModifier
-    })
-    
-    const defenseSetupModifiers = computed<number>((): number => {
+    public static getSetupModifierForDamageType(setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>, damageType: DamageType): number {
         let setupModifier = 1
 
-        if (!calculationConditions.setupModifiers.value || !defense.defenseData) {
+        if (!setupModifiers.value) {
             return setupModifier;
         }
 
         // Armored enemies take 25% extra magical damage and 50% less damage from physical attacks
-        if (calculationConditions.setupModifiers.value.laneMutators.armored) {
-            if (!defense.defenseData.damageType.equals(DamageType.Physical)) {
+        if (setupModifiers.value.laneMutators.armored) {
+            if (!damageType.equals(DamageType.Physical)) {
                 setupModifier *= 1.25
             } else {
                 setupModifier *= .50
@@ -81,16 +53,16 @@ export default function useSetupCalculations(
         }
 
         // Reckless/Berserked enemies take 50% extra damage
-        if (calculationConditions.setupModifiers.value.laneMutators.berserked) {
+        if (setupModifiers.value.laneMutators.berserked) {
             setupModifier *= 1.50
         }
-        if (calculationConditions.setupModifiers.value.laneMutators.reckless) {
+        if (setupModifiers.value.laneMutators.reckless) {
             setupModifier *= 1.50
         }
 
         // Spellbreaker enemies take 25% extra physical 50% less magical damage
-        if (calculationConditions.setupModifiers.value.laneMutators.spellbreaker) {
-            if (defense.defenseData.damageType.equals(DamageType.Physical)) {
+        if (setupModifiers.value.laneMutators.spellbreaker) {
+            if (damageType.equals(DamageType.Physical)) {
                 setupModifier *= 1.25
             } else {
                 setupModifier *= .50
@@ -98,22 +70,75 @@ export default function useSetupCalculations(
         }
 
         // Enemies with a soft spot have 20% extra resistance
-        if (calculationConditions.setupModifiers.value.laneMutators.softSpot) {
+        if (setupModifiers.value.laneMutators.softSpot) {
             setupModifier *= .80
         }
 
         // If enemies are frost enemies, they take +100% extra fire damage and -50% water damage
-        if (calculationConditions.setupModifiers.value.enemyType?.frost) {
-            if (getDamageType(defense).equals(DamageType.Fire)) {
+        if (setupModifiers.value.enemyType?.frost) {
+            if (damageType.equals(DamageType.Fire)) {
                 setupModifier *= 2
             }
 
-            if (getDamageType(defense).equals(DamageType.Water)) {
+            if (damageType.equals(DamageType.Water)) {
                 setupModifier *= .50
             }
         }
 
         return setupModifier
+    }
+
+    public static getSetupHeroBuffsModifier(setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>): number {
+        let heroBuffModifier = 1
+
+        if (!setupModifiers.value) {
+            return heroBuffModifier
+        }
+
+        if (setupModifiers.value.heroBuffs.callToArms) {
+            let callToArmsMultiplier = 1.45;
+            if (setupModifiers.value.heroBuffs.callToArmsInspiredShout) {
+                callToArmsMultiplier = 1.70
+            }
+
+            heroBuffModifier *= callToArmsMultiplier
+        }
+
+        if (setupModifiers.value.heroBuffs.eruption) {
+            let eruptionMultiplier = 1.3;
+            if (setupModifiers.value.heroBuffs.eruptionTwiceAsBright) {
+                eruptionMultiplier = 2.12
+            }
+
+            heroBuffModifier *= eruptionMultiplier
+        }
+
+        return heroBuffModifier
+    }
+}
+
+export default function useSetupCalculations(
+    defense: UserDataStoreDefenseInterface,
+    calculationConditions: CalculationConditionsInterface,
+): DefenseSetupCalculationsComposable {
+    const { getDamageType } = useDefenseDamageType()
+    
+    const defenseSetupComboBuffs = computed<number>((): number => SetupModifierCalculation.getSetupComboBuffsModifier(calculationConditions.setupModifiers, getDamageType(defense)))
+    
+    const defenseSetupHeroBuffs = computed<number>((): number => {
+        if (defense.isBuffDefense) {
+            return 1
+        }
+
+        return SetupModifierCalculation.getSetupHeroBuffsModifier(calculationConditions.setupModifiers)
+    })
+    
+    const defenseSetupModifiers = computed<number>((): number => {
+        if (!defense.defenseData) {
+            return 1;
+        }
+
+        return SetupModifierCalculation.getSetupModifierForDamageType(calculationConditions.setupModifiers, getDamageType(defense))
     })
 
     return { defenseSetupComboBuffs, defenseSetupHeroBuffs, defenseSetupModifiers }

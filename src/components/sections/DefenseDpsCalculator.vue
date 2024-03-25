@@ -13,6 +13,8 @@
   <DefenseOverviewTable
       v-else
       ref="defenseOverviewTable"
+      configure-columns
+      sort-rows
       :defenses="defenses"
       table-hover
       @delete-defense="deleteDefense"

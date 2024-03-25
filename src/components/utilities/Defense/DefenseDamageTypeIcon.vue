@@ -14,7 +14,7 @@
       <IconElementalWater v-if="damageType.equals(DamageType.Water)" />
     </template>
 
-    {{ damageType.label }}
+    {{ damageTypeLabel }}
   </HtmlTooltip>
 </template>
 
@@ -37,6 +37,7 @@ import IconElementalPoison from "@/components/icons/damage_types/IconElementalPo
 import IconElementalStorm from "@/components/icons/damage_types/IconElementalStorm.vue";
 import IconElementalWater from "@/components/icons/damage_types/IconElementalWater.vue";
 import HtmlTooltip from "@/components/layout/HtmlTooltip.vue";
+import StatusEffect from '@/enums/StatusEffect';
 
 const { getDamageType } = useDefenseDamageType();
 
@@ -49,8 +50,20 @@ const damageType = computed<undefined|DamageType>(() => {
 
   return getDamageType(props.defense as UserDataStoreDefenseInterface);
 });
+
+const damageTypeLabel = computed<string>((): string => {
+  let label: string = damageType.value?.label ?? '';
+
+  if (props.defense?.defenseData === undefined) return label;
+
+  if (props.defense.defenseData.statusEffects.contains(StatusEffect.Oiled)) {
+    label += '/Oil';
+  }
+
+  return label;
+});
 </script>
 
 <style scoped>
 
-</style>@/composables/defense/DefenseDamageType
+</style>

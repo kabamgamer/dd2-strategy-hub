@@ -2,6 +2,7 @@ import type OutputModifier from "@/classes/OutputModifier";
 import type ModType from "@/enums/ModType";
 import type DamageType from "@/enums/DamageType";
 import type StatusEffect from "@/enums/StatusEffect";
+import EnumCollection from "./enums/EnumCollection";
 
 export interface PetInterface {
     defensePower: number;
@@ -70,7 +71,7 @@ export interface DefenseRootInterface {
     name: string;
     icon: string;
     mapIcon: string;
-    statusEffects: StatusEffect[];
+    statusEffects: EnumCollection<StatusEffect>;
     damageType: DamageType;
     baseDefensePower: number;
     baseDefenseHealth: number;

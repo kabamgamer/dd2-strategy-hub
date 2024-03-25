@@ -1,5 +1,6 @@
 import { DefenseHealthAP, DefensePowerAP, DefenseRangeAP, DefenseRateAP } from "@/data/AscensionPoints";
 import DamageType from "@/enums/DamageType";
+import EnumCollection from "@/enums/EnumCollection";
 import StatusEffect from "@/enums/StatusEffect";
 import HasAscensionPoints from "@/traits/HasAscensionPoints";
 
@@ -10,7 +11,7 @@ export interface DefenseDataResponse {
     hero: string;
     iconUrl: string;
     mapIcon: string;
-    statusEffect: string;
+    statusEffects?: string;
     damageType: string;
     baseDefPwr: number;
     baseDefHealth: number;
@@ -45,7 +46,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
     name: string;
     icon: string;
     mapIcon: string;
-    statusEffects: StatusEffect[];
+    statusEffects: EnumCollection<StatusEffect>;
     damageType: DamageType;
     baseDefensePower: number;
     baseDefenseHealth: number;
@@ -120,9 +121,7 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
             data.t5HpScalar,
         ];
 
-        if (data.statusEffect) {
-            this.statusEffects = StatusEffect.createEnumCollection(data.statusEffect.split(',').map((effect: string) => effect.trim().toLowerCase()));
-        }
+        this.statusEffects = StatusEffect.createEnumCollection(data.statusEffects?.split(',').map((effect: string) => effect.trim().toLowerCase()).filter((effect: string) => effect !== 'none') ?? []);
 
         if (data.ascDefPwr !== 0) {
             this.ascensionPoints.push(new DefensePowerAP(data.ascDefPwr))

@@ -1,3 +1,5 @@
+import EnumCollection from "./EnumCollection";
+
 export default abstract class EnumDefinition {
     constructor(
         public readonly id: string
@@ -14,9 +16,9 @@ export default abstract class EnumDefinition {
     }
 
     // @ts-ignore
-    public static createEnumCollection(values: string[]): this[] {
-        const collection: any =  values.map(value => this.createEnum(value));
-        return collection.filter((value: any) => value !== undefined);
+    public static createEnumCollection(values: string[]): EnumCollection<this> {
+        const collection: EnumCollection<EnumDefinition> = new EnumCollection<EnumDefinition>(values.map(value => this.createEnum(value)).filter((value: any) => value !== undefined));
+        return collection;
     }
 
     public equals(expectedEnum: EnumDefinition): boolean {

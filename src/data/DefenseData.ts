@@ -1,6 +1,6 @@
 import { DefenseHealthAP, DefensePowerAP, DefenseRangeAP, DefenseRateAP } from "@/data/AscensionPoints";
 import DamageType from "@/enums/DamageType";
-import EnumCollection from "@/enums/EnumCollection";
+import type EnumCollection from "@/enums/EnumCollection";
 import StatusEffect from "@/enums/StatusEffect";
 import HasAscensionPoints from "@/traits/HasAscensionPoints";
 

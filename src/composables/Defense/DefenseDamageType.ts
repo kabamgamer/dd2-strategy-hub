@@ -3,6 +3,7 @@ import DamageType from "@/enums/DamageType";
 import type StatusEffect from "@/enums/StatusEffect";
 import type {ModInterface, ShardInterface} from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+import EnumCollection from "@/enums/EnumCollection";
 
 export default function useDefenseDamageType(): any {
     return {
@@ -23,9 +24,9 @@ export default function useDefenseDamageType(): any {
             return elementalAttunementUtils[0].elementalAttunement as DamageType;
         },
 
-        getStatusEffect(defense: UserDataStoreDefenseInterface): StatusEffect[] {
+        getStatusEffect(defense: UserDataStoreDefenseInterface): EnumCollection<StatusEffect> {
             if (!defense.defenseData) {
-                return [];
+                return new EnumCollection<StatusEffect>();
             }
 
             if (defense.defenseData.statusEffects.length > 0) {

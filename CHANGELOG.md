@@ -9,6 +9,7 @@
 * Defense calculators: Added support for mods/shards which purely base off of defense power (eg. drain aura)
 * Defense calculators: Added calculations for Blazing Phoenix shard
 * Defense calculators: Added calculations for Explosive Guard, Shielding Guard and Explosive Shielding Guard shards
+* Defense calculators: Show crit/non-crit values on hover over DPS/damage stat.
 * Defense calculators: Added oil indication on damage type hover if a defense oils enemies
 * Defense calculators: Fixed an issue with unselect all in table view sometimes not unselecting all rows
 * Defense calculators: Fixed an issue with Frosty Power shard calculations

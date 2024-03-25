@@ -11,7 +11,11 @@
           </span>
 
           <span class="defense-dps" v-if="defenseStats.totalDps > 0">
-            {{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}
+            <HtmlTooltip class="html-tooltip--critical-tooltip">
+              <template #trigger><span class="tooltip__text">{{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}</span></template>
+              <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage : defenseStats.totalDps).toLocaleString('en-US') }}</span> <br />
+              <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage * (1 + defenseStats.criticalDamage / 100) : defenseStats.totalDps).toLocaleString('en-US') }}</span>
+            </HtmlTooltip>
           </span>
         </span>
       </button>
@@ -105,6 +109,7 @@ import IconChevronDown from "@/components/icons/IconChevronDown.vue";
 import IconChevronUp from "@/components/icons/IconChevronUp.vue";
 import DefenseSpecificStat from "@/components/utilities/Defense/DefenseSpecificStat.vue";
 import DefenseUserInfo from "@/components/utilities/Defense/DefenseUserInfo.vue";
+import HtmlTooltip from "@/components/layout/HtmlTooltip.vue";
 
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageTypeIcon.vue";

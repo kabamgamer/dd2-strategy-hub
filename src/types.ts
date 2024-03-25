@@ -2,7 +2,7 @@ import type OutputModifier from "@/classes/OutputModifier";
 import type ModType from "@/enums/ModType";
 import type DamageType from "@/enums/DamageType";
 import type StatusEffect from "@/enums/StatusEffect";
-import EnumCollection from "./enums/EnumCollection";
+import type EnumCollection from "./enums/EnumCollection";
 
 export interface PetInterface {
     defensePower: number;
@@ -181,6 +181,8 @@ export interface CalculatedDefenseStatsInterface {
 export interface DefenseStatInterface<TVal>{
     label: string;
     value: TVal;
+    attackDamage?: number;
+    critDamage?: number;
     dps?: number;
     template?: string;
 }

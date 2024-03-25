@@ -28,6 +28,7 @@ export default function useAttackDamageCalculations(
     defenseHealthAdditives: ComputedRef<number>,
     vampiricHealth: ComputedRef<number>,
     criticalMultiplier: ComputedRef<number>,
+    criticalDamage: ComputedRef<number>,
 ): DefenseAttackDamageCalculationsComposable {
     const { getDamageType } = useDefenseDamageType()
     const { ancientDestructionMultiplier, ancientFortificationMultiplier } = useAncientPowers()
@@ -114,7 +115,7 @@ export default function useAttackDamageCalculations(
 
         shard = defense.userShards.find((shard: ShardInterface) => shard.id === 'blazing_phoenix')
         if (shard) {
-            resolvedDefenseSpecificStats.push(new BlazingPhoenixStat(defense, calculationConditions, defensePowerAdditives, criticalMultiplier, shard, nonTooltipAttackDamageMupltiplier.value))
+            resolvedDefenseSpecificStats.push(new BlazingPhoenixStat(defense, calculationConditions, defensePowerAdditives, criticalMultiplier, criticalDamage, shard, nonTooltipAttackDamageMupltiplier.value))
         }
 
         return [...resolvedDefenseSpecificStats, ...dynamicCustomStats()]
@@ -152,10 +153,18 @@ export default function useAttackDamageCalculations(
 
             customStatDamage *= nonTooltipAttackDamageMupltiplier.value * effectiveCriticalMultiplier
             customStatDamage *= SetupModifierCalculation.getSetupBonusMultiplier(calculationConditions.setupModifiers, customStatDamageType)
-            resolvedDefenseSpecificStats.push({
+            const customStatCalculations = {
                 label: util.name,
                 value: Math.round(customStatDamage).toLocaleString('en-US'),
-            })
+                critDamage: undefined as undefined|number,
+                attackDamage: undefined as undefined|number,
+            };
+
+            if (!damageModifierClone.mutators.noCrit) {
+                customStatCalculations.attackDamage = customStatDamage / effectiveCriticalMultiplier
+                customStatCalculations.critDamage = customStatCalculations.attackDamage * (1 + criticalDamage.value / 100)
+            }
+            resolvedDefenseSpecificStats.push(customStatCalculations)
         })
 
         return resolvedDefenseSpecificStats

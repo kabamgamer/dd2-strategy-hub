@@ -18,7 +18,11 @@ defineProps({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.tooltip__text {
+  border-bottom: 1px dotted;
+}
+
 .html-tooltip {
   position: relative;
   display: inline-block;
@@ -50,6 +54,18 @@ defineProps({
 
   &:hover &__text {
     visibility: visible;
+  }
+
+  &--critical-tooltip {
+    .html-tooltip__text {
+      &--non-critical {
+        color: #ffae00;
+      }
+
+      &--critical {
+        color: #dd0000;
+      }
+    }
   }
 }
 </style>

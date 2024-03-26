@@ -1,8 +1,11 @@
 <template>
   <div class="container-fluid community-map-container">
+
+    <h1>{{ mapConfigurations?.title }}</h1>
+
     <LoadingSpinner v-if="loading" />
 
-    <Section :section-title="mapConfigurations?.title" v-else>
+    <Section v-else>
       <div class="row" v-if="map">
         <div class="col-md-9 map_wrapper">
           <CommunityMap :map="map" :key="communityMapKey">
@@ -195,6 +198,7 @@ import type {
 } from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type MapData from "@/data/MapData";
+import type { MetaDataComposable } from "@/composables/SEO/metaData";
 
 import useCommunityMapsApi from "@/api/CommunityMapsApi";
 import { useMapStore } from "@/stores/Map";
@@ -482,9 +486,20 @@ async function loadMapConfigurations(): Promise<void> {
   loading.value = true
 
   mapConfigurations.value = await getCommunityMapById(route.params.id)
+  if (mapConfigurations.value.createdAt) {
+    mapConfigurations.value.createdAt = new Date(mapConfigurations.value.createdAt)
+  }
+
   mapMetaForm.load(mapConfigurations.value);
   if (mapConfigurations.value.map) {
     map.value = await getMapById(mapConfigurations.value.map)
+  }
+
+  const metaInfo: undefined|MetaDataComposable = router.currentRoute.value.meta?.metaInfo as undefined|MetaDataComposable
+  if (metaInfo) {
+    metaInfo.set('title', mapConfigurations.value.title)
+    metaInfo.set('description', `This ${mapConfigurations.value.gameMode} ${mapConfigurations.value.difficulty} build of "${map.value?.name ?? ''}" is brought to you by ${mapConfigurations.value.author.name}, published on ${mapConfigurations.value.createdAt.toLocaleDateString('en-US')}.`)
+    metaInfo.set('keywords', [map.value?.name ?? '', 'community map', ...mapConfigurations.value.tags])
   }
 
   loading.value = false

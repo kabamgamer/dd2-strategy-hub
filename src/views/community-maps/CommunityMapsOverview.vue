@@ -1,8 +1,16 @@
 <template>
   <div class="container">
-    <div class="action_toolbar d-flex justify-content-end">
-      <button class="btn btn-primary" @click="onCreateNewMap">Share your layout</button>
+
+    <div class="action_toolbar d-flex justify-content-between">
+      <h1>Community maps</h1>
+
+      <span><button class="btn btn-primary" @click="onCreateNewMap">Share your layout</button></span>
     </div>
+
+    <p>
+      Discover new strategies and share your own with the community. Struggle te beat a map? Find a way to beat it here. Have a great layout? Share it with the community.
+    </p>
+
     <Section>
       <CommunityMapFilters @filter="onFilter" />
     </Section>

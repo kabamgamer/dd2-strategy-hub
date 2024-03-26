@@ -41,6 +41,9 @@
         Build: <ChangelogModal /> | &copy; {{ (new Date).getFullYear() }} DD2 Strategy Hub |
         <a href="https://github.com/kabamgamer/dd2-strategy-hub" target="_blank" rel="noopener noreferrer">
           <span class="icon-github"><IconGithub /></span> Github
+        </a> |
+        <a href="https://wiki.dungeondefenders2.com/wiki/Main_Page" class="external" target="_blank" rel="noopener">
+          DD2 Wiki
         </a>
       </span>
     </div>

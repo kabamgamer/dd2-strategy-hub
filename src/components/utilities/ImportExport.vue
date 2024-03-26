@@ -1,5 +1,5 @@
 <template>
-  <a class="btn btn-secondary" @click.prevent="openModal">Import / export</a>
+  <a href="#" class="btn btn-secondary" @click.prevent="openModal">Import / export</a>
 
   <Modal title="Import/Export" ref="importExportModal">
     <template #body>

@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-outline-success ms-2" @click.prevent="openModal" v-if="withCta && !user?.accessToken">
+  <button class="btn btn-success ms-2" @click.prevent="openModal" v-if="withCta && !user?.accessToken">
     Login
   </button>
   <div class="dropdown user-profile-dropdown" v-else>

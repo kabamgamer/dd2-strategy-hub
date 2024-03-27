@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+## [v1.6.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.0) (2023-03-28)
 
 * Defense calculators: Added option to sort defenses in table by drag & drop
 * Defense calculators: Added option to configure visible columns in defense table
@@ -18,7 +18,7 @@
 * Table view is now the default view
 * Removed light mode/theme
 
-[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.1...HEAD)
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.1...v1.6.0)
 
 
 

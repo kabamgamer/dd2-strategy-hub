@@ -13,17 +13,24 @@
     <td>{{ label }}</td>
 
     <td v-for="tableHeader in tableHeaders" v-show="tableHeader.visible" :key="tableHeader.key">
-      <template v-if="tableHeader.key !== 'totalDps'">{{ statForHeader(tableHeader) }}</template>
-      
-      <HtmlTooltip class="html-tooltip--critical-tooltip" v-else>
-        <template #trigger><span class="tooltip__text">{{ statForHeader(tableHeader) }}</span></template>
-        <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage : defenseStats.totalDps).toLocaleString('en-US') }}</span> <br />
-        <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage * (1 + defenseStats.criticalDamage / 100) : defenseStats.totalDps).toLocaleString('en-US') }}</span>
-      </HtmlTooltip>
+      <template v-if="!tableHeader.customStatsCount">
+        <template v-if="tableHeader.key !== 'totalDps'">{{ statForHeader(tableHeader) }}</template>
+        
+        <HtmlTooltip class="html-tooltip--critical-tooltip" v-else>
+          <template #trigger><span class="tooltip__text">{{ statForHeader(tableHeader) }}</span></template>
+          <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage : defenseStats.totalDps).toLocaleString('en-US') }}</span> <br />
+          <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage * (1 + defenseStats.criticalDamage / 100) : defenseStats.totalDps).toLocaleString('en-US') }}</span>
+        </HtmlTooltip>
 
-      <HtmlTooltip v-if="isBuffDefense && (tableHeader.key === 'criticalDamage' || tableHeader.key === 'tooltipDps')">
-        This is the bonus applied to other defenses
-      </HtmlTooltip>
+        <HtmlTooltip v-if="isBuffDefense && (tableHeader.key === 'criticalDamage' || tableHeader.key === 'tooltipDps')">
+          This is the bonus applied to other defenses
+        </HtmlTooltip>
+      </template>
+
+      <template v-else>
+        <DefenseSpecificStat v-if="customStatForHeader(tableHeader)" :stat="customStatForHeader(tableHeader)" :tableView="true" />
+        <template v-else>N/A</template>
+      </template>
     </td>
 
     <!-- Defense upgrade tier -->
@@ -48,11 +55,13 @@ import type { PropType } from "vue";
 import type { DefenseStatsInterface } from "@/types";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type { TableHeaderInterface } from "./DefenseOverviewTable.vue";
+import type { DefenseStatInterface } from '@/types';
 
 import { useUserDataStore } from "@/stores/UserData";
 
 import HtmlTooltip from "@/components/layout/HtmlTooltip.vue";
 import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageTypeIcon.vue";
+import DefenseSpecificStat from '@/components/utilities/Defense/DefenseSpecificStat.vue';
 import IconChevronDown from "@/components/icons/IconChevronDown.vue";
 import IconChevronUp from "@/components/icons/IconChevronUp.vue";
 import IconBars from "@/components/icons/IconBars.vue";
@@ -64,6 +73,7 @@ const props = defineProps({
   isBuffDefense: Boolean,
   selected: Boolean,
   sortRows: Boolean,
+  defenseSpecificStats: Array as PropType<DefenseStatInterface<any>[]>,
   defenseLevel: {
     type: Number,
     required: true,
@@ -80,6 +90,10 @@ const props = defineProps({
 
 const { tableHeaders } = storeToRefs(useUserDataStore())
 const checked = toRef(props, 'selected');
+
+function customStatForHeader(tableHeader: TableHeaderInterface): DefenseStatInterface<any> {
+  return (props.defenseSpecificStats as DefenseStatInterface<any>[]).find(stat => stat.label.replace(' ', '') === tableHeader.key) as DefenseStatInterface<any>;
+}
 
 function statForHeader(tableHeader: TableHeaderInterface): string | number {
   let headerStat: number = (props.defenseStats as any)[tableHeader.key];

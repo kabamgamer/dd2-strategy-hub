@@ -41,6 +41,7 @@
             :selected="selectedDefenses.includes(defense.incrementId)"
             @row-select="selectDefense"
             @defense-edit="onDefenseEdit"
+            @defense-specific-stats="onDefenseSpecificStatsCollection"
           />
         </slot>
       </tbody>
@@ -63,6 +64,7 @@ import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 
 import type { ToRef } from "vue";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+import type { DefenseStatInterface } from '@/types';
 
 import { useUserDataStore } from "@/stores/UserData";
 
@@ -78,6 +80,7 @@ export interface TableHeaderInterface {
   label: string;
   key: string;
   visible: boolean;
+  customStatsCount?: number;
 }
 
 const { loading } = storeToRefs(useGoogleSpreadsheetDataStore())
@@ -147,6 +150,40 @@ function checkAll(): void {
 function onDefenseEdit(defense: UserDataStoreDefenseInterface): void {
   editDefense.value = defense;
   editDefenseModal.value.show();
+}
+
+function onDefenseSpecificStatsCollection(addedDefenseStats: DefenseStatInterface<any>[], deletedDefenseStats: DefenseStatInterface<any>[]): void {
+  // Process deleted stats
+  if (deletedDefenseStats.length > 0) {
+    deletedDefenseStats.forEach((stat: DefenseStatInterface<any>) => {
+      const headerIndex = availableTableHeaders.value.findIndex((header: TableHeaderInterface) => stat.label === header.label);
+      if (headerIndex !== -1) {
+        // @ts-ignore
+        availableTableHeaders.value[headerIndex].customStatsCount--;
+        if (availableTableHeaders.value[headerIndex].customStatsCount === 0) {
+          tableHeaders.value = tableHeaders.value.filter((header: TableHeaderInterface) => header.key !== stat.label.replace(' ', ''));
+          availableTableHeaders.value.splice(headerIndex, 1);
+        }
+      }
+    });
+  }
+
+  // Process added stats
+  if (addedDefenseStats.length > 0) {
+    addedDefenseStats.forEach((stat: DefenseStatInterface<any>) => {
+      const headerIndex = availableTableHeaders.value.findIndex((header: TableHeaderInterface) => stat.label === header.label);
+      if (headerIndex !== -1) {
+        // @ts-ignore
+        availableTableHeaders.value[headerIndex].customStatsCount++;
+      } else {
+        const key: string = stat.label.replace(' ', '')
+        availableTableHeaders.value.push({ key, label: stat.label, visible: true, customStatsCount: 1 });
+        if (!tableHeaders.value.some((header: TableHeaderInterface) => header.key === key)) {
+          tableHeaders.value.push({ key, label: stat.label, visible: true, customStatsCount: 1 });
+        }
+      }
+    });
+  }
 }
 
 function selectDefense(defenseIncrementId: number, selected: boolean): void {

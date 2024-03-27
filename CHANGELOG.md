@@ -14,6 +14,7 @@
 * Defense calculators: Fixed an issue with unselect all in table view sometimes not unselecting all rows
 * Defense calculators: Fixed an issue with Frosty Power shard calculations
 * Defense calculators: Fixed an issue where setup calculations sometimes wouldn't refresh when defense shards where update
+* Table view is now the default view
 * Removed light mode/theme
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.5.1...HEAD)

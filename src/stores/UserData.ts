@@ -35,7 +35,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
 
     const dataMigration = new DataMigrations
 
-    const tableView = ref<boolean>(localStorage.getItem('tableView') === 'true')
+    const tableView = ref<boolean>(!localStorage.getItem('tableView') || localStorage.getItem('tableView') === 'true')
     const lastVisitedVersion = ref<string>(localStorage.getItem('lastVisitedVersion') ?? 'v0.0.0')
     const isDev = ref<boolean>(localStorage.getItem('isDev') === 'true')
     const tableHeaders = ref<TableHeaderInterface[]>(getTableHeaders())

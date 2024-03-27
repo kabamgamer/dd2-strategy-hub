@@ -7,6 +7,7 @@
         :icon="defense.defenseData?.icon"
         :label="defense.userData.label"
         :defenseLevel="defenseLevel"
+        :defense-specific-stats="defenseSpecificStats"
         :in-setup="setupDefenses !== undefined"
         :is-buff-defense="defense.isBuffDefense"
         :defense-stats="defenseStats"
@@ -47,7 +48,8 @@ import type {
   CalculatedDefenseStatsInterface,
   DefenseSetupModifiersInterface,
   UserSetupDefenseInterface,
-  DefenseStatsInterface
+  DefenseStatsInterface,
+  DefenseStatInterface,
 } from "@/types";
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
@@ -60,7 +62,7 @@ import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 
 const userStore = useUserDataStore();
 
-const emit = defineEmits(['total-dps-calculated', 'row-select', 'defense-edit'])
+const emit = defineEmits(['total-dps-calculated', 'row-select', 'defense-edit', 'defense-specific-stats'])
 const props = defineProps({
   defense: {
     type: Object as PropType<UserDataStoreDefenseInterface>,
@@ -112,6 +114,11 @@ function onDefenseCalculationUpdate(): void {
 }
 
 watch(totalDps, onDefenseCalculationUpdate)
+watch(defenseSpecificStats, (newValue: DefenseStatInterface<any>[], oldValue: DefenseStatInterface<any>[]) => {
+  const addedStats: DefenseStatInterface<any>[] = newValue.filter(stat => !oldValue.some(statToCheck => statToCheck.label === stat.label))
+  const removedStats: DefenseStatInterface<any>[] = oldValue.filter(stat => !newValue.some(statToCheck => statToCheck.label === stat.label))
+  emit('defense-specific-stats', addedStats, removedStats)
+})
 
 if (defense.isBuffDefense) {
   watch(defensePower, onDefenseCalculationUpdate)

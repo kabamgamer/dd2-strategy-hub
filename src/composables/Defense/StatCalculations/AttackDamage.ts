@@ -152,7 +152,7 @@ export default function useAttackDamageCalculations(
             const customStatDamageType = damageModifierClone.mutators.asDamageType ? new DamageType(damageModifierClone.mutators.asDamageType) : getDamageType(defense)
 
             customStatDamage *= nonTooltipAttackDamageMupltiplier.value * effectiveCriticalMultiplier
-            customStatDamage *= SetupModifierCalculation.getSetupBonusMultiplier(calculationConditions.setupModifiers, customStatDamageType)
+            customStatDamage *= SetupModifierCalculation.getSetupBonusMultiplier(calculationConditions.setupDefenses, calculationConditions.setupModifiers, customStatDamageType)
             const customStatCalculations = {
                 label: util.name,
                 value: Math.round(customStatDamage).toLocaleString('en-US'),

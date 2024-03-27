@@ -51,7 +51,7 @@ export default class BlazingPhoenixStat implements DefenseStatInterface<string> 
         const defensePower = defense.userData.pet.defensePower * useAncientPowers().ancientDestructionMultiplier.value + (defense.defenseData?.baseDefensePower ?? 0) + defense.userData.relic.defensePower + defensePowerAdditives.value;
         let blazingPhoenixBaseDamage: number = defensePower * parseFloat(shard.customOptions ?? '0') / 100;
 
-        blazingPhoenixBaseDamage *= SetupModifierCalculation.getSetupBonusMultiplier(this.calculationConditions.setupModifiers, DamageType.Fire)
+        blazingPhoenixBaseDamage *= SetupModifierCalculation.getSetupBonusMultiplier(this.calculationConditions.setupDefenses, this.calculationConditions.setupModifiers, DamageType.Fire)
 
         return blazingPhoenixBaseDamage
     }

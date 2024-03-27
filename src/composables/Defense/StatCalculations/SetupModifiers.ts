@@ -3,9 +3,10 @@ import { computed } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
-import type { DefenseSetupModifiersInterface } from '@/types';
+import type { DefenseSetupModifiersInterface, ModInterface, ShardInterface } from '@/types';
 import useDefenseDamageType from "@/composables/Defense/DefenseDamageType";
 import DamageType from '@/enums/DamageType';
+import StatusEffect from '@/enums/StatusEffect';
 
 interface DefenseSetupCalculationsComposable {
     defenseSetupComboBuffs: ComputedRef<number>,
@@ -14,11 +15,11 @@ interface DefenseSetupCalculationsComposable {
 }
 
 export class SetupModifierCalculation {
-    public static getSetupBonusMultiplier(setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>, damageType: DamageType): number {
-        return this.getSetupComboBuffsModifier(setupModifiers, damageType) * this.getSetupModifierForDamageType(setupModifiers, damageType) * this.getSetupHeroBuffsModifier(setupModifiers)
+    public static getSetupBonusMultiplier(setupDefenses: Ref<undefined | UserDataStoreDefenseInterface[]>, setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>, damageType: DamageType): number {
+        return this.getSetupComboBuffsModifier(setupDefenses, setupModifiers, damageType) * this.getSetupModifierForDamageType(setupModifiers, damageType) * this.getSetupHeroBuffsModifier(setupModifiers)
     }
 
-    public static getSetupComboBuffsModifier(setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>, damageType: DamageType): number {
+    public static getSetupComboBuffsModifier(setupDefenses: Ref<undefined | UserDataStoreDefenseInterface[]>, setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>, damageType: DamageType): number {
         let comboModifier = 1
 
         if (!setupModifiers.value) {
@@ -32,6 +33,30 @@ export class SetupModifierCalculation {
         if (setupModifiers.value.combos.shatter && damageType.equals(DamageType.Earth)) {
             comboModifier *= 1.5
         }
+
+        setupDefenses.value?.forEach((defense: UserDataStoreDefenseInterface) => {
+            if (defense.isBuffDefense || !defense.defenseData) {
+                return
+            }
+            
+            if (defense.defenseData.statusEffects.contains(StatusEffect.Cripple)) {
+                let crippleModifier: number = 1.25
+                const spiritBlessingShard: undefined|ShardInterface = defense.userShards.find((shard) => shard.id === 'spirit_blessing')
+                if (spiritBlessingShard) {
+                    crippleModifier += parseFloat(spiritBlessingShard.customOptions ?? '0') / 100
+                }
+
+                comboModifier *= crippleModifier
+            }
+
+            [...defense.userMods, ...defense.userShards].forEach((util: ModInterface | ShardInterface) => {
+                if (!util.damageModifier?.mutators.debuff) {
+                    return
+                }
+
+                comboModifier *= 1 + (util.damageModifier.percentage ?? 0) / 100
+            })
+        })
 
         return comboModifier
     }
@@ -123,7 +148,7 @@ export default function useSetupCalculations(
 ): DefenseSetupCalculationsComposable {
     const { getDamageType } = useDefenseDamageType()
     
-    const defenseSetupComboBuffs = computed<number>((): number => SetupModifierCalculation.getSetupComboBuffsModifier(calculationConditions.setupModifiers, getDamageType(defense)))
+    const defenseSetupComboBuffs = computed<number>((): number => SetupModifierCalculation.getSetupComboBuffsModifier(calculationConditions.setupDefenses, calculationConditions.setupModifiers, getDamageType(defense)))
     
     const defenseSetupHeroBuffs = computed<number>((): number => {
         if (defense.isBuffDefense) {

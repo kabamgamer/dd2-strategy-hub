@@ -44,6 +44,6 @@ export default class ExplosiveGuard implements DefenseStatInterface<string> {
         const currentHeatlhScalar: number = this.defense.defenseData?.hpScalar[this.defenseLevel-1] ?? 1
         const tier1HeatlhScalar: number = this.defense.defenseData?.hpScalar[0] ?? 1
         healthValue += healthValue * (currentHeatlhScalar / tier1HeatlhScalar - 1)
-        return healthValue * this.explosiveGuardPercentage / 100 * SetupModifierCalculation.getSetupBonusMultiplier(this.calculationConditions.setupModifiers, DamageType.Physical)
+        return healthValue * this.explosiveGuardPercentage / 100 * SetupModifierCalculation.getSetupBonusMultiplier(this.calculationConditions.setupDefenses, this.calculationConditions.setupModifiers, DamageType.Physical)
     }
 }

@@ -17,6 +17,7 @@ export interface OutputModifierMutatorsInterface {
     noUpgradeScaling?: boolean;
     customStat?: number;
     asDamageType?: string;
+    debuff?: boolean;
 }
 
 export default class OutputModifier {

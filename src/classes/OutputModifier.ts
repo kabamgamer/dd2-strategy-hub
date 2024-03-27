@@ -4,6 +4,20 @@ export interface OutputModifierMutatorsInterface {
         types?: string[];
         noStack?: string[];
     };
+    fromHealth?: {
+        vampiric?: boolean;
+        skipAscension?: boolean;
+        ancientFortificationBonus?: string[];
+    };
+    fromPower?: {
+        skipAscension?: boolean;
+        ancientDestructionBonus?: string[];
+    };
+    noCrit?: boolean;
+    noUpgradeScaling?: boolean;
+    customStat?: number;
+    asDamageType?: string;
+    debuff?: boolean;
 }
 
 export default class OutputModifier {

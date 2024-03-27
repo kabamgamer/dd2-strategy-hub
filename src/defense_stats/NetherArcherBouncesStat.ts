@@ -1,19 +1,18 @@
-import type { DefenseStatInterface, ModInterface, ShardInterface } from "@/types";
+import type { Ref } from "vue";
+import type { DefenseStatInterface } from "@/types";
+import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
-export default class NetherArcherBouncesStat implements DefenseStatInterface {
+export default class NetherArcherBouncesStat implements DefenseStatInterface<{ [bounce: number]: number }> {
     public readonly template: string = 'NetherArcherBouncesStatTemplate'
-    private readonly totalDps: number
-    private readonly defenseMods: ModInterface[]
-    private readonly defenseShards: ShardInterface[]
+    private readonly totalDps: Ref<number>
+    private readonly defense: UserDataStoreDefenseInterface
 
     constructor(
-        totalDps: number,
-        defenseMods: ModInterface[],
-        defenseShards: ShardInterface[]
+        totalDps: Ref<number>,
+        defense: UserDataStoreDefenseInterface
     ) {
         this.totalDps = totalDps
-        this.defenseMods = defenseMods
-        this.defenseShards = defenseShards
+        this.defense = defense
     }
 
     get label(): string {
@@ -25,7 +24,7 @@ export default class NetherArcherBouncesStat implements DefenseStatInterface {
 
         const bounces: { [bounce: number]: number } = {}
         for (let i: number = 1; i <= this.bounces; i++) {
-            bounces[i] = this.totalDps * bouncesDamageMultipliers[i]
+            bounces[i] = this.totalDps.value * bouncesDamageMultipliers[i]
         }
 
         return bounces
@@ -40,11 +39,11 @@ export default class NetherArcherBouncesStat implements DefenseStatInterface {
     }
 
     get hasSpectralArrows(): boolean {
-        return this.defenseMods.some(mod => mod.id === 'spectral_arrows')
+        return this.defense.userMods.some(mod => mod.id === 'spectral_arrows')
     }
 
     get hasGhostArrows(): boolean {
-        return this.defenseShards.some(shard => shard.id === 'ghost_arrows')
+        return this.defense.userShards.some(shard => shard.id === 'ghost_arrows')
     }
 
     getBouncesDamageMultipliers(): { [bounce: number]: number } {

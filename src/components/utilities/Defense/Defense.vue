@@ -1,66 +1,68 @@
 <template>
-  <DefenseOverviewTableRow
-      v-if="tableView"
-      :defense="defense"
-      :icon="defense.defenseData?.icon"
-      :label="defense.userData.label"
-      :defenseLevel="defenseLevel"
-      :in-setup="setupDefenses !== undefined"
-      :is-buff-defense="isBuffDefense()"
-      :defense-stats="defenseStats"
-      :all-checked="allChecked"
-      @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
-      @row-select="(value) => $emit('row-select', defense.incrementId, value)"
-      @defense-edit="() => $emit('defense-edit', defense)"
-  />
+  <LoadingSpinner v-if="!defense.defenseData" />
+  <template v-else>
+    <DefenseOverviewTableRow
+        v-if="tableView"
+        :defense="defense"
+        :icon="defense.defenseData?.icon"
+        :label="defense.userData.label"
+        :defenseLevel="defenseLevel"
+        :defense-specific-stats="defenseSpecificStats"
+        :in-setup="setupDefenses !== undefined"
+        :is-buff-defense="defense.isBuffDefense"
+        :defense-stats="defenseStats"
+        :selected="selected"
+        :sort-rows="sortRows"
+        @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
+        @row-select="(value) => $emit('row-select', defense.incrementId, value)"
+        @defense-edit="() => $emit('defense-edit', defense)"
+    />
 
-  <DefenseOverviewAccordionItem
-      v-else
-      :id="id"
-      :collapsed="collapsed"
-      :defenseLevel="defenseLevel"
-      :defense-specific-stats="defenseSpecificStats"
-      :icon="defense.defenseData?.icon"
-      :label="defense.userData.label"
-      :defense="defense"
-      :in-setup="setupDefenses !== undefined"
-      :is-buff-defense="isBuffDefense()"
-      :defense-stats="defenseStats"
-      @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
-      @defense-delete="deleteDefense"
-      class="mb-3"
-  >
-    <template #defense-details>
-      <slot name="accordion-defense-details"></slot>
-    </template>
-  </DefenseOverviewAccordionItem>
+    <DefenseOverviewAccordionItem
+        v-else
+        :id="id"
+        :collapsed="collapsed"
+        :defenseLevel="defenseLevel"
+        :defense-specific-stats="defenseSpecificStats"
+        :icon="defense.defenseData?.icon"
+        :label="defense.userData.label"
+        :defense="defense"
+        :in-setup="setupDefenses !== undefined"
+        :is-buff-defense="defense.isBuffDefense"
+        :defense-stats="defenseStats"
+        @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
+        @defense-delete="deleteDefense"
+        class="mb-3"
+    >
+      <template #defense-details>
+        <slot name="accordion-defense-details"></slot>
+      </template>
+    </DefenseOverviewAccordionItem>
+  </template>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted, computed } from "vue";
-import type { PropType } from "vue";
+import { ref, watch, defineProps, defineEmits, onMounted, computed, reactive, toRefs } from "vue";
+import type { PropType, UnwrapNestedRefs } from "vue";
 import type {
   CalculatedDefenseStatsInterface,
   DefenseSetupModifiersInterface,
   UserSetupDefenseInterface,
-  DefenseStatsInterface
+  DefenseStatsInterface,
+  DefenseStatInterface,
 } from "@/types";
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 
-import { useDefenseCalculations } from "@/composables/DefenseCalculations";
+import { useDefenseCalculations } from "@/composables/Defense/DefenseCalculations";
 import { useUserDataStore } from "@/stores/UserData";
-import { storeToRefs } from "pinia";
 import DefenseOverviewTableRow from "@/components/utilities/Defense/Overview/Table/DefenseOverviewTableRow.vue";
 import DefenseOverviewAccordionItem from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordionItem.vue";
+import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
 
 const userStore = useUserDataStore();
 
-const { deleteDefense } = userStore
-const { ancientPowerPoints } = storeToRefs(userStore);
-const { totalDps, tooltipDps, attackDamage, attackRate, defensePower, defenseHitPoints, defenseRange, criticalDamage, criticalChance, calculateDefensePower, defenseSpecificStats, isBuffDefense } = useDefenseCalculations()
-
-const emit = defineEmits(['total-dps-calculated', 'row-select', 'defense-edit'])
+const emit = defineEmits(['total-dps-calculated', 'row-select', 'defense-edit', 'defense-specific-stats'])
 const props = defineProps({
   defense: {
     type: Object as PropType<UserDataStoreDefenseInterface>,
@@ -70,21 +72,19 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  selected: Boolean,
+  sortRows: Boolean,
   collapsed: Boolean,
-  allChecked: Boolean,
   setupDefenses: Object as PropType<UserDataStoreDefenseInterface[]|undefined>,
   setupDefenseOptions: Object as PropType<{ [defensesIncrementId: number]: UserSetupDefenseInterface }|undefined>,
   defenseBoosts: Object as PropType<{[incrementId: number]: CalculatedDefenseStatsInterface}|undefined>,
   setupModifiers: Object as PropType<DefenseSetupModifiersInterface|undefined>,
 });
 
-const defense: UserDataStoreDefenseInterface = props.defense as UserDataStoreDefenseInterface
-
-let defenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface}|undefined;
+const defense: UnwrapNestedRefs<UserDataStoreDefenseInterface> = reactive(props.defense)
 
 const id = ref<string>()
 const defenseLevel = ref<number>(1)
-const isLoadingDefenseSetupShards = ref<boolean>(false)
 const attackRatePercentage = computed(() => Math.round((attackRate.value - (defense.defenseData?.baseAttackRate ?? 0)) / ((defense.defenseData?.maxAttackRate ?? 0) - (defense.defenseData?.baseAttackRate ?? 0)) * 100))
 const defenseStats = computed((): DefenseStatsInterface => ({
   defensePower: defensePower.value,
@@ -99,54 +99,36 @@ const defenseStats = computed((): DefenseStatsInterface => ({
   attackDamage: attackDamage.value,
 }))
 
-function recalculate(): void {
-  if (!defense.userData) return
+const { setupDefenses, setupDefenseOptions, defenseBoosts, setupModifiers } = toRefs(props)
 
-  // Await the loading of mods and shards before calculating
-  const interval: any = setInterval((): void => {
-    if ((!props.setupDefenses || !isLoadingDefenseSetupShards.value)) {
-      clearInterval(interval)
-      calculateDefensePower(defense, defenseLevel.value, ancientPowerPoints.value, props.setupDefenses, props.setupDefenseOptions, props.defenseBoosts, props.setupModifiers)
-      emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value, props.defenseBoosts ? Object.keys(props.defenseBoosts) : [])
-    }
-  }, 100)
+const { deleteDefense } = userStore
+const { totalDps, tooltipDps, attackDamage, 
+  attackRate, defensePower, defenseHitPoints, 
+  defenseRange, criticalDamage, criticalChance, 
+  defenseSpecificStats 
+// @ts-ignore
+} = useDefenseCalculations(defense, defenseLevel, setupDefenses, setupDefenseOptions, defenseBoosts, setupModifiers)
+
+function onDefenseCalculationUpdate(): void {
+  emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value)
 }
 
-watch(defense.userData, recalculate, { deep: true })
+watch(totalDps, onDefenseCalculationUpdate)
+watch(defenseSpecificStats, (newValue: DefenseStatInterface<any>[], oldValue: DefenseStatInterface<any>[]) => {
+  const addedStats: DefenseStatInterface<any>[] = newValue.filter(stat => !oldValue.some(statToCheck => statToCheck.label === stat.label))
+  const removedStats: DefenseStatInterface<any>[] = oldValue.filter(stat => !newValue.some(statToCheck => statToCheck.label === stat.label))
+  emit('defense-specific-stats', addedStats, removedStats)
+})
 
-// Trigger recalculation on data changes
-watch(defenseLevel, recalculate)
-watch(ancientPowerPoints, recalculate, { deep: true })
-watch(() => props.setupModifiers, recalculate, { deep: true })
-watch(() => props.setupDefenseOptions, recalculate, { deep: true })
-watch(() => props.defenseBoosts, (newValue) => {
-  if (JSON.stringify(newValue) === JSON.stringify(defenseBoosts)) return
-
-  // Clone the defenseBoosts object to avoid reactivity issues
-  defenseBoosts = JSON.parse(JSON.stringify(newValue))
-
-  recalculate()
-}, { deep: true })
-watch(() => props.setupDefenses, (newValue, oldValue) => {
-  if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
-
-  setTimeout(recalculate, 400)
-}, { deep: true })
+if (defense.isBuffDefense) {
+  watch(defensePower, onDefenseCalculationUpdate)
+  watch(criticalDamage, onDefenseCalculationUpdate)
+}
 
 onMounted((): void => {
   id.value = 'id' + Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
       .substring(1)
       .toLowerCase() + defense.incrementId
-
-  // Await the loading of defenseData before initializing calculations
-  const interval: any = setInterval((): void => {
-    if (defense.defenseData) {
-      clearInterval(interval)
-      recalculate()
-
-      setTimeout(recalculate, 400)
-    }
-  }, 100)
 })
 </script>

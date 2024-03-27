@@ -33,7 +33,7 @@ import type { DefenseStatInterface } from "@/types";
 
 defineProps({
   stat: {
-    type: Object as PropType<DefenseStatInterface>,
+    type: Object as PropType<DefenseStatInterface<{ [bounce: number]: number }>>,
     required: true,
   },
 })

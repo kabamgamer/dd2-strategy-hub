@@ -13,6 +13,8 @@
   <DefenseOverviewTable
       v-else
       ref="defenseOverviewTable"
+      configure-columns
+      sort-rows
       :defenses="defenses"
       table-hover
       @delete-defense="deleteDefense"
@@ -37,21 +39,28 @@ import BootstrapModal from "@/components/layout/BootstrapModal.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
 import DefenseOverviewTable from "@/components/utilities/Defense/Overview/Table/DefenseOverviewTable.vue";
 import DefenseOverviewAccordion from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordion.vue";
+import UserDefense from "@/classes/UserDefense";
 
 const userStore = useUserDataStore()
 const { defenses, tableView } = storeToRefs(userStore);
 const { getNextDefenseIncrementId, deleteDefense } = userStore;
 
 const defenseOverviewTable = ref();
+const isDefenseSelection = ref<boolean>(false);
 const defenseSelectionModal = ref<InstanceType<typeof BootstrapModal>>();
 
 function addDefense(): void {
+  isDefenseSelection.value = true;
   defenseSelectionModal.value?.show();
 }
 
 function onDefenseSelection(defenseData: DefenseRootInterface): void {
+  if (!isDefenseSelection.value) {
+    return;
+  }
+
   const incrementId = getNextDefenseIncrementId();
-  defenses.value.push({
+  defenses.value.push(new UserDefense({
     incrementId,
     defenseData,
     userData: {
@@ -67,8 +76,9 @@ function onDefenseSelection(defenseData: DefenseRootInterface): void {
     },
     userMods: [],
     userShards: [],
-  });
+  }));
 
+  isDefenseSelection.value = false;
   defenseSelectionModal.value?.hide();
 }
 </script>

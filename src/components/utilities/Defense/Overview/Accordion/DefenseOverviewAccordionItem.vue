@@ -10,8 +10,12 @@
             {{ defense.userData.label }}
           </span>
 
-          <span class="defense-dps" v-if="!isBuffDefense">
-            {{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}
+          <span class="defense-dps" v-if="defenseStats.totalDps > 0">
+            <HtmlTooltip class="html-tooltip--critical-tooltip">
+              <template #trigger><span class="tooltip__text">{{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}</span></template>
+              <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage : defenseStats.totalDps).toLocaleString('en-US') }}</span> <br />
+              <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage * (1 + defenseStats.criticalDamage / 100) : defenseStats.totalDps).toLocaleString('en-US') }}</span>
+            </HtmlTooltip>
           </span>
         </span>
       </button>
@@ -56,19 +60,19 @@
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense HP:</strong> {{ Math.round(defenseStats.defenseHitPoints).toLocaleString('en-US') }}</span>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Rate:</strong> {{ defenseStats.attackRate.toFixed(3).replace(/(\.[^0]*)0+$/, '$1').replace(/\.$/, '') }} ({{ defenseStats.attackRatePercentage }}%)</span>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseStats.defenseRange }}</span>
-                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ (defenseStats.criticalChance * 100).toFixed(2) }}%</span>
-                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ (defenseStats.criticalDamage * 100).toFixed(2) }}%</span>
+                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit chance:</strong> {{ defenseStats.criticalChance.toFixed(2) }}%</span>
+                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage:</strong> {{ defenseStats.criticalDamage.toFixed(2) }}%</span>
                 </template>
 
                 <template v-else>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Power bonus:</strong> {{ Math.round(defenseStats.defensePower / 10) }}</span>
-                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (defenseStats.criticalDamage * 100 / 4).toFixed(2) }}%</span>
+                  <span class="w-100 defense-info__header-stats__stat"><strong>Crit damage bonus:</strong> {{ (defenseStats.criticalDamage / 4).toFixed(2) }}%</span>
                   <span class="w-100 defense-info__header-stats__stat"><strong>Defense Range:</strong> {{ defenseStats.defenseRange }}</span>
                 </template>
 
-                <div v-for="(stat, index) in defenseSpecificStats" :key="index">
+                <template v-for="(stat, index) in defenseSpecificStats" :key="index">
                   <DefenseSpecificStat :stat="stat" />
-                </div>
+                </template>
               </div>
             </div>
           </div>
@@ -105,6 +109,7 @@ import IconChevronDown from "@/components/icons/IconChevronDown.vue";
 import IconChevronUp from "@/components/icons/IconChevronUp.vue";
 import DefenseSpecificStat from "@/components/utilities/Defense/DefenseSpecificStat.vue";
 import DefenseUserInfo from "@/components/utilities/Defense/DefenseUserInfo.vue";
+import HtmlTooltip from "@/components/layout/HtmlTooltip.vue";
 
 import { useGoogleSpreadsheetDataStore } from "@/stores/GoogleSpreadSheets";
 import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageTypeIcon.vue";
@@ -112,7 +117,7 @@ import DefenseDamageTypeIcon from "@/components/utilities/Defense/DefenseDamageT
 const props = defineProps({
   id: String,
   icon: String,
-  defenseSpecificStats: Array as PropType<DefenseStatInterface[]>,
+  defenseSpecificStats: Array as PropType<DefenseStatInterface<any>[]>,
   inSetup: Boolean,
   isBuffDefense: Boolean,
   defenseLevel: {

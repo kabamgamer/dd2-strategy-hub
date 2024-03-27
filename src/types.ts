@@ -2,6 +2,7 @@ import type OutputModifier from "@/classes/OutputModifier";
 import type ModType from "@/enums/ModType";
 import type DamageType from "@/enums/DamageType";
 import type StatusEffect from "@/enums/StatusEffect";
+import type EnumCollection from "./enums/EnumCollection";
 
 export interface PetInterface {
     defensePower: number;
@@ -19,8 +20,10 @@ export interface ModInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    damageModifier?: OutputModifier;
     elementalAttunement?: DamageType;
     compatibilities?: string[];
+    customOptions?: string;
     type?: ModType;
 }
 
@@ -37,8 +40,10 @@ export interface ShardInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
+    damageModifier?: OutputModifier;
     elementalAttunement?: DamageType;
     compatibilities?: string[];
+    customOptions?: string;
 }
 
 export interface RelicInterface {
@@ -66,7 +71,7 @@ export interface DefenseRootInterface {
     name: string;
     icon: string;
     mapIcon: string;
-    statusEffects: StatusEffect[];
+    statusEffects: EnumCollection<StatusEffect>;
     damageType: DamageType;
     baseDefensePower: number;
     baseDefenseHealth: number;
@@ -173,9 +178,12 @@ export interface CalculatedDefenseStatsInterface {
     defensePower: number;
 }
 
-export interface DefenseStatInterface {
-    get label(): string;
-    get value(): any;
+export interface DefenseStatInterface<TVal>{
+    label: string;
+    value: TVal;
+    attackDamage?: number;
+    critDamage?: number;
+    dps?: number;
     template?: string;
 }
 

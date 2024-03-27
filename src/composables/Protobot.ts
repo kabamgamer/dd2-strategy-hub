@@ -7,6 +7,8 @@ import { useModStore } from "@/stores/ModInfo";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type { ModInterface, UserDefenseInterface } from "@/types";
 
+import UserDefense from "@/classes/UserDefense";
+
 export function useProtobot(): any {
     const protobotDefenses = ref<UserDataStoreDefenseInterface[]>([]);
 
@@ -19,13 +21,13 @@ export function useProtobot(): any {
     {
         const _protobotDefenses: UserDefenseInterface[] = await formatProtobotDefenses();
         protobotDefenses.value = await Promise.all(_protobotDefenses.map(async (userData: UserDefenseInterface): Promise<UserDataStoreDefenseInterface> => {
-            return {
+            return new UserDefense({
                 incrementId: 1,
                 defenseData: await getDefenseRoot(userData.id),
                 userData,
                 userMods: [],
                 userShards: [],
-            }
+            })
         }));
 
         return Promise.resolve();

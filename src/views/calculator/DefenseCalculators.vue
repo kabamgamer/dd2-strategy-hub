@@ -1,5 +1,14 @@
 <template>
   <div class="container">
+    <h1>Defense Calculators</h1>
+    <p>
+      With the defense calculator you can test how effective the effect of mods and shards are on your defenses. You can also test how your defenses work against different enemy types and Onslaught Mutators.
+    </p>
+    <p>
+      Get started by creating a defense and configure the mods and shards you want to use. Then you can test your defenses in combination with your Boost Aura and Buff Beam, pylon shards and other possible buffs by 
+      combining all defenses in a setup.
+    </p>
+
     <Section section-title="Ancient power points">
       <AncientPowerPoints />
     </Section>

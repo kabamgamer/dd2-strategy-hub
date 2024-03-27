@@ -1,5 +1,6 @@
 import EnumDefinition from "@/enums/EnumDefinition";
 import StatusEffect from "@/enums/StatusEffect";
+import EnumCollection from "./EnumCollection";
 
 export default class DamageType extends EnumDefinition {
     static NonLethal: DamageType = new this('n/a');
@@ -20,16 +21,16 @@ export default class DamageType extends EnumDefinition {
         return this.equals(DamageType.Physical) || this.equals(DamageType.Magical);
     }
 
-    public getRelatedStatusEffects(): StatusEffect[] {
+    public getRelatedStatusEffects(): EnumCollection<StatusEffect> {
         if (this.equals(DamageType.Poison)) {
-            return [StatusEffect.Poisoned];
+            return new EnumCollection<StatusEffect>([StatusEffect.Poisoned]);
         }
 
         if (this.equals(DamageType.Water)) {
-            return [StatusEffect.Drench];
+            return new EnumCollection<StatusEffect>([StatusEffect.Drench]);
         }
 
-        return [];
+        return new EnumCollection;
     }
 
     public get label(): string {

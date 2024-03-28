@@ -56,13 +56,12 @@ export interface RelicInterface {
 export interface AscensionPointInterface {
     id: string;
     label: string;
-    upgradeLevel: number;
     maxLevel: number;
     defensePower?: number;
     defenseHealth?: number;
     defenseRate?: number;
     defenseRange?: number;
-    setUpgradeLevel: (level: number) => AscensionPointInterface;
+    getStatForLevel: (stat: string, level: number) => number;
 }
 
 // This interface is used to identify all base defense data which will be the same for every user

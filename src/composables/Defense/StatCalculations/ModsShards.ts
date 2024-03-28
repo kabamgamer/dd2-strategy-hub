@@ -2,6 +2,7 @@ import ModType from "@/enums/ModType";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type { ModInterface, ShardInterface } from "@/types";
 import type { CalculationConditionsInterface } from "@/composables/Defense/DefenseCalculations";
+import type { OutputModifierMutatorsInterface } from "@/classes/OutputModifier";
 
 interface ModsShardsComposable {
     forRegularModsAndShards: (stat: string, callback: (util: ModInterface|ShardInterface) => void, includePylons?: boolean) => void
@@ -23,7 +24,8 @@ export default function useModsShards(defense: UserDataStoreDefenseInterface, ca
                     }
                 }
 
-                if (!includePylons && (util as any)[stat]?.mutators.pylon) {
+                const mutators: undefined|OutputModifierMutatorsInterface = (util as any)[stat]?.mutators
+                if (!includePylons && mutators?.pylon) {
                     return
                 }
     

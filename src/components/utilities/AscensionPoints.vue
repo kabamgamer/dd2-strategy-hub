@@ -7,7 +7,7 @@
     <div class="row">
       <div class="col-md-4" v-for="ascensionPoint in ascensionPoints" :key="ascensionPoint.id">
         <label>{{ ascensionPoint.label }}</label>
-        <div class="reroll-trackers__tracker_count input-group mb-3" style="max-width: 125px">
+        <div class="reroll-trackers__tracker_count input-group mb-3">
           <input type="number" min="0" :max="ascensionPoint.maxLevel" v-model="modelValue[ascensionPoint.id]" class="form-control ascension-point">
           <div class="input-group-append">
             <span class="input-group-text">/<a href="#" @click.prevent="assignMax(ascensionPoint)">{{ ascensionPoint.maxLevel }}</a></span>
@@ -42,7 +42,7 @@ function assignMax(ascensionPoint: AscensionPointInterface): void {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .ascension {
     .title {
       display: flex;
@@ -54,6 +54,10 @@ function assignMax(ascensionPoint: AscensionPointInterface): void {
         font-size: 14px;
         cursor: pointer;
       }
+    }
+
+    .reroll-trackers__tracker_count {
+      max-width: 125px;
     }
   }
   .ascension-point,

@@ -7,7 +7,7 @@
     <td @click.stop><input type="checkbox" :checked="checked" @change="() => $emit('rowSelect', !checked)" /></td>
 
     <!-- Icon -->
-    <td style="width: 50px"><img width="50" :src="icon" :alt="'Defense Icon ' + label"></td>
+    <td class="td--icon"><img width="50" :src="icon" :alt="'Defense Icon ' + label"></td>
 
     <!-- Label -->
     <td>{{ label }}</td>
@@ -43,7 +43,7 @@
     </td>
 
     <!-- Damage type icon -->
-    <td @click.stop style="width: 30px"><DefenseDamageTypeIcon :defense="defense" /></td>
+    <td @click.stop class="td--damage-type"><DefenseDamageTypeIcon :defense="defense" /></td>
   </tr>
 </template>
 
@@ -139,6 +139,13 @@ td {
 
   &:not(:nth-child(-n + 2)) {
     cursor: pointer;
+  }
+
+  &.td--damage-type {
+    width: 30px;
+  }
+  &.td--damage-type {
+    width: 50px;
   }
 }
 

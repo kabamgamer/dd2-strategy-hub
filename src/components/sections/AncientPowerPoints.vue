@@ -1,10 +1,10 @@
 <template>
   <div class="row ancient-power-points">
     <div class="col ancient-power-points__point mb-3 " v-for="ancientPower in ancientPowers" :key="ancientPower.id">
-      <Card :cardTitle="ancientPower.name">
-        <img style="max-width: 119px" :src="ancientPower.icon" :alt="'Ancient ' + ancientPower.name">
+      <Card class="ancient-power-points__card" :cardTitle="ancientPower.name">
+        <img :src="ancientPower.icon" :alt="'Ancient ' + ancientPower.name">
 
-        <div class="input-group" style="max-width: 119px">
+        <div class="input-group">
           <input type="number" min="0" max="10" v-model="ancientPowerPoints[ancientPower.id]" class="form-control ancient-power-reset" @change="ensureValidLevel(ancientPower.id)">
           <div class="input-group-append">
             <span class="input-group-text">/<a class="link" @click.prevent="ancientPowerPoints[ancientPower.id] = 10">10</a></span>
@@ -30,10 +30,18 @@ function ensureValidLevel(id: string): void {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 /* for every point: 2 columns on small mobile, 3 bigger mobile devices, 4 tablet, 7 desktop */
-.ancient-power-points__point {
-  flex: 0 0 50%;
+.ancient-power-points {
+  &__point {
+    flex: 0 0 50%;
+  }
+
+  &__card {
+    img, .input-group {
+      max-width: 119px;
+    }
+  }
 }
 
 @media (min-width: 425px) {

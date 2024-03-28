@@ -43,7 +43,7 @@ export default function useDefenseCriticalCalculations(
         critChance += pylonsModifier('criticalChance')
         critChance += ancientDefenseCriticalChance.value
 
-        return critChance
+        return critChance > 100 ? 100 : critChance
     })
 
     const criticalDamage = computed<number>((): number => {
@@ -95,7 +95,7 @@ export default function useDefenseCriticalCalculations(
     })
 
     const criticalMultiplier = computed<number>((): number => {
-        const critChanceMultiplier: number = criticalChance.value > 100 ? 1 : criticalChance.value / 100
+        const critChanceMultiplier: number = criticalChance.value / 100
         const criticalDamageMultiplier: number = criticalDamage.value / 100
 
         return 1 + critChanceMultiplier * criticalDamageMultiplier

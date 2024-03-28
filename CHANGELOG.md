@@ -1,8 +1,16 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+
+* Fixed an issue with crit/non-crit tooltip showing incorrect values for special shards
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.2...HEAD)
+
+
+
 ## [v1.6.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.1) (2023-03-28)
 
-* Fixed an infinite loop in defense calculations when there's 2 identical towers with different ascension data
+* Fixed a performance issue in defense calculations when there's 2 identical towers with different ascension data
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.0...v1.6.1)
 

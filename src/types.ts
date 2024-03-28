@@ -94,15 +94,19 @@ export interface DefenseRootInterface {
 // This interface is used to identify all base defense data which will be the same for every user
 export interface DefenseStatsInterface {
     defenseHitPoints: number;
-    attackDamage: number;
     attackRate: number;
     attackRatePercentage: number;
     defenseRange: number;
     criticalChance: number;
     criticalDamage: number;
     defensePower: number;
+    tooltipAttackDamage: number;
     tooltipDps: number;
     totalDps: number;
+    totalAttackDamage: {
+        nonCrit: number;
+        crit: number;
+    };
 }
 
 export interface SetupElementalCombosInterface {

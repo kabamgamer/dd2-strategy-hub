@@ -55,7 +55,7 @@ export function useDefenseCalculations(
         return defenseHealth.value * (defense.defenseData?.hpScalar[defenseLevel.value - 1] ?? 0)
     })
 
-    const { tooltipAttackDamage, nonTooltipAttackDamageBonus, defenseSpecificStats } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth, criticalMultiplier, criticalDamage)
+    const { tooltipAttackDamage, nonTooltipAttackDamageBonus, totalAttackDamage, defenseSpecificStats } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth, criticalMultiplier, criticalDamage)
     const customStatsDps = computed<number>(() => defenseSpecificStats.value.reduce((acc: number, stat: DefenseStatInterface<any>) => acc + (stat.dps ?? 0), 0))
 
     const tooltipDps = computed<number>(() => tooltipAttackDamage.value * criticalMultiplier.value / attackRate.value)
@@ -76,5 +76,5 @@ export function useDefenseCalculations(
     const allDefenseSpecificStats = computed<DefenseStatInterface<any>[]>((): DefenseStatInterface<any>[] => [...defenseSpecificStats.value, ...defenseSpecificStatsDependingOnTotalDps.value])
 
     // expose managed state as return value
-    return { totalDps, tooltipDps, attackDamage: tooltipAttackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, defenseSpecificStats: allDefenseSpecificStats  }
+    return { totalDps, tooltipDps, tooltipAttackDamage, totalAttackDamage, attackRate, defensePower, defenseHealth, defenseHitPoints, defenseRange, criticalChance, criticalDamage, defenseSpecificStats: allDefenseSpecificStats  }
 }

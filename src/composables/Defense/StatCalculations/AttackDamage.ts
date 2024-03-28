@@ -1,6 +1,6 @@
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
-import type { ComputedRef, Ref } from 'vue';
+import type { ComputedRef, Ref, UnwrapNestedRefs } from 'vue';
 import type { DefenseStatInterface, ModInterface, ShardInterface } from '@/types';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
@@ -17,6 +17,7 @@ import DamageType from '@/enums/DamageType';
 export interface DefenseAttackDamageCalculationsComposable {
     tooltipAttackDamage: ComputedRef<number>,
     nonTooltipAttackDamageBonus: ComputedRef<number>,
+    totalAttackDamage: UnwrapNestedRefs<{ nonCrit: number, crit: number }>,
     defenseSpecificStats: ComputedRef<DefenseStatInterface<any>[]>,
 }
 
@@ -63,8 +64,16 @@ export default function useAttackDamageCalculations(
         return baseAttackDamage * attackDamageMultiplier + bonusAttackDamage;
     })
 
+    const totalAttackDamage = reactive<{crit: number, nonCrit: number}>({
+        crit: 0,
+        nonCrit: 0,
+    })
     const nonTooltipAttackDamageMupltiplier = ref<number>(1)
     const nonTooltipAttackDamageBonus = computed<number>((): number => {
+        let criticalDamageMultiplier: number = 1 + criticalDamage.value / 100
+        totalAttackDamage.nonCrit = tooltipAttackDamage.value
+        totalAttackDamage.crit = tooltipAttackDamage.value * criticalDamageMultiplier
+
         let bonusAttackDamage = 0
         let attackDamageMultiplier = 0
         forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface) => {
@@ -73,14 +82,21 @@ export default function useAttackDamageCalculations(
             }
 
             const criticalDivision: number = util.damageModifier.mutators.noCrit ? criticalMultiplier.value : 1
+            criticalDamageMultiplier = util.damageModifier.mutators.noCrit ? 1 : criticalDamageMultiplier
 
             if (util.damageModifier.mutators.fromPower) {
-                bonusAttackDamage += attackDamageFromPower(util.damageModifier) / criticalDivision
+                const powerDamageBonus: number = attackDamageFromPower(util.damageModifier)
+                bonusAttackDamage += powerDamageBonus / criticalDivision
+                totalAttackDamage.nonCrit += powerDamageBonus
+                totalAttackDamage.crit += powerDamageBonus * criticalDamageMultiplier
                 return
             }
 
             if (util.damageModifier.mutators.fromHealth) {
-                bonusAttackDamage += attackDamageFromHealth(util.damageModifier) / criticalDivision
+                const healthDamageBonus: number = attackDamageFromHealth(util.damageModifier)
+                bonusAttackDamage += healthDamageBonus / criticalDivision
+                totalAttackDamage.nonCrit += healthDamageBonus
+                totalAttackDamage.crit += healthDamageBonus * criticalDamageMultiplier
                 return
             }
 
@@ -92,6 +108,8 @@ export default function useAttackDamageCalculations(
 
         nonTooltipAttackDamageMupltiplier.value = 1 + attackDamageMultiplier
         bonusAttackDamage *= nonTooltipAttackDamageMupltiplier.value
+        totalAttackDamage.nonCrit *= nonTooltipAttackDamageMupltiplier.value
+        totalAttackDamage.crit *= nonTooltipAttackDamageMupltiplier.value
         return tooltipAttackDamage.value * attackDamageMultiplier + bonusAttackDamage;
     })
     
@@ -253,5 +271,5 @@ export default function useAttackDamageCalculations(
         return ancientBonus
     }
 
-    return { tooltipAttackDamage, nonTooltipAttackDamageBonus, defenseSpecificStats }
+    return { tooltipAttackDamage, nonTooltipAttackDamageBonus, defenseSpecificStats, totalAttackDamage }
 }

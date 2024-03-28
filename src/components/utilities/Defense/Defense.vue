@@ -96,16 +96,17 @@ const defenseStats = computed((): DefenseStatsInterface => ({
   totalDps: totalDps.value,
   attackRate: attackRate.value,
   attackRatePercentage: attackRatePercentage.value,
-  attackDamage: attackDamage.value,
+  tooltipAttackDamage: tooltipAttackDamage.value,
+  totalAttackDamage: totalAttackDamage
 }))
 
 const { setupDefenses, setupDefenseOptions, defenseBoosts, setupModifiers } = toRefs(props)
 
 const { deleteDefense } = userStore
-const { totalDps, tooltipDps, attackDamage, 
+const { totalDps, tooltipDps, tooltipAttackDamage,
   attackRate, defensePower, defenseHitPoints, 
   defenseRange, criticalDamage, criticalChance, 
-  defenseSpecificStats 
+  defenseSpecificStats, totalAttackDamage
 // @ts-ignore
 } = useDefenseCalculations(defense, defenseLevel, setupDefenses, setupDefenseOptions, defenseBoosts, setupModifiers)
 

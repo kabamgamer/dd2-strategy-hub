@@ -3,7 +3,6 @@ import type { AscensionPointInterface } from "@/types";
 export class DefenseHealthAP implements AscensionPointInterface {
     id: string = "defense_health"
     label: string = "Defense Health"
-    upgradeLevel: number = 0
     maxLevel: number = 0
     defensePower: number = 0
     defenseHealth: number = 0
@@ -19,18 +18,18 @@ export class DefenseHealthAP implements AscensionPointInterface {
         this.maxLevel = maxLevel;
     }
 
-    setUpgradeLevel(upgradeLevel: number = 0): AscensionPointInterface {
-        this.upgradeLevel = upgradeLevel;
-        this.defenseHealth = upgradeLevel * this.defenseHealthMultiplier;
+    getStatForLevel(stat: string, upgradeLevel: number = 0): number {
+        if (stat !== 'defenseHealth') {
+            return 0
+        }
 
-        return this
+        return upgradeLevel * this.defenseHealthMultiplier;
     }
 }
 
 export class DefensePowerAP implements AscensionPointInterface {
     id: string = "defense_power"
     label: string = "Defense Power"
-    upgradeLevel: number = 0
     maxLevel: number = 0
     defensePower: number = 0
     defensePowerMultiplier: number = 20
@@ -46,18 +45,18 @@ export class DefensePowerAP implements AscensionPointInterface {
         this.maxLevel = maxLevel;
     }
 
-    setUpgradeLevel(upgradeLevel: number = 0): AscensionPointInterface {
-        this.upgradeLevel = upgradeLevel;
-        this.defensePower = upgradeLevel * this.defensePowerMultiplier;
+    getStatForLevel(stat: string, upgradeLevel: number = 0): number {
+        if (stat !== 'defensePower') {
+            return 0
+        }
 
-        return this
+        return upgradeLevel * this.defensePowerMultiplier;
     }
 }
 
 export class DefenseRangeAP implements AscensionPointInterface {
     id: string = "defense_range"
     label: string = "Defense Range"
-    upgradeLevel: number = 0
     maxLevel: number = 0
     defensePower: number = 0
     defensePowerMultiplier: number = -30
@@ -76,19 +75,22 @@ export class DefenseRangeAP implements AscensionPointInterface {
         this.maxLevel = maxLevel;
     }
 
-    setUpgradeLevel(upgradeLevel: number = 0): AscensionPointInterface {
-        this.upgradeLevel = upgradeLevel;
-        this.defensePower = upgradeLevel * this.defensePowerMultiplier;
-        this.defenseRange = upgradeLevel * this.defenseRangeMultiplier;
+    getStatForLevel(stat: string, upgradeLevel: number = 0): number {
+        if (stat === 'defensePower') {
+            return upgradeLevel * this.defensePowerMultiplier
+        }
 
-        return this
+        if (stat === 'defenseRange') {
+            return upgradeLevel * this.defenseRangeMultiplier
+        }
+
+        return 0;
     }
 }
 
 export class DefenseRateAP implements AscensionPointInterface {
     id: string = "defense_rate"
     label: string = "Defense Rate";
-    upgradeLevel: number = 0;
     maxLevel: number = 0;
     defensePower: number = 0;
     defenseHealth: number = 0;
@@ -104,10 +106,11 @@ export class DefenseRateAP implements AscensionPointInterface {
         this.maxLevel = maxLevel;
     }
 
-    setUpgradeLevel(upgradeLevel: number = 0): AscensionPointInterface {
-        this.upgradeLevel = upgradeLevel;
-        this.defenseRate = upgradeLevel * this.defenseRatePercentage;
+    getStatForLevel(stat: string, upgradeLevel: number = 0): number {
+        if (stat !== 'defenseRate') {
+            return 0
+        }
 
-        return this
+        return upgradeLevel * this.defenseRatePercentage;
     }
 }

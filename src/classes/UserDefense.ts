@@ -32,11 +32,11 @@ export default class UserDefense implements UserDataStoreDefenseInterface {
     }
     
     get ascensionDefenseHealth(): number {
-        if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints)) {
+        if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints) || !this.defenseData.defenseHealthAP) {
             return 0;
         }
 
-        return this.defenseData.defenseHealthAP?.setUpgradeLevel(this.userData.ascensionPoints.defense_health ?? 0)?.defenseHealth ?? 0
+        return this.defenseData.defenseHealthAP.getStatForLevel('defenseHealth', this.userData.ascensionPoints.defense_health ?? 0)
     }
     
     get ascensionDefensePower(): number {
@@ -44,24 +44,24 @@ export default class UserDefense implements UserDataStoreDefenseInterface {
             return 0;
         }
 
-        const rangeGambitSubtraction = this.defenseData.defenseRangeAP?.setUpgradeLevel(this.userData.ascensionPoints.defense_range ?? 0)?.defensePower ?? 0;
-        const ascensionDefensePower = this.defenseData.defensePowerAP?.setUpgradeLevel(this.userData.ascensionPoints.defense_power ?? 0)?.defensePower ?? 0
+        const rangeGambitSubtraction = this.defenseData.defenseRangeAP?.getStatForLevel('defensePower', this.userData.ascensionPoints.defense_range ?? 0) ?? 0;
+        const ascensionDefensePower = this.defenseData.defensePowerAP?.getStatForLevel('defensePower', this.userData.ascensionPoints.defense_power ?? 0) ?? 0;
         return rangeGambitSubtraction + ascensionDefensePower
     }
     
     get ascensionRange(): number {
-        if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints)) {
+        if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints) || !this.defenseData.defenseRangeAP) {
             return 0;
         }
 
-        return this.defenseData.defenseRangeAP?.setUpgradeLevel(this.userData.ascensionPoints.defense_range ?? 0)?.defenseRange ?? 0
+        return this.defenseData.defenseRangeAP.getStatForLevel('defenseRange', this.userData.ascensionPoints.defense_range ?? 0)
     }
     
     get ascensionRate(): number {
-        if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints)) {
+        if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints) || !this.defenseData.defenseRateAP) {
             return 0;
         }
 
-        return this.defenseData.defenseRateAP?.setUpgradeLevel(this.userData.ascensionPoints.defense_rate ?? 0)?.defenseRate ?? 0
+        return this.defenseData.defenseRateAP.getStatForLevel('defenseRate', this.userData.ascensionPoints.defense_rate ?? 0)
     }
 }

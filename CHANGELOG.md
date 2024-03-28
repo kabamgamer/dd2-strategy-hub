@@ -1,6 +1,14 @@
 # Changelog
 
-## [v1.6.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.0) (2023-03-28)
+## [v1.6.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.1) (2023-03-28)
+
+* Fixed an infinite loop in defense calculations when there's 2 identical towers with different ascension data
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.0...v1.6.1)
+
+
+
+## [v1.6.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.0) (2023-03-27)
 
 * Defense calculators: Added option to sort defenses in table by drag & drop
 * Defense calculators: Added option to configure visible columns in defense table

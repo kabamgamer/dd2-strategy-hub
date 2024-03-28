@@ -17,7 +17,7 @@
           <label for="defenseCount" class="col-sm-4 col-form-label" v-if="defense.defenseData?.hero === 'Ev2'">Node count:</label>
           <label for="defenseCount" class="col-sm-4 col-form-label" v-else>Defense count:</label>
           <div class="col-sm-8">
-            <input type="number" v-model="defenseSetup.defenses[defense.incrementId].defenseCount" class="form-control" id="defenseCount">
+            <input type="number" v-model="defenseSetup.defenses[defense.incrementId].defenseCount" class="form-control" id="defenseCount" min="0">
           </div>
         </div>
       </div>
@@ -27,6 +27,12 @@
           Delete
         </button>
       </div>
+    </template>
+
+    <template #table-row-defense-details>
+      <td class="td--amount">
+        <input type="number" v-model="defenseSetup.defenses[defense.incrementId].defenseCount" class="form-control px-1" id="defenseCount" min="0">
+      </td>
     </template>
   </Defense>
 </template>
@@ -73,6 +79,18 @@ function onTotalDpsCalculated(): void {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.td--amount {
+  vertical-align: middle;
+  
+  input[type="number"] {
+    width: 47px;
 
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: inner-spin-button;
+      opacity: 1;
+    }
+  }
+}
 </style>

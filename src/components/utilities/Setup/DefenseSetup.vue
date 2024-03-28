@@ -60,6 +60,10 @@
           table-view
         />
       </template>
+
+      <template #headers>
+        <th>Amount</th>
+      </template>
     </DefenseOverviewTable>
   </div>
 

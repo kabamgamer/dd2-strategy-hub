@@ -42,6 +42,8 @@
       </div>
     </td>
 
+    <slot name="default"></slot>
+
     <!-- Damage type icon -->
     <td @click.stop class="td--damage-type"><DefenseDamageTypeIcon :defense="defense" /></td>
   </tr>

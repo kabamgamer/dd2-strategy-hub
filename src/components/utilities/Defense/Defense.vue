@@ -16,7 +16,11 @@
         @defense-level-update="(newDefenseLevel) => defenseLevel = newDefenseLevel"
         @row-select="(value) => $emit('row-select', defense.incrementId, value)"
         @defense-edit="() => $emit('defense-edit', defense)"
-    />
+    >
+      <template #default>
+        <slot name="table-row-defense-details"></slot>
+      </template>
+    </DefenseOverviewTableRow>
 
     <DefenseOverviewAccordionItem
         v-else

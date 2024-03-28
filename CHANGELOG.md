@@ -1,10 +1,11 @@
 # Changelog
 
-## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+## [v1.6.2](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.2) (2023-03-28)
 
 * Fixed an issue with crit/non-crit tooltip showing incorrect values for special shards
+* Added amount column to defense setup table
 
-[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.2...HEAD)
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.1...v1.6.2)
 
 
 

@@ -24,6 +24,7 @@ tsconfig.vitest.tsbuildinfo
 .vscode/*
 !.vscode/extensions.json
 .idea
+scripts/.env
 *.suo
 *.ntvs*
 *.njsproj

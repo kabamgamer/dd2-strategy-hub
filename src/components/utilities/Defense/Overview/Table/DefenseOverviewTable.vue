@@ -29,6 +29,7 @@
           <th scope="col">Label</th>
           <th v-for="tableHeader in tableHeaders" v-show="tableHeader.visible" :key="tableHeader.key" scope="col">{{ tableHeader.label }}</th>
           <th scope="col" class="text-center">Tier #</th>
+          <slot name="headers"></slot>
           <th scope="col"></th>
         </tr>
       </thead>

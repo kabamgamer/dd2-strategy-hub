@@ -18,8 +18,8 @@
         
         <HtmlTooltip class="html-tooltip--critical-tooltip" v-else>
           <template #trigger><span class="tooltip__text">{{ statForHeader(tableHeader) }}</span></template>
-          <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage : defenseStats.totalDps).toLocaleString('en-US') }}</span> <br />
-          <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage * (1 + defenseStats.criticalDamage / 100) : defenseStats.totalDps).toLocaleString('en-US') }}</span>
+          <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.totalAttackDamage.nonCrit).toLocaleString('en-US') }}</span> <br />
+          <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.totalAttackDamage.crit).toLocaleString('en-US') }}</span>
         </HtmlTooltip>
 
         <HtmlTooltip v-if="isBuffDefense && (tableHeader.key === 'criticalDamage' || tableHeader.key === 'tooltipDps')">
@@ -41,6 +41,8 @@
         <button class="btn btn-link btn--down" @click="$emit('defenseLevelUpdate', defenseLevel-1)" :disabled="defenseLevel===1"><IconChevronDown /></button>
       </div>
     </td>
+
+    <slot name="default"></slot>
 
     <!-- Damage type icon -->
     <td @click.stop class="td--damage-type"><DefenseDamageTypeIcon :defense="defense" /></td>

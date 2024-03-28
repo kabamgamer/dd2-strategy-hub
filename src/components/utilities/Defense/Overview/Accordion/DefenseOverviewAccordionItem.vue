@@ -13,8 +13,8 @@
           <span class="defense-dps" v-if="defenseStats.totalDps > 0">
             <HtmlTooltip class="html-tooltip--critical-tooltip">
               <template #trigger><span class="tooltip__text">{{ Math.round(defenseStats.totalDps).toLocaleString('en-US') }}</span></template>
-              <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage : defenseStats.totalDps).toLocaleString('en-US') }}</span> <br />
-              <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.attackDamage ? defenseStats.attackDamage * (1 + defenseStats.criticalDamage / 100) : defenseStats.totalDps).toLocaleString('en-US') }}</span>
+              <span class="html-tooltip__text--non-critical">Non-crit: {{ Math.round(defenseStats.totalAttackDamage.nonCrit).toLocaleString('en-US') }}</span> <br />
+              <span class="html-tooltip__text--critical">Crit: {{ Math.round(defenseStats.totalAttackDamage.crit).toLocaleString('en-US') }}</span>
             </HtmlTooltip>
           </span>
         </span>

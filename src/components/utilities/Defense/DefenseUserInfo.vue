@@ -1,5 +1,10 @@
 <template>
   <div class="defense-user-info">
+    <template v-if="includeLabel">
+      <Input v-model="defense.userData.label" label="Defense Label" />
+      <hr />
+    </template>
+
     <div class="defense-user-info__actions">
       <a class="defense-user-info__actions-action" @click.prevent="maxAllStats('medallion')">Max stats (medallion)</a>
       <a class="defense-user-info__actions-action" @click.prevent="maxAllStats('totem')">Max stats (totem)</a>
@@ -43,15 +48,17 @@ import { defineProps, toRef, computed } from "vue";
 
 import type { PropType, ToRef } from "vue";
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+import type { ModInterface } from "@/types";
 
 import { useGodlyStat } from "@/composables/GodlyStat";
+
+import ModType from "@/enums/ModType";
 
 import DefenseRelic from "@/components/utilities/Defense/Relic/DefenseRelic.vue";
 import Pet from "@/components/utilities/Defense/Pet.vue";
 import AscensionPoints from "@/components/utilities/AscensionPoints.vue";
 import Shards from "@/components/utilities/Defense/Shards.vue";
-import type {ModInterface} from "@/types";
-import ModType from "@/enums/ModType";
+import Input from "@/components/layout/form/Input.vue";
 
 const { getMaxStatForGodlyType } = useGodlyStat()
 
@@ -60,6 +67,7 @@ const props = defineProps({
     type: Object as PropType<UserDataStoreDefenseInterface>,
     required: true,
   },
+  includeLabel: Boolean,
 });
 
 const defense: ToRef<UserDataStoreDefenseInterface> = toRef(props, 'defense') as ToRef<UserDataStoreDefenseInterface>

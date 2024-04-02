@@ -2,27 +2,13 @@
   <div class="card h-200">
     <div class="card-header">Mod reroll costs</div>
     <div class="card-body">
-      <label for="moteCost">Mote cost (per stack):</label>
-      <div class="reroll-mote__cost input-group mb-3" style="max-width: 125px">
-        <input
-          type="number"
-          min="0"
-          v-model="rerollCost.moteCost"
-          name="moteCost"
-          class="form-control"
-          id="moteCost"
-        />
-      </div>
-      <label for="tokenCost">Token cost (per stack):</label>
-      <div class="reroll-token__cost input-group mb-3" style="max-width: 125px">
-        <input
-          type="number"
-          min="0"
-          v-model="rerollCost.tokenCost"
-          name="tokenCost"
-          class="form-control"
-          id="tokenCost"
-        />
+      <div class="row">
+        <div class="col-md-6 col-lg-3">
+          <Input v-model="rerollCost.moteCost" type="number" label="Mote cost (per stack)" />
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <Input v-model="rerollCost.tokenCost" type="number" label="Token cost (per stack)" />
+        </div>
       </div>
 
       <div class="table-responsive">
@@ -79,6 +65,7 @@
           </tbody>
         </table>
       </div>
+      <div class="text-muted">* If you consider buying a mod and selling the tokens, keep in mind this will only give you a profit of 85% over token price due to Etherian Tax.</div>
     </div>
   </div>
 </template>
@@ -86,6 +73,8 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useUserDataStore } from "@/stores/UserData";
+
+import Input from "@/components/layout/form/Input.vue";
 
 export interface RerollCostInterface {
   moteCost: number;
@@ -104,12 +93,6 @@ function calculateCost(
 
   return Math.floor(
     (motePrice * amountOfMotes + tokenPrice + goldCost) * amountOfRerolls
-  ).toLocaleString();
+  ).toLocaleString('en-US');
 }
 </script>
-
-<style scoped>
-.btn-set .btn {
-  margin-right: 5px;
-}
-</style>

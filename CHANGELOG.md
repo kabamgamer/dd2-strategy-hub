@@ -1,11 +1,11 @@
 # Changelog
 
-## [v1.6.3](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+## [v1.6.3](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.3) (2023-04-03)
 
 * Added Reroll Cost Calculator by EllH (thanks for contribution <3)
 * Added the ability to update defense labels in table view
 
-[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.2...HEAD)
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.2...v1.6.3)
 
 
 

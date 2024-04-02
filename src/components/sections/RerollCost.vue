@@ -5,7 +5,7 @@
       <label for="moteCost">Mote cost (per stack):</label>
       <div class="reroll-mote__cost input-group mb-3" style="max-width: 125px">
         <input
-          type="text"
+          type="number"
           min="0"
           v-model="rerollCost.moteCost"
           name="moteCost"

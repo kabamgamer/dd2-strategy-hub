@@ -14,6 +14,7 @@ import { useDefenseStore } from "@/stores/DefenseInfo";
 import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
 import UserDefense from '@/classes/UserDefense';
+import type { RerollCostInterface } from '@/components/sections/RerollCost.vue';
 
 export interface UserDataStoreDefenseInterface {
     incrementId: number
@@ -42,6 +43,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const defenses = ref<UserDataStoreDefenseInterface[]>(getDefenses())
     const defenseSetups = ref<UserDefenseSetupInterface[]>(getDefenseSetups())
     const ancientPowerPoints = ref<UserAncientResetPoints>(getAncientPowerPoints())
+    const rerollCost = ref<RerollCostInterface>(getRerollCost())
 
     loadDefenseData()
     loadModData()
@@ -105,6 +107,17 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         }
 
         return JSON.parse(localStorage.getItem('ancientResetPoints') ?? '{}')
+    }
+
+    function getRerollCost(): RerollCostInterface {
+        if (!localStorage.getItem('rerollCost')) {
+            return {
+                moteCost: 0,
+                tokenCost: 0
+            }
+        }
+
+        return JSON.parse(localStorage.getItem('rerollCost') ?? '{}')
     }
 
     async function loadDefenseData(): Promise<void> {
@@ -225,7 +238,12 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('lastVisitedVersion', lastVisitedVersion.value)
     })
 
-    return { isDev, tableHeaders, tableView, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
+    watch(rerollCost, () => {
+        localStorage.setItem('rerollCost', JSON.stringify(rerollCost.value))
+    }, { deep: true })
+
+
+    return { isDev, tableHeaders, tableView, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, rerollCost, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
 })
 
 export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {

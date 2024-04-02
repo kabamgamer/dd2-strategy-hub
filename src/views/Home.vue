@@ -23,8 +23,16 @@
 
     <Section section-title="Reroll tracker">
       <div class="row">
-        <div class="col-md-6">
+        <div class="mt-1 mb-1 col-md-6">
           <RerollTracker />
+        </div>
+      </div>
+    </Section>
+
+    <Section section-title="Reroll costs">
+      <div class="row">
+        <div class="mt-1 mb-1 col-md-12">
+          <RerollCost />
         </div>
       </div>
     </Section>
@@ -35,6 +43,7 @@
 import AncientPowerResets from "@/components/sections/AncientPowerResets.vue";
 import RerollTracker from "@/components/sections/RerollTracker.vue";
 import Section from "@/components/layout/Section.vue";
+import RerollCost from "@/components/sections/RerollCost.vue";
 
 </script>
 

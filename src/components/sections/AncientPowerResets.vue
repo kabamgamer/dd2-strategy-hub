@@ -1,5 +1,5 @@
 <template>
-  <div class="reset-calculators mt-5 mb-5">
+  <div class="reset-calculators mt-1 mb-1">
     <div class="row">
       <div class="reset-calculators__calculator col-md-4">
         <Card cardTitle="Minimum ascension calculator">

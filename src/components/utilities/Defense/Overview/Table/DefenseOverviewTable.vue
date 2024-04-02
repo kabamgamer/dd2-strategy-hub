@@ -51,7 +51,7 @@
 
   <BootstrapModal title="Edit defense" ref="editDefenseModal">
     <template #body>
-      <DefenseUserInfo v-if="editDefense" :defense="editDefense" />
+      <DefenseUserInfo v-if="editDefense" :defense="editDefense" include-label />
     </template>
   </BootstrapModal>
 </template>

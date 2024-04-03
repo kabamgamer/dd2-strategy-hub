@@ -4,21 +4,18 @@
     <div class="card-body">
       <div class="row">
         <div class="col-md-6 col-lg-3">
+          <Input type="number" v-model="rerollCost.moteCost" @change="handleChange(ChangeTypes.SingleMote)" step="5000" min="0" label="Mote cost" />
+        </div>
+        <div class="col-md-6 col-lg-3">
           <Input type="number" v-model="rerollCost.moteCostStack" @change="handleChange(ChangeTypes.StackMote)" step="100000" min="0" label="Mote cost (per stack)" />
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <Input type="number" v-model="rerollCost.tokenCost" @change="handleChange(ChangeTypes.SingleToken)" step="5000" min="0" label="Token cost" />
         </div>
         <div class="col-md-6 col-lg-3">
           <Input type="number" v-model="rerollCost.tokenCostStack" @change="handleChange(ChangeTypes.StackToken)" step="100000" min="0" label="Token cost (per stack)" />
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-6 col-lg-3">
-          <Input type="number" v-model="rerollCost.moteCost" @change="handleChange(ChangeTypes.SingleMote)" step="5000" min="0" label="Mote cost" />
-        </div>
-        <div class="col-md-6 col-lg-3">
-          <Input type="number" v-model="rerollCost.tokenCost" @change="handleChange(ChangeTypes.SingleToken)" step="5000" min="0" label="Token cost" />
-        </div>
-      </div>
-
       <div class="table-responsive">
         <table class="table table-bordered">
           <thead>

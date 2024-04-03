@@ -15,6 +15,7 @@ import { useModStore } from "@/stores/ModInfo";
 import { useShardStore } from "@/stores/ShardInfo";
 import UserDefense from '@/classes/UserDefense';
 import type { RerollCostInterface } from '@/components/sections/RerollCost.vue';
+import type { RerollTrackerInterface } from '@/components/sections/RerollTracker.vue';
 
 export interface UserDataStoreDefenseInterface {
     incrementId: number
@@ -44,6 +45,7 @@ export const useUserDataStore = defineStore('userDataStore', () => {
     const defenseSetups = ref<UserDefenseSetupInterface[]>(getDefenseSetups())
     const ancientPowerPoints = ref<UserAncientResetPoints>(getAncientPowerPoints())
     const rerollCost = ref<RerollCostInterface>(getRerollCost())
+    const rerollTracker = ref<RerollTrackerInterface>(getRerollTracker())
 
     loadDefenseData()
     loadModData()
@@ -113,11 +115,32 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         if (!localStorage.getItem('rerollCost')) {
             return {
                 moteCost: 0,
-                tokenCost: 0
+                tokenCost: 0,
+                moteCostStack: 0,
+                tokenCostStack: 0,
             }
         }
 
         return JSON.parse(localStorage.getItem('rerollCost') ?? '{}')
+    }
+
+    function getRerollTracker(): RerollTrackerInterface {
+        // Handle Old Local Data
+        if(localStorage.getItem('mod_reroll_tracker')) {
+            const oldRerollCount = localStorage.getItem('mod_reroll_tracker');
+            localStorage.removeItem('mod_reroll_tracker');
+            return {
+                currentCount: oldRerollCount ? parseInt(oldRerollCount) : 0
+            }
+        }
+
+        if (!localStorage.getItem('rerollTracker')) {
+            return {
+                currentCount: 0
+            }
+        }
+
+        return JSON.parse(localStorage.getItem('rerollTracker') ?? '{}')
     }
 
     async function loadDefenseData(): Promise<void> {
@@ -242,8 +265,12 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         localStorage.setItem('rerollCost', JSON.stringify(rerollCost.value))
     }, { deep: true })
 
+    watch(rerollTracker, () => {
+        localStorage.setItem('rerollTracker', JSON.stringify(rerollTracker.value))
+    }, { deep: true })
 
-    return { isDev, tableHeaders, tableView, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, rerollCost, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
+
+    return { isDev, tableHeaders, tableView, lastVisitedVersion, defenses, defenseSetups, ancientPowerPoints, rerollCost, rerollTracker, deleteDefense, deleteDefenseSetup, getNextDefenseIncrementId, getNextDefenseSetupIncrementId, importDefenses, importDefenseSetups }
 })
 
 export function getDefaultSetupModifiers(): DefenseSetupModifiersInterface {

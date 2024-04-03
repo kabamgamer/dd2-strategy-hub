@@ -109,10 +109,10 @@ export interface RerollCostInterface {
 }
 
 enum ChangeTypes {
-  SingleMote = 'singleMote',
-  SingleToken = 'singleToken',
-  StackMote = 'stackMote',
-  StackToken = 'stackTokens'
+  SingleMote = "singleMote",
+  SingleToken = "singleToken",
+  StackMote = "stackMote",
+  StackToken = "stackTokens",
 }
 
 const { rerollCost, rerollTracker } = storeToRefs(useUserDataStore());
@@ -120,22 +120,26 @@ const pitySystemLimit = ref(286);
 
 function handleChange(type: string): void {
   switch (type) {
-  case ChangeTypes.SingleMote:
-    rerollCost.value.moteCostStack = rerollCost.value.moteCost * 99
-    break;
-  case ChangeTypes.SingleToken:
-    rerollCost.value.tokenCostStack = rerollCost.value.tokenCost * 99
-    break;
-  case ChangeTypes.StackMote:
-    rerollCost.value.moteCost =  Math.floor(rerollCost.value.moteCostStack / 99)
-    break;
-  case ChangeTypes.StackToken:
-    rerollCost.value.tokenCost =  Math.floor(rerollCost.value.tokenCostStack / 99)
-    break;
-  default:
-    // Default case
-    break;
-}
+    case ChangeTypes.SingleMote:
+      rerollCost.value.moteCostStack = rerollCost.value.moteCost * 99;
+      break;
+    case ChangeTypes.SingleToken:
+      rerollCost.value.tokenCostStack = rerollCost.value.tokenCost * 99;
+      break;
+    case ChangeTypes.StackMote:
+      rerollCost.value.moteCost = Math.floor(
+        rerollCost.value.moteCostStack / 99
+      );
+      break;
+    case ChangeTypes.StackToken:
+      rerollCost.value.tokenCost = Math.floor(
+        rerollCost.value.tokenCostStack / 99
+      );
+      break;
+    default:
+      // Default case
+      break;
+  }
 }
 
 function calculateCost(

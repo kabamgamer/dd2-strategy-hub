@@ -128,9 +128,11 @@ export const useUserDataStore = defineStore('userDataStore', () => {
         // Handle Old Local Data
         if(localStorage.getItem('mod_reroll_tracker')) {
             const oldRerollCount = localStorage.getItem('mod_reroll_tracker');
+            const newRerollCount = { currentCount: oldRerollCount ? parseInt(oldRerollCount) : 0 }
             localStorage.removeItem('mod_reroll_tracker');
+            localStorage.setItem('rerollTracker', JSON.stringify(newRerollCount))
             return {
-                currentCount: oldRerollCount ? parseInt(oldRerollCount) : 0
+                currentCount: newRerollCount.currentCount
             }
         }
 

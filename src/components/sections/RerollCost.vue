@@ -17,50 +17,19 @@
             <tr>
               <th scope="col">Chaos</th>
               <th scope="col">Campaign</th>
-              <th scope="col">1</th>
-              <th scope="col">2</th>
-              <th scope="col">3</th>
-              <th scope="col">4</th>
-              <th scope="col">5</th>
-              <th scope="col">6</th>
-              <th scope="col">7</th>
-              <th scope="col">8</th>
-              <th scope="col">9</th>
-              <th scope="col">10</th>
+              <th scope="col" v-for="i in 10" :key="i">{{ i }}</th>
             </tr>
           </thead>
 
           <tbody>
             <tr>
               <th scope="row">Cost per roll</th>
-              <td>{{ calculateCost(2, 2500) }}</td>
-              <td>{{ calculateCost(2, 2500) }}</td>
-              <td>{{ calculateCost(2, 2750) }}</td>
-              <td>{{ calculateCost(2, 3500) }}</td>
-              <td>{{ calculateCost(5, 4500) }}</td>
-              <td>{{ calculateCost(5, 5000) }}</td>
-              <td>{{ calculateCost(5, 6000) }}</td>
-              <td>{{ calculateCost(3, 11000) }}</td>
-              <td>{{ calculateCost(4, 25000) }}</td>
-              <td>{{ calculateCost(5, 25000) }}</td>
-              <td>{{ calculateCost(5, 25000) }}</td>
+              <td scope="row" v-for="calculateCosts in getCalculateCostForRerollCount(1)" :key="calculateCosts">{{ calculateCosts }}</td>
             </tr>
-          </tbody>
-
-          <tbody>
+            
             <tr>
               <th scope="row">Cost per 286</th>
-              <td>{{ calculateCost(2, 2500, 286) }}</td>
-              <td>{{ calculateCost(2, 2500, 286) }}</td>
-              <td>{{ calculateCost(2, 2750, 286) }}</td>
-              <td>{{ calculateCost(2, 3500, 286) }}</td>
-              <td>{{ calculateCost(5, 4500, 286) }}</td>
-              <td>{{ calculateCost(5, 5000, 286) }}</td>
-              <td>{{ calculateCost(5, 6000, 286) }}</td>
-              <td>{{ calculateCost(3, 11000, 286) }}</td>
-              <td>{{ calculateCost(4, 25000, 286) }}</td>
-              <td>{{ calculateCost(5, 25000, 286) }}</td>
-              <td>{{ calculateCost(5, 25000, 286) }}</td>
+              <td scope="row" v-for="calculateCosts in getCalculateCostForRerollCount(286)" :key="calculateCosts">{{ calculateCosts }}</td>
             </tr>
           </tbody>
         </table>
@@ -83,9 +52,27 @@ export interface RerollCostInterface {
 
 const { rerollCost } = storeToRefs(useUserDataStore());
 
+function getCalculateCostForRerollCount(
+  amountOfRerolls: number
+): string[] {
+  return [
+    calculateCost(2, 2500, amountOfRerolls), // Campaign
+    calculateCost(2, 2500, amountOfRerolls), // Chaos 1
+    calculateCost(2, 2750, amountOfRerolls), // Chaos 2
+    calculateCost(2, 3500, amountOfRerolls), // Chaos 3
+    calculateCost(5, 4500, amountOfRerolls), // Chaos 4
+    calculateCost(5, 5000, amountOfRerolls), // Chaos 5
+    calculateCost(5, 6000, amountOfRerolls), // Chaos 6
+    calculateCost(3, 11000, amountOfRerolls), // Chaos 7
+    calculateCost(4, 25000, amountOfRerolls), // Chaos 8
+    calculateCost(5, 25000, amountOfRerolls), // Chaos 9
+    calculateCost(5, 25000, amountOfRerolls), // Chaos 10
+  ]
+}
+
 function calculateCost(
-  amountOfMotes: number,
-  goldCost: number,
+  amountOfMotes: number = 1,
+  goldCost: number = 1,
   amountOfRerolls: number = 1
 ): string {
   const motePrice = rerollCost.value.moteCost / 99;

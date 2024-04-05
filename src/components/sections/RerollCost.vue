@@ -103,16 +103,16 @@ function handleChange(type: string): void {
 function getChaosTiers(): ChaosTiers[] {
   return [
     { title: "Campaign", moteAmount: 2, goldAmount: 2500 },
-    { title: "Chaos 1", moteAmount: 2, goldAmount: 2500 },
-    { title: "Chaos 2", moteAmount: 2, goldAmount: 2750 },
-    { title: "Chaos 3", moteAmount: 2, goldAmount: 3500 },
-    { title: "Chaos 4", moteAmount: 5, goldAmount: 4500 },
-    { title: "Chaos 5", moteAmount: 5, goldAmount: 5000 }, 
-    { title: "Chaos 6", moteAmount: 5, goldAmount: 6000 },
-    { title: "Chaos 7", moteAmount: 3, goldAmount: 11000 },
-    { title: "Chaos 8", moteAmount: 4, goldAmount: 25000 },
-    { title: "Chaos 9", moteAmount: 5, goldAmount: 25000 },
-    { title: "Chaos 10", moteAmount: 5, goldAmount: 25000 }
+    { title: "1", moteAmount: 2, goldAmount: 2500 },
+    { title: "2", moteAmount: 2, goldAmount: 2750 },
+    { title: "3", moteAmount: 2, goldAmount: 3500 },
+    { title: "4", moteAmount: 5, goldAmount: 4500 },
+    { title: "5", moteAmount: 5, goldAmount: 5000 }, 
+    { title: "6", moteAmount: 5, goldAmount: 6000 },
+    { title: "7", moteAmount: 3, goldAmount: 11000 },
+    { title: "8", moteAmount: 4, goldAmount: 25000 },
+    { title: "9", moteAmount: 5, goldAmount: 25000 },
+    { title: "10", moteAmount: 5, goldAmount: 25000 }
   ]
 }
 

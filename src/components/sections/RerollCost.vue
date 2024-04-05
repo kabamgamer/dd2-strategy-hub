@@ -21,27 +21,26 @@
           <thead>
             <tr>
               <th scope="col">Chaos</th>
-              <th scope="col">Campaign</th>
-              <th scope="col" v-for="i in 10" :key="i">{{ i }}</th>
+              <th scope="col" v-for="chaosTier in getChaosTiers()" :key="chaosTier.title">{{ chaosTier.title }}</th>
             </tr>
           </thead>
 
           <tbody>
             <tr>
               <th scope="row">Cost per roll</th>
-              <td scope="row" v-for="calculateCosts in getCalculateCostForRerollCount(1)" :key="calculateCosts">{{ calculateCosts }}</td>
+              <td scope="row" v-for="chaosTier in getChaosTiers()" :key="`per-${chaosTier.title}`">{{ calculateCost(chaosTier.moteAmount, chaosTier.goldAmount) }}</td>
             </tr>
             
             <tr>
               <th scope="row">Cost per 286</th>
-              <td scope="row" v-for="calculateCosts in getCalculateCostForRerollCount(pitySystemLimit)" :key="calculateCosts">{{ calculateCosts }}</td>
+              <td scope="row" v-for="chaosTier in getChaosTiers()" :key="`286-${chaosTier.title}`">{{ calculateCost(chaosTier.moteAmount, chaosTier.goldAmount, 286) }}</td>
             </tr>
           </tbody>
 
           <tbody>
             <tr>
               <th scope="row">Cost until pity</th>
-              <td scope="row" v-for="calculateCosts in getCalculateCostForRerollCount(pitySystemLimit - rerollTracker.currentCount)" :key="calculateCosts">{{ calculateCosts }}</td>
+              <td scope="row" v-for="chaosTier in getChaosTiers()" :key="`pity-${chaosTier.title}`">{{ calculateCost(chaosTier.moteAmount, chaosTier.goldAmount, pitySystemLimit - rerollTracker.currentCount) }}</td>
             </tr>
           </tbody>
         </table>
@@ -62,6 +61,12 @@ export interface RerollCostInterface {
   tokenCost: number;
   moteCostStack: number;
   tokenCostStack: number;
+}
+
+type ChaosTiers = {
+  title: string,
+  moteAmount: number,
+  goldAmount: number,
 }
 
 enum ChangeTypes {
@@ -95,31 +100,29 @@ function handleChange(type: string): void {
   }
 }
 
-function getCalculateCostForRerollCount(
-  amountOfRerolls: number
-): string[] {
+function getChaosTiers(): ChaosTiers[] {
   return [
-    calculateCost(2, 2500, amountOfRerolls), // Campaign
-    calculateCost(2, 2500, amountOfRerolls), // Chaos 1
-    calculateCost(2, 2750, amountOfRerolls), // Chaos 2
-    calculateCost(2, 3500, amountOfRerolls), // Chaos 3
-    calculateCost(5, 4500, amountOfRerolls), // Chaos 4
-    calculateCost(5, 5000, amountOfRerolls), // Chaos 5
-    calculateCost(5, 6000, amountOfRerolls), // Chaos 6
-    calculateCost(3, 11000, amountOfRerolls), // Chaos 7
-    calculateCost(4, 25000, amountOfRerolls), // Chaos 8
-    calculateCost(5, 25000, amountOfRerolls), // Chaos 9
-    calculateCost(5, 25000, amountOfRerolls), // Chaos 10
+    { title: "Campaign", moteAmount: 2, goldAmount: 2500 },
+    { title: "Chaos 1", moteAmount: 2, goldAmount: 2500 },
+    { title: "Chaos 2", moteAmount: 2, goldAmount: 2750 },
+    { title: "Chaos 3", moteAmount: 2, goldAmount: 3500 },
+    { title: "Chaos 4", moteAmount: 5, goldAmount: 4500 },
+    { title: "Chaos 5", moteAmount: 5, goldAmount: 5000 }, 
+    { title: "Chaos 6", moteAmount: 5, goldAmount: 6000 },
+    { title: "Chaos 7", moteAmount: 3, goldAmount: 11000 },
+    { title: "Chaos 8", moteAmount: 4, goldAmount: 25000 },
+    { title: "Chaos 9", moteAmount: 5, goldAmount: 25000 },
+    { title: "Chaos 10", moteAmount: 5, goldAmount: 25000 }
   ]
 }
 
 function calculateCost(
-  amountOfMotes: number = 1,
-  goldCost: number = 1,
+  amountOfMotes: number = 0,
+  goldCost: number = 0,
   amountOfRerolls: number = 1
 ): string {
   return Math.floor(
-    ((rerollCost.value.moteCost ?? 0 * amountOfMotes) + rerollCost.value.tokenCost ?? 0 + goldCost) * amountOfRerolls
+    ((rerollCost.value.moteCost * amountOfMotes) + rerollCost.value.tokenCost + goldCost) * amountOfRerolls
   ).toLocaleString('en-US');
 }
 </script>

@@ -3,11 +3,20 @@ import OutputModifier from "@/classes/OutputModifier";
 
 export default class HasOutputModifier {
 
-    protected getOutputModifierForValue(value?: string): OutputModifier | undefined {
+    protected getOutputModifierForValue(value?: string): OutputModifier | OutputModifier[] | undefined {
         if (value === '' || value === undefined) {
             return undefined
         }
 
+        if (!value.includes('&')) {
+            return this.getOutputModifier(value)
+        }
+
+        const values: string[] = value.split('&');
+        return values.map((value: string) => this.getOutputModifier(value.trim()))
+    }
+
+    private getOutputModifier(value: string): OutputModifier {
         const valuesAndMutators: string[] = value.split('|');
         const modifierValue: string = valuesAndMutators.splice(0,1)[0].replace('+', '');
 

@@ -1,10 +1,11 @@
 import { computed, reactive, ref } from 'vue';
 
 import type { ComputedRef, Ref, UnwrapNestedRefs } from 'vue';
-import type { DefenseStatInterface, ModInterface, ShardInterface } from '@/types';
+import type { DefenseRootInterface, DefenseStatInterface, ModInterface, ShardInterface } from '@/types';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type OutputModifier from '@/classes/OutputModifier';
+import { useDefenseCalculations } from '@/composables/Defense/DefenseCalculations';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
 import useSetupCalculations, { SetupModifierCalculation } from '@/composables/Defense/StatCalculations/SetupModifiers';
@@ -13,6 +14,8 @@ import ShieldingGuardStat from '@/defense_stats/ShieldingGuardStat';
 import BlazingPhoenixStat from '@/defense_stats/BlazingPhoenixStat';
 import useDefenseDamageType from '../DefenseDamageType';
 import DamageType from '@/enums/DamageType';
+import UserDefense from '../../../classes/UserDefense';
+import { createPinia } from 'pinia';
 
 export interface DefenseAttackDamageCalculationsComposable {
     tooltipAttackDamage: ComputedRef<number>,
@@ -50,18 +53,18 @@ export default function useAttackDamageCalculations(
 
         let bonusAttackDamage = 0
         let attackDamageMultiplier = 1
-        forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface) => {
-            if (!util.inTooltip || !util.damageModifier) {
+        forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface, damageModifier: OutputModifier) => {
+            if (!util.inTooltip) {
                 return
             }
 
-            bonusAttackDamage += util.damageModifier.additive ?? 0
-            if (util.damageModifier.percentage) {
-                attackDamageMultiplier += util.damageModifier.percentage / 100
+            bonusAttackDamage += damageModifier.additive ?? 0
+            if (damageModifier.percentage) {
+                attackDamageMultiplier += damageModifier.percentage / 100
             }
         })
 
-        return baseAttackDamage * attackDamageMultiplier + bonusAttackDamage;
+        return Math.abs(baseAttackDamage * attackDamageMultiplier + bonusAttackDamage);
     })
 
     const totalAttackDamage = reactive<{crit: number, nonCrit: number}>({
@@ -76,33 +79,33 @@ export default function useAttackDamageCalculations(
 
         let bonusAttackDamage = 0
         let attackDamageMultiplier = 0
-        forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface) => {
-            if (util.inTooltip || !util.damageModifier) {
+        forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface, damageModifier: OutputModifier) => {
+            if (util.inTooltip) {
                 return
             }
 
-            const criticalDivision: number = util.damageModifier.mutators.noCrit ? criticalMultiplier.value : 1
-            criticalDamageMultiplier = util.damageModifier.mutators.noCrit ? 1 : criticalDamageMultiplier
+            const criticalDivision: number = damageModifier.mutators.noCrit ? criticalMultiplier.value : 1
+            criticalDamageMultiplier = damageModifier.mutators.noCrit ? 1 : criticalDamageMultiplier
 
-            if (util.damageModifier.mutators.fromPower) {
-                const powerDamageBonus: number = attackDamageFromPower(util.damageModifier)
+            if (damageModifier.mutators.fromPower) {
+                const powerDamageBonus: number = attackDamageFromPower(damageModifier)
                 bonusAttackDamage += powerDamageBonus / criticalDivision
                 totalAttackDamage.nonCrit += powerDamageBonus
                 totalAttackDamage.crit += powerDamageBonus * criticalDamageMultiplier
                 return
             }
 
-            if (util.damageModifier.mutators.fromHealth) {
-                const healthDamageBonus: number = attackDamageFromHealth(util.damageModifier)
+            if (damageModifier.mutators.fromHealth) {
+                const healthDamageBonus: number = attackDamageFromHealth(damageModifier)
                 bonusAttackDamage += healthDamageBonus / criticalDivision
                 totalAttackDamage.nonCrit += healthDamageBonus
                 totalAttackDamage.crit += healthDamageBonus * criticalDamageMultiplier
                 return
             }
 
-            bonusAttackDamage += (util.damageModifier.additive ?? 0) / criticalDivision
-            if (util.damageModifier.percentage) {
-                attackDamageMultiplier += util.damageModifier.percentage / 100 / criticalDivision
+            bonusAttackDamage += (damageModifier.additive ?? 0) / criticalDivision
+            if (damageModifier.percentage) {
+                attackDamageMultiplier += damageModifier.percentage / 100 / criticalDivision
             }
         })
 
@@ -135,6 +138,39 @@ export default function useAttackDamageCalculations(
         if (shard) {
             resolvedDefenseSpecificStats.push(new BlazingPhoenixStat(defense, calculationConditions, defensePowerAdditives, criticalMultiplier, criticalDamage, shard, nonTooltipAttackDamageMupltiplier.value))
         }
+        
+        // From "non base damage" (eg. poison from poison defenses)
+        defense.defenseData.children?.forEach((childDefenseData: DefenseRootInterface) => {
+            const defenseClone = new UserDefense({
+                incrementId: defense.incrementId,
+                defenseData: childDefenseData,
+                userData: { ...defense.userData, 'id': childDefenseData.id },
+                userMods: defense.userMods,
+                userShards: defense.userShards,
+            }, defense.userData.id)
+
+            const { 
+                attackRate: elementalAttackRate, 
+                totalDps: elementalTotalDps,
+                totalAttackDamage: elementalTotalAttackDamage,
+            } = useDefenseCalculations(defenseClone, calculationConditions)
+
+            if (childDefenseData.baseAttackRate !== defense.defenseData?.baseAttackRate || childDefenseData.maxAttackRate !== defense.defenseData?.maxAttackRate) {
+                resolvedDefenseSpecificStats.push({
+                    label: childDefenseData.name + ' Rate',
+                    value: elementalAttackRate.value.toFixed(2).toLocaleString('en-US'),
+                })
+            }
+
+            resolvedDefenseSpecificStats.push({
+                label: childDefenseData.name + ' DPS',
+                tooltipDps: (elementalTotalDps.value / criticalMultiplier.value),
+                dps: elementalTotalDps.value,
+                value: Math.round(elementalTotalDps.value).toLocaleString('en-US'),
+                attackDamage: elementalTotalAttackDamage.nonCrit,
+                critDamage: elementalTotalAttackDamage.crit,
+            })
+        })
 
         return [...resolvedDefenseSpecificStats, ...dynamicCustomStats()]
     })
@@ -142,13 +178,13 @@ export default function useAttackDamageCalculations(
     function dynamicCustomStats(): DefenseStatInterface<any>[] {
         const resolvedDefenseSpecificStats: DefenseStatInterface<any>[] = []
 
-        forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface) => {
-            if (!util.damageModifier || !util.damageModifier.mutators.customStat) {
+        forRegularModsAndShards('damageModifier', (util: ModInterface|ShardInterface, damageModifier: OutputModifier) => {
+            if (!damageModifier.mutators.customStat) {
                 return
             }
 
-            const damageModifierClone: OutputModifier = Object.assign(Object.create(Object.getPrototypeOf(util.damageModifier)), util.damageModifier)
-            damageModifierClone.percentage = util.damageModifier.mutators.customStat
+            const damageModifierClone: OutputModifier = Object.assign(Object.create(Object.getPrototypeOf(damageModifier)), damageModifier)
+            damageModifierClone.percentage = damageModifier.mutators.customStat
             const effectiveCriticalMultiplier: number = damageModifierClone.mutators.noCrit ? 1 : criticalMultiplier.value
 
             let customStatDamage: undefined|number

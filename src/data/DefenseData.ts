@@ -77,11 +77,6 @@ export default class DefenseData extends HasAscensionPoints implements DefenseRo
      * @protected
      */
     protected populate(data: DefenseDataResponse): void {
-        // Very basic check to see if data is present
-        if (!data.maxAtkRange || !data.baseDefPwr) {
-            return
-        }
-
         const damageType: undefined|DamageType = DamageType.createEnum(data.damageType.toLowerCase());
         if (damageType === undefined) {
             throw new Error(`Invalid damage type: ${data.damageType}`);

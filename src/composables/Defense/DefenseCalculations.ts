@@ -24,21 +24,8 @@ export interface CalculationConditionsInterface {
 
 export function useDefenseCalculations(
     defense: UserDataStoreDefenseInterface,
-    defenseLevel: Ref<number>,
-    setupDefenses: Ref<undefined | UserDataStoreDefenseInterface[]>,
-    setupDefenseOptions: Ref<undefined | { [defensesIncrementId: number]: UserSetupDefenseInterface }>,
-    defenseBoosts: Ref<undefined | { [incrementId: number]: CalculatedDefenseStatsInterface }>,
-    setupModifiers: Ref<undefined | DefenseSetupModifiersInterface>,
+    calculationConditions: CalculationConditionsInterface,
 ): any {
-
-    const calculationConditions: CalculationConditionsInterface = {
-        defenseLevel,
-        setupDefenses,
-        setupDefenseOptions,
-        defenseBoosts,
-        setupModifiers,
-    }
-
     const { defenseHealth, defenseHealthAdditives, vampiricHealth } = useDefenseHealthCalculations(defense, calculationConditions);
     const { defensePower, defensePowerAdditives } = useDefensePowerCalculations(defense, calculationConditions, vampiricHealth);
     const { criticalChance, criticalDamage, criticalMultiplier } = useDefenseCriticalCalculations(defense, calculationConditions);
@@ -52,14 +39,16 @@ export function useDefenseCalculations(
             return 0
         }
 
-        return defenseHealth.value * (defense.defenseData?.hpScalar[defenseLevel.value - 1] ?? 0)
+        return defenseHealth.value * (defense.defenseData?.hpScalar[calculationConditions.defenseLevel.value - 1] ?? 0)
     })
 
     const { tooltipAttackDamage, nonTooltipAttackDamageBonus, totalAttackDamage, defenseSpecificStats } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth, criticalMultiplier, criticalDamage)
+    const customStatsTooltipDps = computed<number>(() => defenseSpecificStats.value.reduce((acc: number, stat: DefenseStatInterface<any>) => acc + (stat.tooltipDps ?? 0), 0))
     const customStatsDps = computed<number>(() => defenseSpecificStats.value.reduce((acc: number, stat: DefenseStatInterface<any>) => acc + (stat.dps ?? 0), 0))
 
-    const tooltipDps = computed<number>(() => tooltipAttackDamage.value * criticalMultiplier.value / attackRate.value)
-    const totalDps = computed<number>(() => (tooltipAttackDamage.value + nonTooltipAttackDamageBonus.value) * defenseSetupComboBuffs.value * defenseSetupModifiers.value * criticalMultiplier.value / attackRate.value + customStatsDps.value)
+    const projectileCount = defense.userData.id === 'Pufferfish' ? 6 : 1
+    const tooltipDps = computed<number>(() => tooltipAttackDamage.value * criticalMultiplier.value / attackRate.value + customStatsTooltipDps.value )
+    const totalDps = computed<number>(() => (tooltipAttackDamage.value * projectileCount + nonTooltipAttackDamageBonus.value) * defenseSetupComboBuffs.value * defenseSetupModifiers.value * criticalMultiplier.value / attackRate.value + customStatsDps.value)
 
     const defenseSpecificStatsDependingOnTotalDps = computed<DefenseStatInterface<any>[]>((): DefenseStatInterface<any>[] => {
         const resolvedDefenseSpecificStats: DefenseStatInterface<any>[] = []

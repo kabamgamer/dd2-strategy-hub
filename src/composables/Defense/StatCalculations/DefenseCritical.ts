@@ -7,6 +7,7 @@ import type { CalculatedDefenseStatsInterface, ModInterface, ShardInterface } fr
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import usePylonCalculations from '@/composables/Defense/PylonCalculations';
 import useModsShards from './ModsShards';
+import OutputModifier from '@/classes/OutputModifier';
 
 interface DefenseCriticalCalculationsComposable {
     criticalChance: ComputedRef<number>
@@ -23,11 +24,16 @@ export default function useDefenseCriticalCalculations(
     const { forRegularModsAndShards, diverseValueForStat } = useModsShards(defense, calculationConditions)
 
     const criticalChance = computed<number>((): number => {
-        // 30% is the base crit chance
+        // 30% is the base crit chance (including 20% ascension crit chance)
         let critChance: number = 30;
+        
+        // Poison damage is not affected by ascension crit chance and mods/shards/godly stats
+        if (defense.parent === 'Pufferfish') {
+            return 10;
+        }
 
-        forRegularModsAndShards('criticalChance', (util: ModInterface | ShardInterface) => {
-            critChance += util.criticalChance?.percentage ?? 0
+        forRegularModsAndShards('criticalChance', (util: ModInterface | ShardInterface, criticalChanceModifier: OutputModifier) => {
+            critChance += criticalChanceModifier.percentage ?? 0
         })
 
         critChance += diverseValueForStat('criticalChance', 'percentage');
@@ -50,19 +56,25 @@ export default function useDefenseCriticalCalculations(
         // 50% is the base crit damage
         let criticalDamagePercentage: number = 50;
 
-        if (!defense.defenseData) {
-            return criticalDamagePercentage
-        }
-
-        forRegularModsAndShards('criticalDamage', (util: ModInterface | ShardInterface) => {
-            criticalDamagePercentage += util.criticalDamage?.percentage ?? 0
-        })
-
-        criticalDamagePercentage += diverseValueForStat('criticalDamage', 'percentage');
         if (!defense.isBuffDefense) {
             // Add all the crit damage boosts from other defenses
             criticalDamagePercentage += Object.values(calculationConditions.defenseBoosts.value ?? {}).reduce((total: number, defenseBoost: CalculatedDefenseStatsInterface) => total + defenseBoost.critDamage, 0)
         }
+        
+        // Pufferfish' poison damage is not affected by ascension crit damage and mods/shards/godly stats
+        if (defense.parent === 'Pufferfish') {
+            return 30;
+        }
+
+        if (!defense.defenseData) {
+            return criticalDamagePercentage
+        }
+
+        forRegularModsAndShards('criticalDamage', (util: ModInterface | ShardInterface, criticalDamageModifier: OutputModifier) => {
+            criticalDamagePercentage += criticalDamageModifier.percentage ?? 0
+        })
+
+        criticalDamagePercentage += diverseValueForStat('criticalDamage', 'percentage');
 
         if (defense.userData.relic.godlyStat?.type === 'critical_damage') {
             criticalDamagePercentage += defense.userData.relic.godlyStat.value
@@ -85,7 +97,7 @@ export default function useDefenseCriticalCalculations(
         criticalDamagePercentage += pylonsModifier('criticalDamage')
         criticalDamagePercentage += ancientDefenseCriticalDamage.value
 
-        if (defense.isBuffDefense && defense.defenseData) {
+        if (defense.isBuffDefense) {
             const currentAttackScalar: number = defense.defenseData.attackScalar[calculationConditions.defenseLevel.value-1]
             const firstAttackScalar: number = defense.defenseData.attackScalar[0]
             criticalDamagePercentage += criticalDamagePercentage * (currentAttackScalar / firstAttackScalar - 1)

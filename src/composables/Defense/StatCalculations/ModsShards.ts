@@ -3,17 +3,23 @@ import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type { ModInterface, ShardInterface } from "@/types";
 import type { CalculationConditionsInterface } from "@/composables/Defense/DefenseCalculations";
 import type { OutputModifierMutatorsInterface } from "@/classes/OutputModifier";
+import OutputModifier from '../../../classes/OutputModifier';
 
 interface ModsShardsComposable {
-    forRegularModsAndShards: (stat: string, callback: (util: ModInterface|ShardInterface) => void, includePylons?: boolean) => void
+    forRegularModsAndShards: (stat: string, callback: (util: ModInterface|ShardInterface, outputModifier: OutputModifier) => void, includePylons?: boolean) => void
     diverseValueForStat: (stat: string, modifierType: string) => number
 }
 
 export default function useModsShards(defense: UserDataStoreDefenseInterface, calculationConditions: CalculationConditionsInterface): ModsShardsComposable {
     
     return { 
-        forRegularModsAndShards: function(stat: string, callback: (util: ModInterface|ShardInterface) => void, includePylons: boolean = false): void {
+        forRegularModsAndShards: function(stat: string, callback: (util: ModInterface|ShardInterface, outputModifier: OutputModifier) => void, includePylons: boolean = false): void {
             [...defense.userMods, ...defense.userShards].forEach((util: ModInterface|ShardInterface): void => {
+                let statOutputModifiers: OutputModifier[]|OutputModifier|undefined = (util as any)[stat]
+                if (!statOutputModifiers) {
+                    return
+                }
+
                 if ((util as ModInterface).type?.equals(ModType.Diverse)) {
                     return
                 }
@@ -24,12 +30,30 @@ export default function useModsShards(defense: UserDataStoreDefenseInterface, ca
                     }
                 }
 
-                const mutators: undefined|OutputModifierMutatorsInterface = (util as any)[stat]?.mutators
-                if (!includePylons && mutators?.pylon) {
-                    return
+                if (!Array.isArray(statOutputModifiers)) {
+                    statOutputModifiers = [statOutputModifiers]
                 }
-    
-                callback(util);
+
+                statOutputModifiers.forEach((statOutputModifier: OutputModifier): void => {
+                    const mutators: undefined|OutputModifierMutatorsInterface = statOutputModifier?.mutators
+                    if (!includePylons && mutators?.pylon) {
+                        return
+                    }
+
+                    if (mutators.applyTo) {
+                        if (mutators.applyTo === 'Base' && defense.defenseData?.children) {
+                            callback(util, statOutputModifier);
+                        }
+
+                        if (defense.defenseData?.id === mutators.applyTo) {
+                            callback(util, statOutputModifier);
+                        }
+
+                        return
+                    }
+        
+                    callback(util, statOutputModifier);
+                })
             })
         },
 

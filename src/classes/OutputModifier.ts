@@ -17,6 +17,7 @@ export interface OutputModifierMutatorsInterface {
     noUpgradeScaling?: boolean;
     customStat?: number;
     asDamageType?: string;
+    applyTo?: string;
     debuff?: boolean;
 }
 

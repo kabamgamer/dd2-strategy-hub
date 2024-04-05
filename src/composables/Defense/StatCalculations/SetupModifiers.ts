@@ -7,6 +7,7 @@ import type { DefenseSetupModifiersInterface, ModInterface, ShardInterface } fro
 import useDefenseDamageType from "@/composables/Defense/DefenseDamageType";
 import DamageType from '@/enums/DamageType';
 import StatusEffect from '@/enums/StatusEffect';
+import OutputModifier from '@/classes/OutputModifier';
 
 interface DefenseSetupCalculationsComposable {
     defenseSetupComboBuffs: ComputedRef<number>,
@@ -50,11 +51,18 @@ export class SetupModifierCalculation {
             }
 
             [...defense.userMods, ...defense.userShards].forEach((util: ModInterface | ShardInterface) => {
-                if (!util.damageModifier?.mutators.debuff) {
+                if (!util.damageModifier) {
                     return
                 }
 
-                comboModifier *= 1 + (util.damageModifier.percentage ?? 0) / 100
+                const damageModifiers: OutputModifier[] = Array.isArray(util.damageModifier) ? util.damageModifier : [util.damageModifier];
+                damageModifiers.forEach((damageModifier: OutputModifier) => {
+                    if (!damageModifier.mutators.pylon) {
+                        return
+                    }
+
+                    comboModifier *= 1 + (damageModifier.percentage ?? 0) / 100
+                })
             })
         })
 

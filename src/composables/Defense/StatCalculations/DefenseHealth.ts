@@ -7,6 +7,7 @@ import type { ModInterface, ShardInterface } from '@/types';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import usePylonCalculations from '@/composables/Defense/PylonCalculations';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
+import OutputModifier from '@/classes/OutputModifier';
 
 interface DefenseHealthCalculationsComposable {
     defenseHealth: ComputedRef<number>
@@ -32,8 +33,8 @@ export default function useDefenseHealthCalculations(
 
         additiveValues += defense.ascensionDefenseHealth;
 
-        forRegularModsAndShards('defenseHealth', (util: ModInterface|ShardInterface): void => {
-            additiveValues += util.defenseHealth?.additive ?? 0
+        forRegularModsAndShards('defenseHealth', (util: ModInterface|ShardInterface, defenseHealthModifier: OutputModifier): void => {
+            additiveValues += defenseHealthModifier.additive ?? 0
         })
 
         return additiveValues
@@ -46,12 +47,12 @@ export default function useDefenseHealthCalculations(
             return 1
         }
 
-        forRegularModsAndShards('defenseHealth', (util: ModInterface|ShardInterface): void => {
-            if (!util.defenseHealth?.percentage) {
+        forRegularModsAndShards('defenseHealth', (util: ModInterface|ShardInterface, defenseHealthModifier: OutputModifier): void => {
+            if (!defenseHealthModifier.percentage) {
                 return;
             }
             
-            multiplier += util.defenseHealth.percentage / 100
+            multiplier += defenseHealthModifier.percentage / 100
         })
 
         multiplier *= 1 + usePylonCalculations(defense, calculationConditions.setupDefenses).pylonsModifier('defenseHealth') / 100
@@ -83,8 +84,8 @@ export default function useDefenseHealthCalculations(
             vampiricHealthStat = defense.userData.relic.defenseHealth
         } else {
             vampiricHealthStat = (defense.userData.pet.defenseHealth + defense.defenseData.baseDefenseHealth + defense.userData.relic.defenseHealth) * ancientFortificationMultiplier.value + defense.ascensionDefenseHealth
-            forRegularModsAndShards('defenseHealth', (util: ModInterface|ShardInterface): void => {
-                vampiricHealthStat += util.defenseHealth?.additive ?? 0
+            forRegularModsAndShards('defenseHealth', (util: ModInterface|ShardInterface, defenseHealthModifier: OutputModifier): void => {
+                vampiricHealthStat += defenseHealthModifier.additive ?? 0
             })
         }
 

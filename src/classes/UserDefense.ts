@@ -18,7 +18,9 @@ export default class UserDefense implements UserDataStoreDefenseInterface {
             defenseData?: DefenseRootInterface,
             userMods: ModInterface[],
             userShards: ShardInterface[],
-        }
+        },
+        // Indicates whether this data is child data of another defense (eg. poison damage from Poison Dart Tower)
+        public readonly parent?: string
     ) {
         this.incrementId = userDataStoreDefense.incrementId
         this.userData = userDataStoreDefense.userData
@@ -32,6 +34,10 @@ export default class UserDefense implements UserDataStoreDefenseInterface {
     }
     
     get ascensionDefenseHealth(): number {
+        if (this.parent) {
+            return 0;
+        }
+
         if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints) || !this.defenseData.defenseHealthAP) {
             return 0;
         }
@@ -42,6 +48,10 @@ export default class UserDefense implements UserDataStoreDefenseInterface {
     get ascensionDefensePower(): number {
         if (!this.defenseData || !(this.defenseData instanceof HasAscensionPoints)) {
             return 0;
+        }
+        
+        if (this.parent === 'Pufferfish') {
+            return this.defenseData.defenseRangeAP?.getStatForLevel('defensePower', this.userData.ascensionPoints.defense_range ?? 0) ?? 0;
         }
 
         const rangeGambitSubtraction = this.defenseData.defenseRangeAP?.getStatForLevel('defensePower', this.userData.ascensionPoints.defense_range ?? 0) ?? 0;

@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+
+* Defense calculators: Added poison damage for poison type defenses
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.3...HEAD)
+
+
+
 ## [v1.6.3](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.6.3) (2023-04-03)
 
 * Added Reroll Cost Calculator by EllH (thanks for contribution <3)

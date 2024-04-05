@@ -20,7 +20,7 @@ export interface ModInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
-    damageModifier?: OutputModifier;
+    damageModifier?: OutputModifier|OutputModifier[];
     elementalAttunement?: DamageType;
     compatibilities?: string[];
     customOptions?: string;
@@ -40,7 +40,7 @@ export interface ShardInterface {
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
-    damageModifier?: OutputModifier;
+    damageModifier?: OutputModifier|OutputModifier[];
     elementalAttunement?: DamageType;
     compatibilities?: string[];
     customOptions?: string;
@@ -67,6 +67,7 @@ export interface AscensionPointInterface {
 // This interface is used to identify all base defense data which will be the same for every user
 export interface DefenseRootInterface {
     id: string;
+    children?: DefenseRootInterface[];
     name: string;
     icon: string;
     mapIcon: string;
@@ -186,6 +187,7 @@ export interface DefenseStatInterface<TVal>{
     value: TVal;
     attackDamage?: number;
     critDamage?: number;
+    tooltipDps?: number;
     dps?: number;
     template?: string;
 }

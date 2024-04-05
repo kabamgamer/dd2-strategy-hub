@@ -2,7 +2,7 @@
   <div :class="inFormGroup ? 'form-group' : ''" class="mb-3">
     <label v-if="label" :for="id">{{ label }}</label>
     <input :type="type" class="form-control" :id="id"
-           :placeholder="placeholder ?? label" v-model="value" @change="onchange">
+           :placeholder="placeholder ?? label" :step="step" :min="min" :max="max" v-model="value" @change="onchange">
   </div>
 </template>
 
@@ -22,6 +22,9 @@ const props = defineProps({
     type: String,
     default: 'text',
   },
+  step: String,
+  min: String,
+  max: String
 });
 
 const emits = defineEmits(['change', 'update:modelValue']);

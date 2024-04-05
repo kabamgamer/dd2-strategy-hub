@@ -26,21 +26,9 @@
           </thead>
 
           <tbody>
-            <tr>
-              <th scope="row">Cost per roll</th>
-              <td scope="row" v-for="chaosTier in getChaosTiers()" :key="`per-${chaosTier.title}`">{{ calculateCost(chaosTier.moteAmount, chaosTier.goldAmount) }}</td>
-            </tr>
-            
-            <tr>
-              <th scope="row">Cost per 286</th>
-              <td scope="row" v-for="chaosTier in getChaosTiers()" :key="`286-${chaosTier.title}`">{{ calculateCost(chaosTier.moteAmount, chaosTier.goldAmount, 286) }}</td>
-            </tr>
-          </tbody>
-
-          <tbody>
-            <tr>
-              <th scope="row">Cost until pity</th>
-              <td scope="row" v-for="chaosTier in getChaosTiers()" :key="`pity-${chaosTier.title}`">{{ calculateCost(chaosTier.moteAmount, chaosTier.goldAmount, pitySystemLimit - rerollTracker.currentCount) }}</td>
+            <tr v-for="row in getRerollRows()" :key="row.title">
+              <th scope="row">{{ row.title }}</th>
+              <td scope="row" v-for="chaosTier in getChaosTiers()" :key="`per-${chaosTier.title}`">{{ calculateCost(chaosTier.moteAmount, chaosTier.goldAmount, row.rerollAmount) }}</td>
             </tr>
           </tbody>
         </table>
@@ -63,10 +51,15 @@ export interface RerollCostInterface {
   tokenCostStack: number;
 }
 
-type ChaosTiers = {
+type ChaosTier = {
   title: string,
   moteAmount: number,
   goldAmount: number,
+}
+
+type RerollRow = {
+  title: string,
+  rerollAmount: number,
 }
 
 enum ChangeTypes {
@@ -100,7 +93,7 @@ function handleChange(type: string): void {
   }
 }
 
-function getChaosTiers(): ChaosTiers[] {
+function getChaosTiers(): ChaosTier[] {
   return [
     { title: "Campaign", moteAmount: 2, goldAmount: 2500 },
     { title: "1", moteAmount: 2, goldAmount: 2500 },
@@ -113,6 +106,14 @@ function getChaosTiers(): ChaosTiers[] {
     { title: "8", moteAmount: 4, goldAmount: 25000 },
     { title: "9", moteAmount: 5, goldAmount: 25000 },
     { title: "10", moteAmount: 5, goldAmount: 25000 }
+  ]
+}
+
+function getRerollRows(): RerollRow[] {
+  return [
+    { title: "Cost per roll", rerollAmount: 1 },
+    { title: "Cost per 286", rerollAmount: pitySystemLimit.value },
+    { title: "Cost until pity", rerollAmount: pitySystemLimit.value - rerollTracker.value.currentCount }
   ]
 }
 

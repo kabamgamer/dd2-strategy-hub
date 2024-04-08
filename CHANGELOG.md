@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.7.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.7.1) (2023-04-08)
+
+* Fixed an issue where DPS per bounces table modal would also open edit modal
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.7.0...v1.7.1)
+
+
+
 ## [v1.7.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.7.0) (2023-04-08)
 
 * Defense calculators: Added poison damage for poison type defenses

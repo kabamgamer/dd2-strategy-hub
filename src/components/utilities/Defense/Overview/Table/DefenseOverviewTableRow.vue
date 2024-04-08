@@ -12,7 +12,7 @@
     <!-- Label -->
     <td>{{ label }}</td>
 
-    <td v-for="tableHeader in tableHeaders" v-show="tableHeader.visible" :key="tableHeader.key">
+    <td v-for="tableHeader in tableHeaders" v-show="tableHeader.visible" :key="tableHeader.key" @click.stop="customStatForHeader(tableHeader)?.template ? {} : $emit('defenseEdit')">
       <template v-if="!tableHeader.customStatsCount">
         <template v-if="tableHeader.key !== 'totalDps'">{{ statForHeader(tableHeader) }}</template>
         

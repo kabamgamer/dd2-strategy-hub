@@ -213,7 +213,9 @@ const totalDps = computed((): number => {
   for (const defense of setupDefenses.value) {
     const defenseStats = defensesStats.value[defense.incrementId]
     if (defenseStats) {
-      calculatedTotalDps += defenseStats.totalDps * defenseSetup.value.defenses[defense.incrementId].defenseCount
+      let defenseCount = defense.defenseData?.type === 'Node' ? defenseSetup.value.defenses[defense.incrementId].defenseCount-1 : defenseSetup.value.defenses[defense.incrementId].defenseCount
+      defenseCount = defenseCount < 0 ? 0 : defenseCount
+      calculatedTotalDps += defenseStats.totalDps * defenseCount
     }
   }
 

@@ -4,6 +4,7 @@
 
 * Defense calculators: Added poison damage for poison type defenses
 * Defense calculators: Added proper support for napalm gargoyles
+* Defense calculators: Calculate DPS per beam instead of per node for node type defenses
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.3...HEAD)
 

@@ -34,6 +34,7 @@
         </table>
       </div>
       <div class="text-muted">* If you consider buying a mod and selling the tokens, keep in mind this will only give you a profit of 85% over token price due to Etherian Tax.</div>
+      <div class="text-muted">** Synced to reroll tracker.</div>
     </div>
   </div>
 </template>
@@ -113,7 +114,7 @@ function getRerollRows(): RerollRow[] {
   return [
     { title: "Cost per roll", rerollAmount: 1 },
     { title: "Cost per 286", rerollAmount: pitySystemLimit.value },
-    { title: "Cost until pity", rerollAmount: pitySystemLimit.value - rerollTracker.value.currentCount }
+    { title: "Cost until pity **", rerollAmount: pitySystemLimit.value - rerollTracker.value.currentCount }
   ]
 }
 

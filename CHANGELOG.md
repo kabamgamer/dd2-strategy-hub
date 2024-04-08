@@ -1,12 +1,13 @@
 # Changelog
 
-## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
+## [v1.7.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.7.0) (2023-04-08)
 
 * Defense calculators: Added poison damage for poison type defenses
 * Defense calculators: Added proper support for napalm gargoyles
 * Defense calculators: Calculate DPS per beam instead of per node for node type defenses
+* Added "Cost until pity" calculations to reroll costs table by Ellh
 
-[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.3...HEAD)
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.3...v1.7.0)
 
 
 

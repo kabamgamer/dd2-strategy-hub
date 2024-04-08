@@ -3,7 +3,7 @@ import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
 import type { ModInterface, ShardInterface } from "@/types";
 import type { CalculationConditionsInterface } from "@/composables/Defense/DefenseCalculations";
 import type { OutputModifierMutatorsInterface } from "@/classes/OutputModifier";
-import OutputModifier from '../../../classes/OutputModifier';
+import type OutputModifier from '@/classes/OutputModifier';
 
 interface ModsShardsComposable {
     forRegularModsAndShards: (stat: string, callback: (util: ModInterface|ShardInterface, outputModifier: OutputModifier) => void, includePylons?: boolean) => void

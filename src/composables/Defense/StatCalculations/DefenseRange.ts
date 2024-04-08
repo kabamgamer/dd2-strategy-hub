@@ -4,10 +4,10 @@ import type { ComputedRef } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type { ModInterface, ShardInterface } from '@/types';
+import type OutputModifier from '@/classes/OutputModifier';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import usePylonCalculations from '@/composables/Defense/PylonCalculations';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
-import OutputModifier from '@/classes/OutputModifier';
 
 interface DefenseRangeCalculationsComposable {
     defenseRange: ComputedRef<number>

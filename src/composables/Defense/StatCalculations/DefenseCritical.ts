@@ -4,10 +4,10 @@ import type { ComputedRef } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type { CalculatedDefenseStatsInterface, ModInterface, ShardInterface } from '@/types';
+import type OutputModifier from '@/classes/OutputModifier';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import usePylonCalculations from '@/composables/Defense/PylonCalculations';
 import useModsShards from './ModsShards';
-import OutputModifier from '@/classes/OutputModifier';
 
 interface DefenseCriticalCalculationsComposable {
     criticalChance: ComputedRef<number>
@@ -55,11 +55,6 @@ export default function useDefenseCriticalCalculations(
     const criticalDamage = computed<number>((): number => {
         // 50% is the base crit damage
         let criticalDamagePercentage: number = 50;
-
-        if (!defense.isBuffDefense) {
-            // Add all the crit damage boosts from other defenses
-            criticalDamagePercentage += Object.values(calculationConditions.defenseBoosts.value ?? {}).reduce((total: number, defenseBoost: CalculatedDefenseStatsInterface) => total + defenseBoost.critDamage, 0)
-        }
         
         // Pufferfish' poison damage is not affected by ascension crit damage and mods/shards/godly stats
         if (defense.parent === 'Pufferfish') {
@@ -68,6 +63,11 @@ export default function useDefenseCriticalCalculations(
 
         if (!defense.defenseData) {
             return criticalDamagePercentage
+        }
+
+        if (!defense.isBuffDefense) {
+            // Add all the crit damage boosts from other defenses
+            criticalDamagePercentage += Object.values(calculationConditions.defenseBoosts.value ?? {}).reduce((total: number, defenseBoost: CalculatedDefenseStatsInterface) => total + defenseBoost.critDamage, 0)
         }
 
         forRegularModsAndShards('criticalDamage', (util: ModInterface | ShardInterface, criticalDamageModifier: OutputModifier) => {

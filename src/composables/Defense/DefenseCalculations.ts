@@ -42,7 +42,7 @@ export function useDefenseCalculations(
         return defenseHealth.value * (defense.defenseData?.hpScalar[calculationConditions.defenseLevel.value - 1] ?? 0)
     })
 
-    const { tooltipAttackDamage, nonTooltipAttackDamageBonus, totalAttackDamage, defenseSpecificStats } = useAttackDamageCalculations(defense, defensePower, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth, criticalMultiplier, criticalDamage)
+    const { tooltipAttackDamage, nonTooltipAttackDamageBonus, totalAttackDamage, defenseSpecificStats } = useAttackDamageCalculations(defense, defensePower, defenseRange, calculationConditions, defensePowerAdditives, defenseHealthAdditives, vampiricHealth, criticalMultiplier, criticalDamage)
     const customStatsTooltipDps = computed<number>(() => defenseSpecificStats.value.reduce((acc: number, stat: DefenseStatInterface<any>) => acc + (stat.tooltipDps ?? 0), 0))
     const customStatsDps = computed<number>(() => defenseSpecificStats.value.reduce((acc: number, stat: DefenseStatInterface<any>) => acc + (stat.dps ?? 0), 0))
 

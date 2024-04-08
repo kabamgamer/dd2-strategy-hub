@@ -54,8 +54,9 @@ import type {
 } from "@/types";
 
 import type { UserDataStoreDefenseInterface } from "@/stores/UserData";
+import type { CalculationConditionsInterface } from "@/composables/Defense/DefenseCalculations";
 
-import { CalculationConditionsInterface, useDefenseCalculations } from "@/composables/Defense/DefenseCalculations";
+import { useDefenseCalculations } from "@/composables/Defense/DefenseCalculations";
 import { useUserDataStore } from "@/stores/UserData";
 import DefenseOverviewTableRow from "@/components/utilities/Defense/Overview/Table/DefenseOverviewTableRow.vue";
 import DefenseOverviewAccordionItem from "@/components/utilities/Defense/Overview/Accordion/DefenseOverviewAccordionItem.vue";

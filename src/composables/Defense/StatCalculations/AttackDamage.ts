@@ -12,10 +12,9 @@ import useSetupCalculations, { SetupModifierCalculation } from '@/composables/De
 import ExplosiveGuardStat from '@/defense_stats/ExplosiveGuardStat';
 import ShieldingGuardStat from '@/defense_stats/ShieldingGuardStat';
 import BlazingPhoenixStat from '@/defense_stats/BlazingPhoenixStat';
-import useDefenseDamageType from '../DefenseDamageType';
+import useDefenseDamageType from '@/composables/Defense/DefenseDamageType';
 import DamageType from '@/enums/DamageType';
-import UserDefense from '../../../classes/UserDefense';
-import { createPinia } from 'pinia';
+import UserDefense from '@/classes/UserDefense';
 
 export interface DefenseAttackDamageCalculationsComposable {
     tooltipAttackDamage: ComputedRef<number>,
@@ -27,6 +26,7 @@ export interface DefenseAttackDamageCalculationsComposable {
 export default function useAttackDamageCalculations(
     defense: UserDataStoreDefenseInterface,
     defensePower: Ref<number>,
+    defenseRange: Ref<number>,
     calculationConditions: CalculationConditionsInterface,
     defensePowerAdditives: ComputedRef<number>,
     defenseHealthAdditives: ComputedRef<number>,
@@ -105,6 +105,11 @@ export default function useAttackDamageCalculations(
 
             bonusAttackDamage += (damageModifier.additive ?? 0) / criticalDivision
             if (damageModifier.percentage) {
+                if (damageModifier.mutators.scalesOff?.toLowerCase() === 'range') {
+                    attackDamageMultiplier += damageModifier.percentage / 100 * (defenseRange.value / (defense.defenseData?.maxAttackRange ?? 0)) / criticalDivision
+                    return
+                }
+
                 attackDamageMultiplier += damageModifier.percentage / 100 / criticalDivision
             }
         })

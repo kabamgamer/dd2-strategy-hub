@@ -4,10 +4,10 @@ import type { ComputedRef, Ref } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type { DefenseSetupModifiersInterface, ModInterface, ShardInterface } from '@/types';
+import type OutputModifier from '@/classes/OutputModifier';
 import useDefenseDamageType from "@/composables/Defense/DefenseDamageType";
 import DamageType from '@/enums/DamageType';
 import StatusEffect from '@/enums/StatusEffect';
-import OutputModifier from '@/classes/OutputModifier';
 
 interface DefenseSetupCalculationsComposable {
     defenseSetupComboBuffs: ComputedRef<number>,
@@ -57,7 +57,11 @@ export class SetupModifierCalculation {
 
                 const damageModifiers: OutputModifier[] = Array.isArray(util.damageModifier) ? util.damageModifier : [util.damageModifier];
                 damageModifiers.forEach((damageModifier: OutputModifier) => {
-                    if (!damageModifier.mutators.pylon) {
+                    if (!damageModifier.mutators.debuff) {
+                        return
+                    }
+
+                    if (damageModifier.mutators.debuff.noStack?.some((noStack: string) => setupModifiers.value?.combos[noStack as 'petrify'|'ignite'|'electrocute'|'shatter'])) {
                         return
                     }
 

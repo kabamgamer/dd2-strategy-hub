@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/HEAD) (yyyy-mm-dd)
 
 * Defense calculators: Added poison damage for poison type defenses
+* Defense calculators: Added proper support for napalm gargoyles
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.6.3...HEAD)
 

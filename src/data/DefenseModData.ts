@@ -34,7 +34,7 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
     defenseRange?: OutputModifier;
     criticalChance?: OutputModifier;
     criticalDamage?: OutputModifier;
-    damageModifier?: OutputModifier;
+    damageModifier?: OutputModifier|OutputModifier[];
     elementalAttunement?: DamageType;
     compatibilities?: string[] = undefined;
     customOptions?: string;
@@ -61,12 +61,12 @@ export default class DefenseModData extends HasOutputModifier implements ModInte
         this.description = data.description
         this.inTooltip = data.inTooltip
         this.type = ModType.createEnum(data.type?.toLowerCase())
-        this.defensePower = this.getOutputModifierForValue(data.defensePowerModifier)
-        this.defenseHealth = this.getOutputModifierForValue(data.defenseHealthModifier)
-        this.defenseRate = this.getOutputModifierForValue(data.defenseRateModifier)
-        this.defenseRange = this.getOutputModifierForValue(data.defenseRangeModifier)
-        this.criticalChance = this.getOutputModifierForValue(data.criticalChanceModifier)
-        this.criticalDamage = this.getOutputModifierForValue(data.criticalDamageModifier)
+        this.defensePower = this.getOutputModifierForValue(data.defensePowerModifier) as OutputModifier|undefined
+        this.defenseHealth = this.getOutputModifierForValue(data.defenseHealthModifier) as OutputModifier|undefined
+        this.defenseRate = this.getOutputModifierForValue(data.defenseRateModifier) as OutputModifier|undefined
+        this.defenseRange = this.getOutputModifierForValue(data.defenseRangeModifier) as OutputModifier|undefined
+        this.criticalChance = this.getOutputModifierForValue(data.criticalChanceModifier) as OutputModifier|undefined
+        this.criticalDamage = this.getOutputModifierForValue(data.criticalDamageModifier) as OutputModifier|undefined
         this.damageModifier = this.getOutputModifierForValue(data.damageModifier);
         this.elementalAttunement = DamageType.createEnum(data.elementalAttunement)
         this.customOptions = data.customOptions;

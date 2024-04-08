@@ -36,9 +36,12 @@ export const useDefenseStore: () => any = (): object => {
             getDefenses().then((defenses: DefenseDataResponse[]) => {
                 const defensesCount: number = Object.keys(defenses).length
 
+                let previousDefenseDataObject: DefenseRootInterface;
                 defenses.forEach((defense: DefenseDataResponse, index: number): void => {
-                    // Check if defense name contains brackets
-                    if (defense.defense.includes('(')) {
+                    if (defense.type === 'DefenseElemental' && previousDefenseDataObject) {
+                        defense.defense = defense.defense.replace(/.*\((.*)\)/, '$1');
+                        previousDefenseDataObject.children = previousDefenseDataObject.children || [];
+                        previousDefenseDataObject.children.push(new DefenseData(defense))
                         return
                     }
 
@@ -50,6 +53,7 @@ export const useDefenseStore: () => any = (): object => {
                             allDefenses[hero] = [];
                         }
 
+                        previousDefenseDataObject = defenseDataObject;
                         allDefenses[hero].push(defenseDataObject);
                         allDefensesFlat.push(defenseDataObject);
                     }

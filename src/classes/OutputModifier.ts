@@ -13,11 +13,15 @@ export interface OutputModifierMutatorsInterface {
         skipAscension?: boolean;
         ancientDestructionBonus?: string[];
     };
+    debuff?: {
+        noStack?: string[];
+    };
     noCrit?: boolean;
+    scalesOff?: string;
     noUpgradeScaling?: boolean;
     customStat?: number;
     asDamageType?: string;
-    debuff?: boolean;
+    applyTo?: string;
 }
 
 export default class OutputModifier {

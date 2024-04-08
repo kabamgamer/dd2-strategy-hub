@@ -24,6 +24,7 @@ export interface UserDataStoreDefenseInterface {
     userMods: ModInterface[],
     userShards: ShardInterface[],
     isBuffDefense: boolean,
+    parent?: string,
     ascensionDefenseHealth: number,
     ascensionDefensePower: number,
     ascensionRange: number,

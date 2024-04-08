@@ -4,6 +4,7 @@ import type { ComputedRef } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type { ModInterface, ShardInterface } from '@/types';
+import type OutputModifier from '@/classes/OutputModifier';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import usePylonCalculations from '@/composables/Defense/PylonCalculations';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
@@ -29,11 +30,11 @@ export default function useDefenseRangeCalculations(
         let rangeAdditive = defense.userData.relic.godlyStat?.type === 'defense_range' ? defense.userData.relic.godlyStat.value : 0;
         let rangeMultiplier = 1;
 
-        forRegularModsAndShards('defenseRange', (util: ModInterface | ShardInterface) => {
-            rangeAdditive += util.defenseRange?.additive ?? 0
+        forRegularModsAndShards('defenseRange', (util: ModInterface | ShardInterface, defenseRangeModifier: OutputModifier) => {
+            rangeAdditive += defenseRangeModifier.additive ?? 0
             
-            if (util.defenseRange?.percentage) {
-                rangeMultiplier *= (1 + util.defenseRange.percentage / 100)
+            if (defenseRangeModifier.percentage) {
+                rangeMultiplier *= (1 + defenseRangeModifier.percentage / 100)
             }
         })
 

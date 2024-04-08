@@ -4,6 +4,7 @@ import type { ComputedRef } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type { ModInterface, ShardInterface } from '@/types';
+import type OutputModifier from '@/classes/OutputModifier';
 import usePylonCalculations from '@/composables/Defense/PylonCalculations';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
 
@@ -24,8 +25,8 @@ export default function useDefenseRateCalculations(
 
         let attackRatePercentage: number = 0;
         
-        forRegularModsAndShards('defenseRate', (util: ModInterface | ShardInterface) => {
-            attackRatePercentage += util.defenseRate?.percentage ?? 0
+        forRegularModsAndShards('defenseRate', (util: ModInterface | ShardInterface, defenseRateModifier: OutputModifier) => {
+            attackRatePercentage += defenseRateModifier.percentage ?? 0
         })
         
         attackRatePercentage += defense.ascensionRate;

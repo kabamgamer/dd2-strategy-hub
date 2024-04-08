@@ -4,6 +4,7 @@ import type { ComputedRef } from 'vue';
 import type { UserDataStoreDefenseInterface } from '@/stores/UserData';
 import type { CalculationConditionsInterface } from '@/composables/Defense/DefenseCalculations';
 import type { ModInterface, ShardInterface } from '@/types';
+import type OutputModifier from '@/classes/OutputModifier';
 import useAncientPowers from '@/composables/Defense/AncientPowers';
 import usePylonCalculations from '@/composables/Defense/PylonCalculations';
 import useModsShards from '@/composables/Defense/StatCalculations/ModsShards';
@@ -51,8 +52,8 @@ export default function useDefensePowerCalculations(
         additiveValues += vampiricEmpowerment.value
         additiveValues += diverseValueForStat('defensePower', 'additive');
 
-        forRegularModsAndShards('defensePower', (util: ModInterface|ShardInterface): void => {
-            additiveValues += util.defensePower?.additive ?? 0
+        forRegularModsAndShards('defensePower', (util: ModInterface|ShardInterface, defensePowerModifier: OutputModifier): void => {
+            additiveValues += defensePowerModifier.additive ?? 0
         })
         
         if (!defense.isBuffDefense) {
@@ -75,8 +76,8 @@ export default function useDefensePowerCalculations(
         const boostedBeamShard: ShardInterface|undefined = defense.userShards.find((shard: ShardInterface) => shard.id === 'boosted_beam');
 
         // Calculate percentage modifiers
-        forRegularModsAndShards('defensePower', (util: ModInterface|ShardInterface): void => {
-            if (!util.defensePower?.percentage) {
+        forRegularModsAndShards('defensePower', (util: ModInterface|ShardInterface, defensePowerModifier: OutputModifier): void => {
+            if (!defensePowerModifier.percentage) {
                 return
             }
 
@@ -97,22 +98,22 @@ export default function useDefensePowerCalculations(
             }
 
             if (util.id === 'mass_destruction' && boostedPowerShard) {
-                multiplier *= (1 + (util.defensePower.percentage + (boostedPowerShard.defensePower?.percentage ?? 0)) / 100)
+                multiplier *= (1 + (defensePowerModifier.percentage + (boostedPowerShard.defensePower?.percentage ?? 0)) / 100)
                 return
             }
 
             if (util.id === 'mass_destruction' && boostedBeamShard) {
-                multiplier *= (1 + (util.defensePower.percentage + (boostedBeamShard.defensePower?.percentage ?? 0)) / 100)
+                multiplier *= (1 + (defensePowerModifier.percentage + (boostedBeamShard.defensePower?.percentage ?? 0)) / 100)
                 return
             }
 
             if (util.id === 'motherly_instinct') {
-                multiplier *= motherlyInstinctModifier(util.defensePower.percentage ?? 0)
+                multiplier *= motherlyInstinctModifier(defensePowerModifier.percentage ?? 0)
 
                 return;
             }
 
-            multiplier *= 1 + util.defensePower.percentage / 100
+            multiplier *= 1 + defensePowerModifier.percentage / 100
         }, true)
 
         if (calculationConditions.setupModifiers.value) {

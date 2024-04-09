@@ -128,7 +128,7 @@ function onDefenseCalculationUpdate(): void {
   emit('total-dps-calculated', totalDps.value, defensePower.value, defenseHitPoints.value, criticalDamage.value, criticalChance.value)
 }
 
-watch(totalDps, onDefenseCalculationUpdate)
+watch(totalDps, onDefenseCalculationUpdate, { immediate: true })
 watch(defenseSpecificStats, (newValue?: DefenseStatInterface<any>[], oldValue?: DefenseStatInterface<any>[]) => {
   const addedStats: DefenseStatInterface<any>[] = newValue?.filter(stat => !oldValue?.some(statToCheck => statToCheck.label === stat.label)) ?? []
   const removedStats: DefenseStatInterface<any>[] = oldValue?.filter(stat => !newValue?.some(statToCheck => statToCheck.label === stat.label)) ?? []

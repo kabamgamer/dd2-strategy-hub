@@ -1,8 +1,9 @@
 # Changelog
 
-## [v1.7.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.7.1) (2023-04-08)
+## [v1.7.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.7.1) (2023-04-09)
 
 * Fixed an issue where DPS per bounces table modal would also open edit modal
+* Fixed an issue the total setup DPS wouldn't update after adding a new setup
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.7.0...v1.7.1)
 

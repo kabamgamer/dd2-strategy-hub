@@ -15,11 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import DefenseSetup from "@/components/utilities/Setup/DefenseSetup.vue";
-
+import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 
 import type { UserDefenseSetupInterface } from "@/types";
+
+import DefenseSetup from "@/components/utilities/Setup/DefenseSetup.vue";
 import { useUserDataStore, getDefaultSetupModifiers } from "@/stores/UserData";
 
 const userStore = useUserDataStore()
@@ -28,6 +29,6 @@ const { getNextDefenseSetupIncrementId } = userStore;
 
 function addSetup(): void {
   const incrementId = getNextDefenseSetupIncrementId();
-  defenseSetups.value.push({incrementId, label: "Setup " + incrementId, defenses: {}, modifiers: getDefaultSetupModifiers()} as UserDefenseSetupInterface);
+  defenseSetups.value.push({incrementId, label: "Setup " + incrementId, defenses: reactive({}), modifiers: getDefaultSetupModifiers()} as UserDefenseSetupInterface);
 }
 </script>

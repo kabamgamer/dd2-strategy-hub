@@ -3,6 +3,7 @@ import type ModType from "@/enums/ModType";
 import type DamageType from "@/enums/DamageType";
 import type StatusEffect from "@/enums/StatusEffect";
 import type EnumCollection from "./enums/EnumCollection";
+import type { UnwrapNestedRefs } from "vue";
 
 export interface PetInterface {
     defensePower: number;
@@ -171,7 +172,7 @@ export interface UserDefenseSetupInterface {
     incrementId: number;
     modifiers: DefenseSetupModifiersInterface;
     defensesIncrementIds?: number[]; // @deprecated since v1.1.7
-    defenses: { [defensesIncrementId: number]: UserSetupDefenseInterface };
+    defenses: UnwrapNestedRefs<{ [defensesIncrementId: number]: UserSetupDefenseInterface }>;
 }
 
 export interface CalculatedDefenseStatsInterface {

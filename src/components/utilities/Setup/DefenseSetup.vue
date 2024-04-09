@@ -122,17 +122,7 @@ const addDefenseModal = ref()
 const defensesStats = ref<{[incrementId: number]: CalculatedDefenseStatsInterface}>({})
 const selectedDefense = ref<UserDataStoreDefenseInterface|null>(null)
 
-// TODO Reorder setup defenses when table is reordered
-const setupDefenses = computed<UserDataStoreDefenseInterface[]>({
-  get: () => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined),
-  set: (value: UserDataStoreDefenseInterface[]) => {
-    const defenses: {[incrementId: number]: {defenseCount: number}} = {}
-    value.forEach((defense) => {
-      defenses[defense.incrementId] = defenseSetup.value.defenses[defense.incrementId]
-    })
-    defenseSetup.value.defenses = defenses
-  },
-})
+const setupDefenses = computed<UserDataStoreDefenseInterface[]>(() => defenses.value.filter((defense) => defenseSetup.value.defenses[defense.incrementId] !== undefined))
 const defenseSelection = computed(() => defenses.value.filter((defense) => defense.userData && defenseSetup.value.defenses[defense.incrementId] === undefined))
 const defenseBoosts = computed<{[incrementId: number]: CalculatedDefenseStatsInterface}>(() => {
   const resolvedDefenseBoosts: {[incrementId: number]: CalculatedDefenseStatsInterface} = {}
@@ -251,7 +241,7 @@ function selectDefense(): void {
   if (selectedDefense.value === null) {
     return
   }
-  props.defenseSetup.defenses[selectedDefense.value.incrementId] = {defenseCount: selectedDefense.value.defenseData?.hero !== 'Ev2' ? 1 : 2}
+  defenseSetup.value.defenses[selectedDefense.value.incrementId] = {defenseCount: selectedDefense.value.defenseData?.hero !== 'Ev2' ? 1 : 2}
   addDefenseModal.value.hide()
   selectedDefense.value = null
 }

@@ -36,7 +36,7 @@
             v-model="filters.tags"
             mode="tags"
             :close-on-select="false"
-            :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite', 'Turtle build', 'Spawn kill', 'No Hypershards', 'No lvl10 mods']"
+            :options="tags"
         />
       </div>
     </div>
@@ -61,6 +61,8 @@
 
 <script setup lang="ts">
 import { ref, defineEmits, watch, computed } from "vue";
+
+import tags from "@/data/communityMapTags";
 
 import Multiselect from '@vueform/multiselect'
 import Card from "@/components/layout/Card.vue";

@@ -140,7 +140,7 @@
                 v-model="mapMetaForm.tags"
                 mode="tags"
                 :close-on-select="false"
-                :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite', 'Turtle build', 'Spawn kill', 'No Hypershards', 'No lvl10 mods']"
+                :options="tags"
             />
           </div>
 
@@ -175,6 +175,8 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from "pinia";
 import { Collapse } from "bootstrap";
+
+import tags from "@/data/communityMapTags";
 
 import Multiselect from '@vueform/multiselect'
 import Section from "@/components/layout/Section.vue";

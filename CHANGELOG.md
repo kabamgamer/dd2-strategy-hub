@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/main) (yyyy-mm-dd)
+
+* Defense calculators: Prevents the user from adding duplicate shards
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.7.1...main)
+
+
+
 ## [v1.7.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.7.1) (2023-04-09)
 
 * Fixed an issue where DPS per bounces table modal would also open edit modal

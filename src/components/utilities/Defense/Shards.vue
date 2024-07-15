@@ -10,7 +10,7 @@
       <div class="shards__slot-content" v-if="!selection.shard">
         <div class="shards__slot-name">Shard #{{ index+1 }}</div>
         <div class="shards__slot-description">
-          <ShardSelection v-model="selection.shard" @change="onAddShard(index, selection.shard)" :defenseCompatibility="defenseCompatibility" />
+          <ShardSelection v-model="selection.shard" :restricted="shards" @change="onAddShard(index, selection.shard)" :defenseCompatibility="defenseCompatibility" />
         </div>
       </div>
       <div class="shards__slot-content" v-else>
@@ -45,7 +45,10 @@ const props = defineProps({
     type: Array as PropType<ShardInterface[]>,
     default: () => [],
   },
-  defenseCompatibility: String,
+  defenseCompatibility: {
+    type: String,
+    required: true,
+  },
 });
 
 const modelValue = props.modelValue ?? [];

@@ -217,6 +217,15 @@ export interface MapDefensePlacementInterface {
     }
 }
 
+export interface MapIconPlacementInterface {
+    incrementId: number
+    iconId: number
+    position: {
+        x: number,
+        y: number,
+    }
+}
+
 export interface MapAuthor {
     id: string;
     name: string;
@@ -239,5 +248,6 @@ export interface MapConfigInterface {
     tags: string[];
     defenses: MapDefenseInterface[];
     mapLayout: MapDefensePlacementInterface[];
+    icons: MapIconPlacementInterface[];
     createdAt: Date;
 }

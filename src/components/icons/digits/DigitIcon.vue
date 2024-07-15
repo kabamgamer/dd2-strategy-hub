@@ -6,16 +6,16 @@
     <IconFive v-if="iconId === 5" />
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { defineProps } from "vue";
-
-defineProps({
-    iconId: Number,
-});
 
 import IconOne from "@/components/icons/digits/IconOne.vue";
 import IconTwo from "@/components/icons/digits/IconTwo.vue";
 import IconThree from "@/components/icons/digits/IconThree.vue";
 import IconFour from "@/components/icons/digits/IconFour.vue";
 import IconFive from "@/components/icons/digits/IconFive.vue";
+
+defineProps({
+    iconId: Number,
+});
 </script>

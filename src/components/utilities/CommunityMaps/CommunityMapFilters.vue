@@ -72,7 +72,7 @@ import { useRoute } from "vue-router"
 
 import { useDebounce } from "@/composables/Debounce";
 
-import tags from "@/data/communityMapTags";
+import tags from "@/data/communityMapTags.json";
 
 import Multiselect from '@vueform/multiselect'
 import Card from "@/components/layout/Card.vue";

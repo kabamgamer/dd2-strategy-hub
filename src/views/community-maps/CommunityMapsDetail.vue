@@ -190,7 +190,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from "pinia";
 import { Collapse } from "bootstrap";
 
-import tags from "@/data/communityMapTags";
+import tags from "@/data/communityMapTags.json";
 
 import Multiselect from '@vueform/multiselect'
 import Section from "@/components/layout/Section.vue";

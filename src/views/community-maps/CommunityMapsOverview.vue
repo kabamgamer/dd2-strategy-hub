@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { ref, onUpdated } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRouter } from "vue-router"
 
 import Section from "@/components/layout/Section.vue";
 
@@ -64,39 +64,20 @@ const { getMapById } = useMapStore();
 const { canOrPromptLogin } = useAcl();
 
 const additionalRequestParameters = ref({
-  filter: getQueryFilters(),
+  filter: {},
   tags: null,
+  author: null,
   sortBy: sorting.value,
 });
 
 onUpdated(() => {
   additionalRequestParameters.value = {
-    filter: {...additionalRequestParameters.value.filter, ...getQueryFilters()},
+    filter: additionalRequestParameters.value.filter,
     tags: additionalRequestParameters.value.tags,
+    author: additionalRequestParameters.value.author,
     sortBy: additionalRequestParameters.value.sortBy,
   };
 });
-
-function getQueryFilters(): any {
-  const { query } = useRoute();
-  const filters: any = {};
-
-  if (query.name) {
-    filters.name = query.name;
-  }
-  if (query.difficulty) {
-    filters.difficulty = query.difficulty;
-  }
-  if (query.gameMode) {
-    filters.gameMode = query.gameMode;
-  }
-  if (query.map) {
-    filters.map = query.map;
-  }
-  filters.user_id = query.author || null;
-
-  return filters;
-}
 
 function onCreateNewMap(): void {
   canOrPromptLogin('map.create').then(() => {
@@ -104,12 +85,16 @@ function onCreateNewMap(): void {
   })
 }
 
-function onFilter(filters: {[key: string]: any}): void {
+function onFilter(persistantFilters: {[key: string]: any}): void {
+  let filters = {...persistantFilters};
   const tags = filters.tags;
-  if (tags) {
-    delete filters.tags;
-    additionalRequestParameters.value.tags = tags.join(',');
-  }
+  const author = filters.author;
+
+  delete filters.tags;
+  delete filters.author;
+
+  additionalRequestParameters.value.tags = tags ? tags.join(',') : null;
+  additionalRequestParameters.value.author = author || null;
   additionalRequestParameters.value.filter = filters;
 }
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [v1.8.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.8.0) (2024-07-15)
+
+* Defense calculators: Prevents the user from adding duplicate shards
+* Defense calculators: Reworked Empowered Bolts shard
+* Community maps: Added "Requires 2 accounts" tag (with that tag you can make fair use of 4 mass destructions)
+* Community maps: Added ability to filter by author
+* Community maps: Fixed an issue where filters wouldn't work in "my maps"
+* Community maps: Added the ability to add custom icons to the map
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.7.1...v1.8.0)
+
+
+
 ## [v1.7.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.7.1) (2023-04-09)
 
 * Fixed an issue where DPS per bounces table modal would also open edit modal

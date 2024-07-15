@@ -7,6 +7,7 @@ export interface OutputModifierMutatorsInterface {
     fromHealth?: {
         vampiric?: boolean;
         skipAscension?: boolean;
+        excludePowerTransfer?: boolean;
         ancientFortificationBonus?: string[];
     };
     fromPower?: {

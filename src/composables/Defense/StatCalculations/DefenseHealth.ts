@@ -89,6 +89,9 @@ export default function useDefenseHealthCalculations(
             })
         }
 
+        const powerTransferShard: ShardInterface|undefined = defense.userShards.find((shard: ShardInterface) => shard.id === 'power_transfer')
+        vampiricHealthStat *= (1 + ((powerTransferShard?.defenseHealth?.percentage ?? 0) / 100))
+
         if (calculationConditions.defenseLevel.value === 1) {
             return vampiricHealthStat
         }

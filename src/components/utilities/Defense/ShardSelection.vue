@@ -22,18 +22,24 @@ const props = defineProps({
   },
   defenseCompatibility: {
     type: String,
-    default: '',
+    required: true,
+  },
+  restricted: {
+    type: Array as PropType<ShardInterface[]>,
+    default: () => [],
   },
 });
 
 const selectedShard = ref('');
 const availableShards = ref<{[tier: string]: ShardInterface[]}>({});
 const compatibleShards = computed((): {[tier: string]: ShardInterface[]} => {
-  if (props.defenseCompatibility === '') return availableShards.value;
-
   const filteredShards: {[tier: string]: ShardInterface[]} = {};
   for (const tier in availableShards.value) {
     filteredShards[tier] = availableShards.value[tier].filter((shard: ShardInterface): boolean => {
+      if (props.restricted.length > 0 && props.restricted.includes(shard)) {
+        return false;
+      }
+
       if (shard.compatibilities === undefined) return true;
 
       return shard.compatibilities.includes(props.defenseCompatibility);

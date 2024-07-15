@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 
 import { useUserDataStore } from '@/stores/UserData';
-import { AncientDefenseCriticalChance, AncientDefenseCriticalDamage, AncientDestruction, AncientHealth, AncientStrikes } from '@/data/AncientPowers';
+import { AncientDefenseCriticalChance, AncientDefenseCriticalDamage, AncientDestruction, AncientFortification, AncientStrikes } from '@/data/AncientPowers';
 
 interface AncientPowersInterface {
     ancientDestructionMultiplier: ComputedRef<number>
@@ -26,8 +26,8 @@ export default function useAncientPowers(): AncientPowersInterface {
         }),
 
         ancientFortificationMultiplier: computed<number>((): number => {
-            if (userDataStore.ancientPowerPoints.ancient_health > 0) {
-                return 1 + AncientHealth.upgrades[userDataStore.ancientPowerPoints.ancient_health - 1]
+            if (userDataStore.ancientPowerPoints.ancient_fortification > 0) {
+                return 1 + AncientFortification.upgrades[userDataStore.ancientPowerPoints.ancient_fortification - 1]
             }
 
             return 1

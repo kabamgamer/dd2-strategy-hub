@@ -25,6 +25,14 @@
                           @update:position="(position) => defensePosition.position = position"
                           @update:rotation="(rotation) => defensePosition.rotationInDegrees = rotation"
               />
+              <MapIcon v-for="iconPosition in mapConfigurations.icons"
+                       :key="iconPosition.incrementId"
+                       :icon-id="iconPosition.iconId"
+                       :editMode="editMode"
+                       :position="iconPosition.position"
+                       @update:position="(position) => iconPosition.position = position"
+                       @delete="deleteIconPosition(iconPosition.incrementId)"
+              />
             </template>
           </CommunityMap>
         </div>
@@ -44,7 +52,7 @@
           </div>
           <Card class="mb-3" :cardTitle="map.name" :maxHeight="false">
             <strong>Map:</strong> {{ map.name }} <br />
-            <strong>Author:</strong> <router-link :to="{name: 'community-maps', query: {author: mapConfigurations.author?.id}}">{{ mapConfigurations.author?.name }}</router-link> <br />
+            <strong>Author:</strong> <router-link :to="{name: 'community-maps', query: {author: mapConfigurations.author?.name}}">{{ mapConfigurations.author?.name }}</router-link> <br />
             <strong>Game mode:</strong> {{ mapConfigurations.gameMode }} <br />
             <strong>Difficulty:</strong> {{ mapConfigurations.difficulty }} <br />
             <strong>Tags:</strong> <span v-for="tag in mapConfigurations.tags" :key="tag" class="tag badge bg-success">{{ tag }}</span> <br />
@@ -62,6 +70,12 @@
                 </div>
               </div>
             </div>
+          </Card>
+          
+          <Card class="mb-3 custom-icons" cardTitle="Icons" :maxHeight="false" v-if="editMode">
+            <button class="btn" @click="addIconPosition(iconId)" v-for="iconId in 5" :key="iconId">
+              <DigitIcon :icon-id="iconId" />
+            </button>
           </Card>
 
           <Card :maxHeight="false">
@@ -140,7 +154,7 @@
                 v-model="mapMetaForm.tags"
                 mode="tags"
                 :close-on-select="false"
-                :options="['AFKable', 'Base heroes', 'No blockades', 'Petrify', 'Electrocute', 'Freeze', 'Shatter', 'Ignite', 'Turtle build', 'Spawn kill', 'No Hypershards', 'No lvl10 mods']"
+                :options="tags"
             />
           </div>
 
@@ -176,12 +190,15 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from "pinia";
 import { Collapse } from "bootstrap";
 
+import tags from "@/data/communityMapTags.json";
+
 import Multiselect from '@vueform/multiselect'
 import Section from "@/components/layout/Section.vue";
 import CommunityMap from "@/components/utilities/CommunityMaps/CommunityMap.vue";
 import Card from "@/components/layout/Card.vue";
 import QuillEditor from '@/components/layout/form/QuillEditor.vue'
 import MapDefense from "@/components/utilities/CommunityMaps/Defense/MapDefense.vue";
+import MapIcon from "@/components/utilities/CommunityMaps/Defense/MapIcon.vue";
 import DefensePreview from "@/components/utilities/Defense/DefensePreview.vue";
 import DefenseSelection from "@/components/utilities/Defense/DefenseSelection.vue";
 import LoadingSpinner from "@/components/layout/LoadingSpinner.vue";
@@ -209,6 +226,7 @@ import { useNotificationStore } from "@/stores/Notifications";
 import { useAcl } from "@/composables/Acl";
 import { useLegend } from "@/composables/Legend";
 
+import DigitIcon from "@/components/icons/digits/DigitIcon.vue";
 import IconCaretUp from "@/components/icons/IconCaretUp.vue";
 import IconCaretDown from "@/components/icons/IconCaretDown.vue";
 import IconEye from "@/components/icons/IconEye.vue";
@@ -322,6 +340,24 @@ function addDefensePosition(defenseIncrementId: number): void {
       x: 600,
       y: 300,
     }
+  })
+}
+
+function addIconPosition(iconId: number): void {
+  mapConfigurations.value.icons = mapConfigurations.value.icons || []
+  mapConfigurations.value.icons.push({
+    incrementId: Math.max(...mapConfigurations.value.icons.map((defense) => defense.incrementId), 0) + 1,
+    iconId,
+    position: {
+      x: 600,
+      y: 300,
+    }
+  })
+}
+
+function deleteIconPosition(incrementId: number): void {
+  mapConfigurations.value.icons = mapConfigurations.value.icons.filter((iconPosition) => {
+    return iconPosition.incrementId !== incrementId;
   })
 }
 
@@ -576,7 +612,7 @@ onMounted(() => {
 }
 </style>
 
-<style>
+<style lang="scss">
 .description img {
   max-width: 100%;
 }
@@ -589,5 +625,19 @@ onMounted(() => {
 }
 .ql-align-justify {
   text-align: justify;
+}
+
+.custom-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  button {
+    width: 20%;
+    
+    svg {
+      height: 50px;
+    }
+  }
 }
 </style>

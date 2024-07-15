@@ -275,6 +275,11 @@ export default function useAttackDamageCalculations(
         if (damageModifier.mutators.fromHealth.skipAscension) {
             healthValue -= defense.ascensionDefenseHealth
         }
+
+        if (damageModifier.mutators.fromHealth.excludePowerTransfer !== true) {
+            const powerTransferShard: ShardInterface|undefined = defense.userShards.find((shard: ShardInterface) => shard.id === 'power_transfer')
+            healthValue *= (1 + ((powerTransferShard?.defenseHealth?.percentage ?? 0) / 100))
+        }
         
         if (!damageModifier.mutators.noUpgradeScaling) {
             const currentHeatlhScalar: number = defense.defenseData?.hpScalar[calculationConditions.defenseLevel.value-1] ?? 1

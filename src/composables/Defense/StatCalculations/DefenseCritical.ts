@@ -26,11 +26,6 @@ export default function useDefenseCriticalCalculations(
     const criticalChance = computed<number>((): number => {
         // 30% is the base crit chance (including 20% ascension crit chance)
         let critChance: number = 30;
-        
-        // Poison damage is not affected by ascension crit chance and mods/shards/godly stats
-        if (defense.parent === 'Pufferfish') {
-            return 10;
-        }
 
         forRegularModsAndShards('criticalChance', (util: ModInterface | ShardInterface, criticalChanceModifier: OutputModifier) => {
             critChance += criticalChanceModifier.percentage ?? 0
@@ -55,11 +50,6 @@ export default function useDefenseCriticalCalculations(
     const criticalDamage = computed<number>((): number => {
         // 50% is the base crit damage
         let criticalDamagePercentage: number = 50;
-        
-        // Pufferfish' poison damage is not affected by ascension crit damage and mods/shards/godly stats
-        if (defense.parent === 'Pufferfish') {
-            return 30;
-        }
 
         if (!defense.defenseData) {
             return criticalDamagePercentage

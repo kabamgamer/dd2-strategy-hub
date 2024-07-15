@@ -39,6 +39,13 @@
             :options="tags"
         />
       </div>
+
+      <div class="col-md-4 mt-3">
+        <div class="form-group">
+          <label for="map">Author</label>
+          <input type="text" class="form-control" v-model="filters.author" />
+        </div>
+      </div>
     </div>
 
     <div class="active-filters">
@@ -60,7 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits, watch, computed } from "vue";
+import { ref, defineEmits, watch, computed, onMounted } from "vue";
+import { useRoute } from "vue-router"
+
+import { useDebounce } from "@/composables/Debounce";
 
 import tags from "@/data/communityMapTags";
 
@@ -71,6 +81,10 @@ import IconCross from "@/components/icons/IconCross.vue";
 import type MapData from "@/data/MapData";
 
 const emit = defineEmits(["filter"]);
+
+const route = useRoute();
+
+const { debounce } = useDebounce();
 
 const selectedMap = ref()
 const filters = ref<{[key: string]: any}>({})
@@ -111,9 +125,36 @@ function removeFilter(filterKey: string|number): void {
   filters.value[filterKey] = null;
 }
 
-watch(filters, (): void => {
-  emit("filter", filters.value);
-}, { deep: true })
+function getQueryFilters(): any {
+  const { query } = route;
+  const filters: any = {};
+
+  if (query.name) {
+    filters.name = query.name;
+  }
+  if (query.difficulty) {
+    filters.difficulty = query.difficulty;
+  }
+  if (query.gameMode) {
+    filters.gameMode = query.gameMode;
+  }
+  if (query.map) {
+    filters.map = query.map;
+  }
+  if (query.author) {
+    filters.author = query.author;
+  }
+
+  return filters;
+}
+
+watch(() => route.query, () => (filters.value = getQueryFilters()), { deep: true })
+watch(filters, debounce(() => emit("filter", filters.value), 600), { deep: true })
+
+onMounted(() => {
+    filters.value = getQueryFilters();
+    emit("filter", filters.value);
+})
 </script>
 
 <style scoped>

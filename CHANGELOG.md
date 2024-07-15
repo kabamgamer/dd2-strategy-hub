@@ -4,7 +4,8 @@
 
 * Defense calculators: Prevents the user from adding duplicate shards
 * Community maps: Added "Requires 2 accounts" tag (with that tag you can make fair use of 4 mass destructions)
-* 
+* Community maps: Added ability to filter by author
+* Community maps: Fixed an issue where filters wouldn't work in "my maps"
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.7.1...main)
 

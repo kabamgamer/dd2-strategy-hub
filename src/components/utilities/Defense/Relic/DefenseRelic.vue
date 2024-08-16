@@ -50,7 +50,7 @@ import Cross from "@/components/icons/IconCross.vue"
 import GodlyStatSelection from "@/components/utilities/Defense/Relic/GodlyStatSelection.vue";
 
 const { getModById } = useModStore()
-const { getGodlyStatLabelByType } = useGodlyStat()
+const { getGodlyStatLabelByType, getMaxStatForGodlyType } = useGodlyStat()
 
 const props = defineProps({
   modelValue: {
@@ -91,7 +91,7 @@ function onDeleteMod(index: number): void {
 function onGodlyStatTypeSelect(type: string): void {
   props.modelValue.godlyStat = {
     type,
-    value: 0
+    value: getMaxStatForGodlyType(type)
   }
 }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/main) (yyyy-mm-dd)
+
+* Defense calculators: Prefill highest possible value when selecting godly stat
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.8.0...main)
+
+
 ## [v1.8.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.8.0) (2024-07-15)
 
 * Defense calculators: Prevents the user from adding duplicate shards

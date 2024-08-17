@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/kabamgamer/dd2-strategy-hub/tree/main) (yyyy-mm-dd)
 
 * Defense calculators: Prefill highest possible value when selecting godly stat
+* Community maps: Add ability to zoom in on maps
 
 [Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.8.0...main)
 

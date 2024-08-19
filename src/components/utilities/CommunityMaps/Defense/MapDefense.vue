@@ -37,7 +37,7 @@ import Draggabilly from "draggabilly/draggabilly.js";
 
 import ContextMenu from "@/components/utilities/CommunityMaps/Defense/ContextMenu.vue";
 
-import { useRotateElement } from "@/composables/RotateElement";
+import { useRotateElement } from "@/composables/Element/RotateElement";
 import useCdn from "@/composables/Cdn";
 import IconCross from "@/components/icons/IconCross.vue";
 import IconRotate from "@/components/icons/IconRotate.vue";

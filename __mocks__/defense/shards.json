@@ -1,0 +1,30 @@
+[
+    {
+        "id": "shard1",
+        "name": "Shard 1",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "icon": "https://picsum.photos/250",
+        "pack": "Campaign"
+    },
+    {
+        "id": "shard2",
+        "name": "Shard 2",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "icon": "https://picsum.photos/250",
+        "pack": "Chaos 1"
+    },
+    {
+        "id": "shard3",
+        "name": "Shard 3",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "icon": "https://picsum.photos/250",
+        "pack": "Hyper"
+    },
+    {
+        "id": "shard4",
+        "name": "Shard 4",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "icon": "https://picsum.photos/250",
+        "pack": "Hyper"
+    }
+]

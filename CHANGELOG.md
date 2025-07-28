@@ -5,7 +5,15 @@
 * Defense calculators: Prefill highest possible value when selecting godly stat
 * Community maps: Add ability to zoom in on maps
 
-[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.8.0...main)
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.8.1...main)
+
+
+## [v1.8.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.8.1) (2025-07-28)
+
+* Global changes: Added Cyborg's defenses, mods and shards
+* Defense calculators: Implemented Armor Shred debuff
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.7.1...v1.8.0)
 
 
 ## [v1.8.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.8.0) (2024-07-15)

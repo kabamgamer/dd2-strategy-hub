@@ -91,6 +91,8 @@ const sizeClass = computed(() => {
   return {"no-icon": !props.showDefenseIcon, xs: isXSmallIcon.value, s: isSmallIcon.value, l: isLargeIcon.value, xl: isXLargeIcon.value}
 })
 const isXSmallIcon = computed(() => [
+  'cyborg_biometric_scanner.png',
+  'cyborg_physical_wall.png',
   'ev2_proton_beam.png',
   'ev2_reflect_beam.png',
   'ev2_buff_beam.png',
@@ -102,6 +104,7 @@ const isSmallIcon = computed(() => [
   'initiate_frost_strikes_aura.png',
 ].includes(props.defense?.mapIcon as string))
 const isLargeIcon = computed(() => [
+  'cyborg_drone_defense_system.png',
   'initiate_firework_cannon.png',
 ].includes(props.defense?.mapIcon as string))
 const isXLargeIcon = computed(() => [

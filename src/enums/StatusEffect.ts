@@ -1,6 +1,7 @@
 import EnumDefinition from "@/enums/EnumDefinition";
 
 export default class StatusEffect extends EnumDefinition {
+    static ArmorShred: StatusEffect = new this('armorshred');
     static Chill: StatusEffect = new this('chill');
     static Cripple: StatusEffect = new this('cripple');
     static Drench: StatusEffect = new this('drench');

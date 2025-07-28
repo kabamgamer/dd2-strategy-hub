@@ -50,6 +50,16 @@ export class SetupModifierCalculation {
                 comboModifier *= crippleModifier
             }
 
+            if (defense.defenseData.statusEffects.contains(StatusEffect.ArmorShred)) {
+                let armorShredModifier: number = 1.25
+                const spiritBlessingShard: undefined|ShardInterface = defense.userShards.find((shard) => shard.id === 'enhanced_scan')
+                if (spiritBlessingShard) {
+                    armorShredModifier += parseFloat(spiritBlessingShard.customOptions ?? '0') / 100
+                }
+
+                comboModifier *= armorShredModifier
+            }
+
             [...defense.userMods, ...defense.userShards].forEach((util: ModInterface | ShardInterface) => {
                 if (!util.damageModifier) {
                     return

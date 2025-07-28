@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.8.1](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.8.1) (2025-07-28)
+
+* Global changes: Added Cyborg's defenses, mods and shards
+* Defense calculators: Implemented Armor Shred debuff
+
+[Full Changelog](https://github.com/kabamgamer/dd2-strategy-hub/compare/v1.7.1...v1.8.0)
+
+
 ## [v1.8.0](https://github.com/kabamgamer/dd2-strategy-hub/tree/v1.8.0) (2024-07-15)
 
 * Defense calculators: Prevents the user from adding duplicate shards
